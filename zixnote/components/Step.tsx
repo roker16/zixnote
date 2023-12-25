@@ -1,4 +1,4 @@
-export default function Step({
+  export default function Step({
   title,
   children,
 }: {
