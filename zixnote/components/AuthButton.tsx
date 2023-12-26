@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 import GoogleSignin from './GoogleSignin'
+import Avatar from './Avatar'
 
 export default async function AuthButton() {
   const cookieStore = cookies()
@@ -11,6 +12,7 @@ export default async function AuthButton() {
   const {
     data: { user },
   } = await supabase.auth.getUser()
+
 
   const signOut = async () => {
     'use server'
@@ -30,6 +32,7 @@ export default async function AuthButton() {
           Logout
         </button>
       </form>
+      <Avatar avatar_url={user.user_metadata.avatar_url}/>
     </div>
   ) : (
     <Link
