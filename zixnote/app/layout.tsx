@@ -23,7 +23,7 @@ const Footer = () => {
       <div className="container mx-auto text-center">
         <p>
           <a href="/terms" className="mx-2">
-            Termss
+            Termsss
           </a>
           |
           <a href="/contact" className="mx-2">
