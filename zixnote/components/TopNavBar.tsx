@@ -1,16 +1,5 @@
 // "use client";
 // TopNavBar.js
-import React, { useState, useRef, useEffect } from "react";
-import {
-  FaUserCircle,
-  FaBars,
-  FaSignOutAlt,
-  FaEdit,
-  FaBook,
-  FaQuestion,
-} from "react-icons/fa";
-import { FaHandHolding } from "react-icons/fa";
-import AuthButton from "./AuthButton";
 import { User } from "@supabase/supabase-js";
 import RightDrawer from "./RightDrawer";
 
@@ -56,6 +45,7 @@ const TopNavBar = ({ user }: { user: User | null }) => {
               </li>
               <li>
                 <RightDrawer user={user}/>
+                {/* <Rightdrawer1/> */}
                 {/* <AuthButton /> */}
               </li>
             </ul>
