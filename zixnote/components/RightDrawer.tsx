@@ -1,10 +1,6 @@
 "use client";
 import { User } from "@supabase/supabase-js";
-import React from "react";
 import Avatar from "./Avatar";
-import { FaMotorcycle } from "react-icons/fa";
-import GoogleSignin from "./GoogleSignin";
-import MyDropdown from "./Mydropdown";
 
 const RightDrawer = ({ user }: { user: User | null }) => (
   <div className="drawer drawer-end rounded-full p-0 ">
@@ -59,7 +55,6 @@ const RightDrawer = ({ user }: { user: User | null }) => (
           </ul>
         </li>
       </ul>
-      <MyDropdown />
     </div>
   </div>
 );

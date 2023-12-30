@@ -1,11 +1,8 @@
-import { GeistSans } from "geist/font/sans";
-import "./globals.css";
+import Footer from "@/components/Footer";
+import TopNavBar from "@/components/TopNavBar";
 import { createClient } from "@/utils/supabase/server";
 import { cookies } from "next/headers";
-import { FaUserCircle, FaBars } from "react-icons/fa";
-import TopNavBar from "@/components/TopNavBar";
-import AuthButton from "@/components/AuthButton";
-import Avatar from "@/components/Avatar";
+import "./globals.css";
 
 const defaultUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
@@ -17,27 +14,6 @@ export const metadata = {
   description: "The fastest way to build apps with Next.js and Supabase",
 };
 
-const Footer = () => {
-  return (
-    <footer className="bg-gray-200 p-4">
-      <div className="container mx-auto text-center">
-        <p>
-          <a href="/terms" className="mx-2">
-            Terms
-          </a>
-          |
-          <a href="/contact" className="mx-2">
-            Contact
-          </a>
-          |
-          <a href="/privacy-policy" className="mx-2">
-            Privacy Policy
-          </a>
-        </p>
-      </div>
-    </footer>
-  );
-};
 export default async function RootLayout({
   children,
 }: {
@@ -47,19 +23,14 @@ export default async function RootLayout({
   const {
     data: { user },
   } = await supabase.auth.getUser();
-
+  const theme = ["light", "luxury", "dark"];
   return (
-    <html data-theme="light" lang="en">
-      <body >
+    <html data-theme={theme[0]} lang="en">
+      <body>
         <div>
           <TopNavBar user={user} />
           {/* Other content goes here */}
-          <div className="container mx-auto p-4">
-            <h1 className="text-2xl font-bold">Main Content</h1>
-            {user?.email}
-           
-            {children}
-          </div>
+          <div className="container mx-auto p-4">{children}</div>
           <Footer />
         </div>
         {/* <main className="min-h-screen flex flex-col items-center">

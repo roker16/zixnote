@@ -35,7 +35,7 @@ const TopNavBar = ({ user }: { user: User | null }) => {
             Zixnote
           </div>
           <div className="flex-none hidden lg:block">
-            <ul className="menu menu-horizontal">
+            <ul className="menu menu-horizontal items-center">
               {/* Navbar menu content here */}
               <li>
                 <a>Create Syllabus</a>
@@ -44,7 +44,7 @@ const TopNavBar = ({ user }: { user: User | null }) => {
                 <a>Notes</a>
               </li>
               <li>
-                <RightDrawer user={user}/>
+                <RightDrawer user={user} />
                 {/* <Rightdrawer1/> */}
                 {/* <AuthButton /> */}
               </li>
@@ -52,7 +52,6 @@ const TopNavBar = ({ user }: { user: User | null }) => {
           </div>
         </div>
         {/* Page content here */}
-        Content
       </div>
       <div className="drawer-side">
         <label
