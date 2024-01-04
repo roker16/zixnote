@@ -1,4 +1,5 @@
 import React from "react";
+import GoogleSignin from "./GoogleSignin";
 
 function Footer() {
   return (
@@ -48,7 +49,8 @@ function Footer() {
           </div>
         </nav>
         <aside>
-          <p>Copyright © 2023 - All right reserved by ACME Industries Ltd</p>
+          <p>Copyright © 2023 - All right reserved by Zixnote</p>
+          <GoogleSignin/>
         </aside>
       </footer>
     </div>
