@@ -10,7 +10,7 @@ const SunEditor = dynamic(() => import("suneditor-react"), {
 
 const SunEditorTest = () => {
   return (
-    <div>
+    <div className="mx-auto">
       <p> My Other Contents </p>
       <SunEditor setOptions={options} hideToolbar={false} />
     </div>

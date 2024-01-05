@@ -23,7 +23,7 @@ export default async function RootLayout({
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  const theme = ["light", "luxury", "dark"];
+  const theme = ["light", "luxury", "dark","valentine"];
   return (
     <html data-theme={theme[0]} lang="en">
       <body>
