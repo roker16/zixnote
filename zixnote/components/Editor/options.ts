@@ -6,6 +6,7 @@ export const options: SunEditorOptions = {
   hideToolbar: true, //not working set directly this options in suneditor
   mode: "classic",
   katex: katex,
+  
 
   resizingBar: false, // for hiding bottom bar
   //   className:"card shadow-xl",
