@@ -1,4 +1,3 @@
-
 export interface IndexItem {
   category_id: number | null;
   index_id: number;
@@ -6,6 +5,10 @@ export interface IndexItem {
   parent_index_id: number | null;
   sequence: number | null;
   syllabus_id: number;
+  syll_syllabus_entity: {
+    id: number;
+    syllabus_name: string;
+  } | null;
 }
 
 export interface NestedIndexItem extends IndexItem {
@@ -28,5 +31,3 @@ export const transformFlatToNested = (
     .sort((a, b) => a.sequence! - b.sequence!)
     .map(createNode);
 };
-
-

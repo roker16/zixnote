@@ -1,31 +1,31 @@
-"use client"
 import NestedIndex from "@/app/manage-index/component";
-import SunEditorTest from "@/components/Editor/Suneditor";
-import { createClient } from "@/utils/supabase/client";
-import { Database } from "@/utils/supabase/supatype";
+import { createClient } from "@/utils/supabase/server";
 
+import { Database } from "@/utils/supabase/supatype";
 import { transformFlatToNested } from "@/utils/transformFlatToNested";
 import { cookies } from "next/headers";
-import { useState } from "react";
 
 export type ActionProps = {
   mode: "edit" | "create" | "delete";
   data: Database["public"]["Tables"]["syll_index"]["Row"];
 };
 export default async function Index() {
-  const [mode, setMode] = useState<ActionProps>();
+  const supabase = createClient(cookies());
 
-  const supabase = createClient();
-
-  let { data: syll_index, error } = await supabase
-    .from("syll_index")
-    .select("*");
+  let { data: syll_index, error } = await supabase.from("syll_index").select(
+    `index_id,
+    syllabus_id,
+    syll_syllabus_entity(id,syllabus_name),
+      parent_index_id,
+      index_name,
+      category_id,
+      sequence`
+  );
 
   // const isSupabaseConnected = canInitSupabaseClient();
 
   return (
-    <div className="w-full flex flex-col gap-20 items-center">
-      Index
+    <div className="w-full flex flex-col  items-center">
       <NestedIndex data={transformFlatToNested(syll_index!)} />
     </div>
   );
