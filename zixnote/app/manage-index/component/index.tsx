@@ -1,10 +1,8 @@
-"use client"
-import React, { ReactNode, useState } from "react";
-import IndexForm from "./IndexForm";
-import ActionButtons from "./ActionButtons";
+"use client";
 import { useBoundStore } from "@/store/zustand";
-import { MdAdd } from "react-icons/md";
-import { findTopLevelParentId } from "./../../../utils/findTopLevelParentId";
+import React, { Dispatch, useState } from "react";
+import { MdAdd, MdSunny } from "react-icons/md";
+import ActionButtons from "./ActionButtons";
 
 export interface NestedIndexItem {
   category_id: number | null;
@@ -21,27 +19,21 @@ export interface NestedIndexItem {
 }
 
 interface NestedIndexItemProps {
-  originaldata?: NestedIndexItem;
+  topLevelIndex?: NestedIndexItem;
   data: NestedIndexItem[];
   level?: number;
-  // editable: boolean;
-  actionui?: ReactNode;
+  toggledIds: (number | null)[];
+  setToggledIds: Dispatch<React.SetStateAction<(number | null)[]>>;
 }
 
 const NestedIndexItem: React.FC<NestedIndexItemProps> = ({
-  originaldata,
+  topLevelIndex = null,
   data,
   level = 0,
-  // editable,
-  actionui,
+  toggledIds,
+  setToggledIds,
 }) => {
   const paddingLeft = level * 2;
-  const [expandedParents, setExpandedParents] = useState<{
-    [parentId: number]: boolean;
-  }>({});
-  console.log(JSON.stringify(originaldata?.index_id));
-  const [toggledIds, setToggledIds] = useState<(number | null)[]>([]);
-
   const handleToggle = (index_id: number) => {
     const updatedIds = toggledIds.includes(index_id)
       ? toggledIds.filter((id) => id !== index_id)
@@ -59,61 +51,53 @@ const NestedIndexItem: React.FC<NestedIndexItemProps> = ({
               className=""
               style={{ paddingLeft: `${paddingLeft}px` }}
             >
-              {item.parent_index_id === null ? (
-                <div className="flex items-center justify-between text-sm group">
-                  <div
-                    className={`flex flex-col items-start  ${
-                      item.parent_index_id === null
-                        ? "font-bold text-secondary"
-                        : "opacity-70 group-hover:opacity-100 "
-                    }`}
-                  >
-                    <div className="flex flex-row flex-nowrap items-center">
-                      <span>
-                        {item.parent_index_id == null && (
-                          <button
-                            onClick={() => handleToggle(item.index_id)}
-                            className="btn join-item btn-circle btn-sm btn-ghost"
-                          >
+              <div className="flex items-center justify-between group">
+                <div
+                  onClick={
+                    item.parent_index_id === null
+                      ? () => handleToggle(item.index_id)
+                      : undefined
+                  }
+                  className={`flex flex-col items-start cursor-pointer  ${
+                    item.parent_index_id === null
+                      ? "text-secondary font-medium italic"
+                      : "opacity-70 group-hover:opacity-100 "
+                  }`}
+                >
+                  <div className="flex flex-row flex-nowrap items-center">
+                    <span>
+                      {item.parent_index_id == null && (
+                        <button className="btn btn-circle btn-sm btn-ghost">
+                          {!toggledIds.includes(item.index_id) ? (
                             <MdAdd size={16} />
-                          </button>
-                        )}
-                      </span>
-                      <span> {item.index_name}</span>
-                    </div>
-                  </div>
-                  <div className="invisible group-hover:visible">
-                    <ActionButtons />
-                  </div>
-                </div>
-              ) : toggledIds.includes(
-                  findTopLevelParentId(originaldata!, item.index_id)
-                ) ? (
-                <div className="flex items-center justify-between text-sm group">
-                  <div
-                    className={`flex flex-col items-start  ${
-                      item.parent_index_id === null
-                        ? "font-bold text-secondary"
-                        : "opacity-70 group-hover:opacity-100 "
-                    }`}
-                  >
-                    <div className="flex flex-row flex-nowrap items-center">
-                      <span> {item.index_name}</span>
-                    </div>
-                  </div>
-                  <div className="invisible group-hover:visible">
-                    <ActionButtons />
+                          ) : (
+                            <MdSunny />
+                          )}
+                        </button>
+                      )}
+                    </span>
+
+                    <div >{item.index_name}</div>
                   </div>
                 </div>
-              ) : null}
-              {item.children && (
-                <NestedIndexItem
-                  key={item.index_id}
-                  data={item.children}
-                  level={level + (item.parent_index_id === null ? 16 : 1)}
-                  originaldata={item}
-                />
-              )}
+                <div className="invisible group-hover:visible">
+                  <ActionButtons />
+                </div>
+              </div>
+
+              {item.children &&
+                toggledIds.includes(
+                  topLevelIndex ? topLevelIndex.index_id : item.index_id
+                ) && (
+                  <NestedIndexItem
+                    key={item.index_id}
+                    data={item.children}
+                    level={level + (item.parent_index_id === null ? 16 : -4)}
+                    topLevelIndex={topLevelIndex ? topLevelIndex : item}
+                    toggledIds={toggledIds}
+                    setToggledIds={setToggledIds}
+                  />
+                )}
             </li>
           </div>
         ))}
@@ -122,24 +106,18 @@ const NestedIndexItem: React.FC<NestedIndexItemProps> = ({
   );
 };
 
-const NestedIndex: React.FC<NestedIndexItemProps> = ({
-  data,
-  // editable,
-  actionui,
-}) => {
-  const bears = useBoundStore().bears;
-  const addBear = useBoundStore().addBear;
-
+const NestedIndex = ({ data }:{data:NestedIndexItem[]}) => {
+  const [toggledIds, setToggledIds] = useState<(number | null)[]>([null]);
   return (
     <div className="flex items-start flex-col">
-      {bears}
-      <button className="btn" onClick={() => addBear()}>
-        Add
-      </button>
-      <p className="text-center text-lg font-semibold p-2 w-full rounded-full">
+      {/* <p className="text-center text-lg font-semibold p-2 w-full rounded-full">
         {data[0]?.syll_syllabus_entity?.syllabus_name}
-      </p>
-      <NestedIndexItem data={data} />
+      </p> */}
+      <NestedIndexItem
+        data={data}
+        toggledIds={toggledIds}
+        setToggledIds={setToggledIds}
+      />
     </div>
   );
 };

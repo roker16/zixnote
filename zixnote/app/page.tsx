@@ -1,10 +1,9 @@
-import NestedIndex from "@/app/manage-index/component";
 import SunEditorTest from "@/components/Editor/Suneditor";
-import IndexForm from "@/app/manage-index/component/IndexForm";
 import { createClient } from "@/utils/supabase/server";
-import { transformFlatToNested } from "@/utils/transformFlatToNested";
 import { cookies } from "next/headers";
 import MyCombobox from "./create-notes/component/SearchBox";
+import Signup from "./signup";
+
 
 export default async function Index() {
   const cookieStore = cookies();
@@ -19,11 +18,10 @@ export default async function Index() {
   return (
     <div className="w-full flex flex-col gap-20 items-center">
       hello
+      <Signup/>
       <MyCombobox />
       <SunEditorTest />
-      <div className=" overflow-y-auto">
-        {/* <NestedIndex data={transformFlatToNested(syll_index!)} /> */}
-      </div>
+      
     </div>
   );
 }
