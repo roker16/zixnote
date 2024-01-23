@@ -1,24 +1,13 @@
-export interface IndexItem {
-  category_id: number | null;
-  index_id: number;
-  index_name: string;
-  parent_index_id: number | null;
-  sequence: number | null;
-  syllabus_id: number;
-  syll_syllabus_entity: {
-    id: number;
-    syllabus_name: string;
-  } | null;
-}
+import { ElementTypeOfGetIndex } from "@/app/manage-index/page";
 
-export interface NestedIndexItem extends IndexItem {
-  children?: NestedIndexItem[];
+export interface NestedIndexItem extends ElementTypeOfGetIndex {
+  children?: ElementTypeOfGetIndex[];
 }
 
 export const transformFlatToNested = (
-  flatData: IndexItem[]
+  flatData: ElementTypeOfGetIndex[]
 ): NestedIndexItem[] => {
-  const createNode = (flatItem: IndexItem): NestedIndexItem => ({
+  const createNode = (flatItem: ElementTypeOfGetIndex): NestedIndexItem => ({
     ...flatItem,
     children: flatData
       .filter((item) => item.parent_index_id === flatItem.index_id)

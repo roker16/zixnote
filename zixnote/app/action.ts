@@ -1,29 +1,59 @@
 "use server";
 
 import { wait } from "@/utils/helper";
+import { createClient } from "@/utils/supabase/server";
+import { revalidatePath } from "next/cache";
+import { cookies } from "next/headers";
 import { z } from "zod";
 
 const schema = z.object({
-  email: z
-    .string({
-      invalid_type_error: "Invalid Email",
-    })
-    .min(5, { message: "5 char" }),
+  index: z.string().min(100, { message: "100 char" }),
+  order: z.string().min(1, { message: "1 char" }),
 });
 
-export default async function createUser(prevState: any, formData: FormData) {
-  const email1 = JSON.stringify(formData.get("email"));
+export async function editIndex( formData: FormData) {
+ 
   const validatedFields = schema.safeParse({
-    email: formData.get("email"),
+    index: formData.get("index1"),
+    order: formData.get("order1"),
   });
   await wait(5000);
   // Return early if the form data is invalid
   if (!validatedFields.success) {
+    console.log("hi...",validatedFields.error.flatten().fieldErrors);
     return {
-      message: formData.get("email")?.toString()!,
       errors: validatedFields.error.flatten().fieldErrors,
     };
   }
+  const supabase = createClient(cookies());
+  const { error } = await supabase.from("syll_index").update(
+    {
+      index_name: formData.get("index1")?.toString()!,
+      sequence: Number(formData.get("order1")),
+    },
+  ).eq("index_id",Number(formData.get("id1")));
+  if (error) {
+    console.log(error.message);
+  }
+  revalidatePath("/manage-index");
+}
 
-  // Mutate data
+export async function deleteItem( formData: FormData) {
+  const id = formData.get("id");
+  const tableName = formData.get("tableName");
+
+  // await wait(5000);
+
+  const supabase = createClient(cookies());
+  const { error } = await supabase
+    .from(`${tableName}`)
+    .delete()
+    .eq("index_id", id);
+  if (error) {
+    console.log(error.message)
+    throw new Error('Failed to create task')
+
+  }
+  revalidatePath("/manage-index");
+  // return
 }

@@ -5,7 +5,7 @@ import { transformFlatToNested } from "@/utils/transformFlatToNested";
 import { cookies } from "next/headers";
 
 export default async function Index() {
-  const syll_index = await getIndex(cookies, 1);
+  const syll_index = await getIndex(1);
   return (
     <div className="w-full flex flex-col items-center">
       {typeof syll_index === "string" ? (
@@ -14,14 +14,18 @@ export default async function Index() {
         <p className="opacity-50 italic">Relevant data does not exist!</p>
       ) : (
         <div>
-          <p className="menu-title text-lg">{syll_index[0].syll_syllabus_entity?.syllabus_name}</p>
+          <p className="menu-title text-lg ">
+            {syll_index[0].syll_syllabus_entity?.syllabus_name}
+          </p>
           <NestedIndex data={transformFlatToNested(syll_index)} />
         </div>
       )}
     </div>
   );
 }
-const getIndex = async (cookies: any, indexId: number) => {
+
+
+const getIndex = async (indexId: number) => {
   const supabase = createClient(cookies());
 
   let { data: syll_index, error } = await supabase
@@ -45,4 +49,4 @@ type ReturnTypeOfGetIndex = Awaited<ReturnType<typeof getIndex>>;
 
 type ExtractArrayElementType<T> = T extends (infer U)[] ? U : never;
 
-type ElementTypeOfGetIndex = ExtractArrayElementType<ReturnTypeOfGetIndex>;
+export type ElementTypeOfGetIndex = ExtractArrayElementType<ReturnTypeOfGetIndex>;

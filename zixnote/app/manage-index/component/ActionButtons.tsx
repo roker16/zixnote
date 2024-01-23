@@ -1,32 +1,68 @@
-import React, { Dispatch, SetStateAction } from "react";
-import { ActionProps } from "../page";
-import { Database } from "@/utils/supabase/supatype";
-import { IoAdd } from "react-icons/io5";
+"use client";
+import React from "react";
+
 import { CiEdit } from "react-icons/ci";
+import { IoAdd } from "react-icons/io5";
 import { MdDeleteOutline } from "react-icons/md";
-function ActionButtons({
-//   data,
-//   action,
-// }: {
-  // data: Database["public"]["Tables"]["syll_index"]["Row"];
-  // action: Dispatch<SetStateAction<ActionProps | undefined>>;
-}) {
-  return (
-    <div className="">
+import { ElementTypeOfGetIndex } from "../page";
+import { DeleteForm } from "./DeleteForm";
+import EditForm from "./EditForm";
+export type ActionType = "create" | "edit" | "delete"; // Accept string as well
+
+interface ActionButtonsProps {
+  onClickButton: (mode: ActionType, data?: ElementTypeOfGetIndex) => void;
+  data?: ElementTypeOfGetIndex; // Data to be passed
+}
+
+const ActionButtons: React.FC<ActionButtonsProps> = ({
+  onClickButton,
+  data,
+}) => {
+  const createButton = (
+    <button
+      key="create"
+      className="btn join-item btn-circle btn-sm btn-ghost"
+      onClick={() => onClickButton("create", data)}
+    >
+      <IoAdd />
+    </button>
+  );
+
+  const editButton = (
+    <button
+      key="edit"
+      className="btn join-item btn-circle btn-sm btn-ghost"
+      onClick={() => onClickButton("edit", data)}
+    >
+      <CiEdit />
+    </button>
+  );
+
+  const deleteButton = (
+    <form>
       <button
-        className="btn join-item btn-circle btn-sm btn-ghost "
-        // onClick={() => action({ mode: "create", data: data })}
+        key="delete"
+        className="btn join-item btn-circle btn-sm btn-ghost"
+        onClick={() => onClickButton("delete", data)}
       >
-        <IoAdd />
-      </button>
-      <button className="btn join-item btn-circle btn-sm btn-ghost">
-        <CiEdit />
-      </button>
-      <button className="btn join-item btn-circle btn-sm btn-ghost">
         <MdDeleteOutline />
       </button>
+    </form>
+  );
+
+  return (
+    <div className="flex flex-row flex-nowrap items-center">
+      {createButton}
+      {editButton}
+      {deleteButton}
+      <DeleteForm
+        id={data?.index_id!}
+        tableName={"syll_index"}
+        isIconButton={false}
+      />
+      <EditForm id={data?.index_id!} name={data?.index_name!} order={data?.sequence!} />
     </div>
   );
-}
+};
 
 export default ActionButtons;

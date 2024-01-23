@@ -1,5 +1,5 @@
 import React, { ReactNode } from "react";
-import IndexForm from "../../manage-index/component/IndexForm";
+
 
 interface NestedIndexItem {
   category_id: number | null;
