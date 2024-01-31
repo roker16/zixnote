@@ -2,8 +2,7 @@
 import { NestedIndexItem } from "@/utils/transformFlatToNested";
 import React, { useState } from "react";
 import { MdExpandMore, MdSunny } from "react-icons/md";
-import ActionButtons, { ActionType } from "./ActionButtons";
-import { ElementTypeOfGetIndex } from "../page";
+import ActionButtons from "./ActionButtons";
 
 
 interface TableOfContentProps {
@@ -12,7 +11,6 @@ interface TableOfContentProps {
   indent?: number;
   toggledIds: (number | null)[];
   handleToggle: (index_id: number) => void;
-  handleAction: (action: ActionType, data?: ElementTypeOfGetIndex) => void;
 }
 
 const TableOfContent: React.FC<TableOfContentProps> = ({
@@ -21,12 +19,11 @@ const TableOfContent: React.FC<TableOfContentProps> = ({
   indent = 0,
   toggledIds,
   handleToggle,
-  handleAction,
 }) => {
   const paddingLeft = indent * 2;
 
   return (
-    <ul className=" flex flex-col items-start bg-base-300 text-left ">
+    <ul className=" flex flex-col items-start bg-base-200 text-left ">
       {data.map((item) => (
         <li key={item.index_id} style={{ paddingLeft: `${paddingLeft}px` }}>
           <div className="flex items-center group">
@@ -59,7 +56,7 @@ const TableOfContent: React.FC<TableOfContentProps> = ({
               </div>
             </div>
             <div className="invisible items-center group-hover:visible">
-              <ActionButtons onClickButton={handleAction} data={item} />
+              <ActionButtons data={item} />
             </div>
           </div>
 
@@ -69,11 +66,10 @@ const TableOfContent: React.FC<TableOfContentProps> = ({
             ) && (
               <TableOfContent
                 data={item.children}
-                indent={indent + (item.parent_index_id === null ? 16 : -4)}
+                indent={indent + (item.parent_index_id === null ? 16 : -2)}
                 topLevelIndexItem={topLevelIndex ? topLevelIndex : item}
                 toggledIds={toggledIds}
                 handleToggle={handleToggle}
-                handleAction={handleAction}
               />
             )}
         </li>
@@ -84,29 +80,21 @@ const TableOfContent: React.FC<TableOfContentProps> = ({
 
 const NestedIndex = ({ data }: { data: NestedIndexItem[] }) => {
   const [toggledIds, setToggledIds] = useState<(number | null)[]>([]);
-  const [actionType, setActionType] = useState<{
-    action: ActionType;
-    data?: ElementTypeOfGetIndex;
-  }>();
+
   const handleToggle = (index_id: number) => {
     const updatedIds = toggledIds.includes(index_id)
       ? toggledIds.filter((id) => id !== index_id)
       : [...toggledIds, index_id];
     setToggledIds(updatedIds);
   };
-  const handleAction = (action: ActionType, data?: ElementTypeOfGetIndex) => {
-    setActionType({ action, data });
-  };
+
   return (
     <div>
       <TableOfContent
         data={data}
         toggledIds={toggledIds}
         handleToggle={handleToggle}
-        handleAction={handleAction}
       />
-      
-     
     </div>
   );
 };

@@ -1,8 +1,10 @@
+import { Button } from '@chakra-ui/react'
 import Step from './Step'
 
 export default function ConnectSupabaseSteps() {
   return (
     <ol className="flex flex-col gap-6">
+      <Button variant={"outline"}></Button>
       <Step title="Create Supabase project">
         <p>
           Head over to{' '}
@@ -35,7 +37,7 @@ export default function ConnectSupabaseSteps() {
             className="font-bold hover:underline text-foreground/80"
             rel="noreferrer"
           >
-            your Supabase project's API Settings
+            your Supabase projects API Settings
           </a>
           .
         </p>

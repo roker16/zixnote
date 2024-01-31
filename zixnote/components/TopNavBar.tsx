@@ -1,73 +1,35 @@
-// "use client";
 // TopNavBar.js
 import { User } from "@supabase/supabase-js";
-import RightDrawer from "./RightDrawer";
 
 const TopNavBar = ({ user }: { user: User | null }) => {
   return (
-    <div className="drawer">
-      <input id="my-drawer-3" type="checkbox" className="drawer-toggle" />
-      <div className="drawer-content flex flex-col">
-        {/* Navbar */}
-        <div className="w-full navbar bg-base-300">
-          <div className="flex-none lg:hidden">
-            <label
-              htmlFor="my-drawer-3"
-              aria-label="open sidebar"
-              className="btn btn-square btn-ghost"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                className="inline-block w-6 h-6 stroke-current"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M4 6h16M4 12h16M4 18h16"
-                ></path>
-              </svg>
-            </label>
-          </div>
-          <div className="flex-1 px-2 mx-2 text-lg font-handwriting">
-            Zixnote
-          </div>
-          <div className="flex-none hidden lg:block">
-            <ul className="menu menu-horizontal items-center">
-              {/* Navbar menu content here */}
-              <li>
-                <a>Create Syllabus</a>
-              </li>
-              <li>
-                <a>Notes</a>
-              </li>
-              <li>
-                <RightDrawer user={user} />
-                {/* <Rightdrawer1/> */}
-                {/* <AuthButton /> */}
-              </li>
-            </ul>
-          </div>
-        </div>
-        {/* Page content here */}
+    <div className="bg-blue-500  text-white p-4 flex items-center justify-between">
+      {/* Logo */}
+      <div className="flex items-center">
+        <img
+          src="/logo.png"  // Replace with the path to your logo image
+          alt="Logo"
+          className="w-8 h-8 mr-2"
+        />
+        <span className="text-lg font-semibold">Zixnote</span>
       </div>
-      <div className="drawer-side">
-        <label
-          htmlFor="my-drawer-3"
-          aria-label="close sidebar"
-          className="drawer-overlay"
-        ></label>
-        <ul className="menu p-4 w-80 min-h-full bg-base-200">
-          {/* Sidebar content here */}
-          <li>
-            <a>Create Syllabus</a>
-          </li>
-          <li>
-            <a>Notes</a>
-          </li>
-        </ul>
+
+      {/* Avatar */}
+      <div className="flex items-center">
+        {user ? (
+          <div className="flex items-center mr-4">
+            <span className="mr-2">{user.email}</span>
+            <img
+              src={user?.user_metadata.avatar_url|| "/default-avatar.png"}  // Replace with the path to your default avatar image
+              alt="Avatar"
+              className="w-8 h-8 rounded-full"
+            />
+          </div>
+        ) : (
+          <a href="/login" className="hover:underline">
+            Log In
+          </a>
+        )}
       </div>
     </div>
   );

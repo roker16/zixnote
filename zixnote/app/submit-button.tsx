@@ -9,7 +9,7 @@ export function SubmitButton() {
     <button
       type="submit"
       disabled={pending}
-      className="btn"
+      className="btn btn-full btn-neutral"
     >
       {pending?<div className="loading"></div>: "Submit"}
     </button>

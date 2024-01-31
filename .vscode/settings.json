@@ -6,5 +6,6 @@
     "className",
     "ngClass",
     ".*Styles.*"
-  ]
+  ],
+  "typescript.enablePromptUseWorkspaceTsdk": true
 }

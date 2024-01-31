@@ -7,60 +7,25 @@ import { MdDeleteOutline } from "react-icons/md";
 import { ElementTypeOfGetIndex } from "../page";
 import { DeleteForm } from "./DeleteForm";
 import EditForm from "./EditForm";
+import CreateForm from "./CreateForm";
 export type ActionType = "create" | "edit" | "delete"; // Accept string as well
 
-interface ActionButtonsProps {
-  onClickButton: (mode: ActionType, data?: ElementTypeOfGetIndex) => void;
-  data?: ElementTypeOfGetIndex; // Data to be passed
-}
-
-const ActionButtons: React.FC<ActionButtonsProps> = ({
-  onClickButton,
-  data,
-}) => {
-  const createButton = (
-    <button
-      key="create"
-      className="btn join-item btn-circle btn-sm btn-ghost"
-      onClick={() => onClickButton("create", data)}
-    >
-      <IoAdd />
-    </button>
-  );
-
-  const editButton = (
-    <button
-      key="edit"
-      className="btn join-item btn-circle btn-sm btn-ghost"
-      onClick={() => onClickButton("edit", data)}
-    >
-      <CiEdit />
-    </button>
-  );
-
-  const deleteButton = (
-    <form>
-      <button
-        key="delete"
-        className="btn join-item btn-circle btn-sm btn-ghost"
-        onClick={() => onClickButton("delete", data)}
-      >
-        <MdDeleteOutline />
-      </button>
-    </form>
-  );
-
+const ActionButtons = ({ data }: { data?: ElementTypeOfGetIndex }) => {
   return (
     <div className="flex flex-row flex-nowrap items-center">
-      {createButton}
-      {editButton}
-      {deleteButton}
+      <CreateForm parentId={data?.index_id} syllabusId={data?.syllabus_id!} />
+      <EditForm
+        id={data?.index_id!}
+        name={data?.index_name!}
+        order={data?.sequence!}
+      />
       <DeleteForm
         id={data?.index_id!}
         tableName={"syll_index"}
-        isIconButton={false}
+        idColumnName={"index_id"}
+        isIconButton={true}
+        revalidatePathName={"/manage-index"}
       />
-      <EditForm id={data?.index_id!} name={data?.index_name!} order={data?.sequence!} />
     </div>
   );
 };

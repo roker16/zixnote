@@ -3,20 +3,27 @@ import React from "react";
 import { MdDeleteOutline } from "react-icons/md";
 import { useFormStatus } from "react-dom";
 import { deleteItem } from "@/app/action";
+import { revalidatePath } from 'next/cache';
 
 export const DeleteForm = ({
   id,
   tableName,
+  idColumnName,
+  revalidatePathName,
   isIconButton,
 }: {
   id: number;
   tableName: string;
+  idColumnName: string;
+  revalidatePathName: string;
   isIconButton?: boolean;
 }) => {
   return (
     <form action={deleteItem}>
       <input type="hidden" name="id" value={id} />
       <input type="hidden" name="tableName" value={tableName} />
+      <input type="hidden" name="idColumnName" value={idColumnName} />
+      <input type="hidden" name="revalidatePathName" value={revalidatePathName} />
       {isIconButton ? (
         <DeleteButton isIconButton={isIconButton} />
       ) : (

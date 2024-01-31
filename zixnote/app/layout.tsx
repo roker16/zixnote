@@ -3,6 +3,7 @@ import TopNavBar from "@/components/TopNavBar";
 import { createClient } from "@/utils/supabase/server";
 import { cookies } from "next/headers";
 import "./globals.css";
+import { Providers } from "./providers";
 
 const defaultUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
@@ -26,16 +27,18 @@ export default async function RootLayout({
   const theme = ["light", "luxury", "dark","valentine","wireframe"];
   return (
     <html data-theme={theme[0]} lang="en">
-      <body>
-        <div>
+      <body >
+      <Providers>
+        <div >
           <TopNavBar user={user} />
           {/* Other content goes here */}
-          <div className="container mx-auto p-4">{children}</div>
+          <div className=" container mx-auto p-4">{children}</div>
           <Footer />
         </div>
         {/* <main className="min-h-screen flex flex-col items-center">
 
         </main> */}
+        </Providers>
       </body>
     </html>
   );
