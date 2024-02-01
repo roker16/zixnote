@@ -6,8 +6,8 @@ import { MdAdd, MdEdit } from "react-icons/md";
 
 import { Dialog, Transition } from "@headlessui/react";
 import { Fragment, useState } from "react";
-import { Button, IconButton } from "@chakra-ui/react";
 import { CheckIcon } from "@heroicons/react/20/solid";
+import { ActionIcon, rem } from "@mantine/core";
 
 export default function CreateForm({
   parentId,
@@ -33,23 +33,19 @@ export default function CreateForm({
 
   return (
     <>
-    
       <div className=" flex items-center justify-center">
-        {/* <button type="button" onClick={openModal} className={buttonStyles}>
+        <button type="button" onClick={openModal} className={buttonStyles}>
           {label ? label : <MdAdd />}
-        </button> */} 
-        <IconButton
-        onClick={openModal}
-        
-          isRound={true}
-          size="xs"
-          color={"blue.00"}
-          // variant="solid"
-          // colorScheme="teal"
-          aria-label="Done"
-          fontSize="15px"
-          icon={<MdAdd />}
-        />
+        </button>
+        <ActionIcon
+          size={"xs"}
+          radius={"lg"}
+          variant
+          onClick={openModal}
+          aria-label="ActionIcon with size as a number"
+        >
+          <MdAdd size={"12px"} stroke="1.5" />
+        </ActionIcon>
       </div>
 
       <Transition appear show={isOpen} as={Fragment}>
