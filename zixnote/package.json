@@ -7,18 +7,23 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@chakra-ui/next-js": "^2.2.0",
-    "@chakra-ui/react": "^2.4.2",
-    "@emotion/react": "^11.11.3",
-    "@emotion/styled": "^11.11.0",
     "@headlessui/react": "^1.7.17",
     "@heroicons/react": "^2.1.1",
     "@hookform/resolvers": "^3.3.4",
+    "@mantine/code-highlight": "^7.5.0",
+    "@mantine/core": "^7.5.0",
+    "@mantine/dates": "^7.5.0",
+    "@mantine/form": "^7.5.0",
+    "@mantine/hooks": "^7.5.0",
+    "@mantine/modals": "^7.5.0",
+    "@mantine/notifications": "^7.5.0",
+    "@mantine/nprogress": "^7.5.0",
+    "@mantine/spotlight": "^7.5.0",
     "@supabase/ssr": "latest",
     "@supabase/supabase-js": "latest",
     "@types/react": "^18.2.48",
     "@types/react-dom": "^18.2.18",
-    "framer-motion": "^11.0.3",
+    "dayjs": "^1.11.10",
     "geist": "^1.0.0",
     "katex": "^0.16.9",
     "next": "^14.0.4",
@@ -38,10 +43,10 @@
     "@types/katex": "^0.16.7",
     "@types/node": "20.3.1",
     "@types/uuid": "^9.0.7",
-    
     "autoprefixer": "^10.4.17",
     "encoding": "^0.1.13",
-   
+    "eslint": "8.56.0",
+    "eslint-config-next": "14.1.0",
     "postcss": "^8.4.33",
     "tailwindcss": "^3.4.1"
   }

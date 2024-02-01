@@ -2,8 +2,10 @@
 
 import {
   Box,
+  Button,
   chakra,
   Container,
+  MenuButton,
   Stack,
   Text,
   useColorModeValue,
@@ -42,6 +44,7 @@ const SocialButton = ({
       rounded={'full'}
       w={8}
       h={8}
+      
       cursor={'pointer'}
       as={'a'}
       href={href}
@@ -52,7 +55,8 @@ const SocialButton = ({
       _hover={{
         bg: useColorModeValue('blackAlpha.200', 'whiteAlpha.200'),
       }}>
-      <VisuallyHidden>{label}</VisuallyHidden>
+      {/* <VisuallyHidden >{label}</VisuallyHidden> */}
+      
       {children}
     </chakra.button>
   )
@@ -71,6 +75,7 @@ export default function Footer() {
         justify={'center'}
         align={'center'}>
         <Logo />
+        <Button variant={"ghost"}></Button>
         <Stack direction={'row'} spacing={6}>
           <Box as="a" href={'#'}>
             Home

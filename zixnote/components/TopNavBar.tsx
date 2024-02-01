@@ -3,7 +3,7 @@ import { User } from "@supabase/supabase-js";
 
 const TopNavBar = ({ user }: { user: User | null }) => {
   return (
-    <div className="bg-blue-500  text-white p-4 flex items-center justify-between">
+    <div className="bg-blue-500 text-white p-4 flex items-center justify-between">
       {/* Logo */}
       <div className="flex items-center">
         <img
