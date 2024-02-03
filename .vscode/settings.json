@@ -7,5 +7,6 @@
     "ngClass",
     ".*Styles.*"
   ],
-  "typescript.enablePromptUseWorkspaceTsdk": true
+  "typescript.enablePromptUseWorkspaceTsdk": true,
+  "editor.wordWrapColumn": 90
 }

@@ -1,17 +1,14 @@
 "use client";
 
+import { Button } from "@mantine/core";
 import { useFormStatus } from "react-dom";
 
 export function SubmitButton() {
   const { pending } = useFormStatus();
 
   return (
-    <button
-      type="submit"
-      disabled={pending}
-      className="btn btn-full btn-neutral"
-    >
-      {pending?<div className="loading"></div>: "Submit"}
-    </button>
+    <Button variant="filled" type="submit">
+      {pending ? "Submitting..." : "Submit"}
+    </Button>
   );
 }

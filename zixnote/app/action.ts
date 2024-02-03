@@ -4,6 +4,7 @@ import { wait } from "@/utils/helper";
 import { createClient } from "@/utils/supabase/server";
 import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 import { z } from "zod";
 
 const schema = z.object({
@@ -89,4 +90,10 @@ export async function deleteItem(formData: FormData) {
   }
   revalidatePath(`${revalidatePathName}`);
   // return
+}
+export async function signOut() {
+  const cookieStore = cookies();
+  const supabase = createClient(cookieStore);
+  await supabase.auth.signOut();
+  return redirect("/");
 }

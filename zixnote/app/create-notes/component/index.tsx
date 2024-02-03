@@ -28,7 +28,7 @@ const NestedIndexItem: React.FC<NestedIndexItemProps> = ({
   return (
     <ul className="flex flex-nowrap items-start menu p-0 gap-y-0 bg-base-100 text-left rounded-md ">
       {data.map((item) => (
-        <div>
+        <div key={item.index_id}>
           <li
             key={item.index_id}
             className=""

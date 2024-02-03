@@ -1,12 +1,12 @@
-import Footer from "@/components/Footer";
-import TopNavBar from "@/components/TopNavBar";
+import { FooterCentered } from "@/components/FooterCentered";
+import { HeaderMegaMenu } from "@/components/HeaderMegaMenu";
 import { createClient } from "@/utils/supabase/server";
+import { ColorSchemeScript, MantineProvider } from "@mantine/core";
+import { Notifications } from "@mantine/notifications";
+import "@mantine/core/styles.css";
 import { cookies } from "next/headers";
 import "./globals.css";
-import { Providers } from "./providers";
-import "@mantine/core/styles.css";
-import { ColorSchemeScript, MantineProvider } from '@mantine/core';
-
+import { theme } from "./theme";
 const defaultUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
   : "http://localhost:3000";
@@ -26,24 +26,26 @@ export default async function RootLayout({
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  const theme = ["light", "luxury", "dark", "valentine", "wireframe"];
+  // const theme = ["light", "luxury", "dark", "valentine", "wireframe"];
   return (
-    <html data-theme={theme[0]} lang="en">
+    <html lang="en">
       <head>
         <ColorSchemeScript />
       </head>
-      <body>
-      <MantineProvider>
+      <body >
+        <MantineProvider theme={theme} defaultColorScheme="light">
+          <Notifications  />
           <div>
-            <TopNavBar user={user} />
+            {/* <TopNavBar user={user} /> */}
+            <HeaderMegaMenu user={user} />
             {/* Other content goes here */}
-            <div className=" container mx-auto p-4">{children}</div>
-            <Footer />
+            <div className="h-full bg-red-300">{children}</div>
+            <FooterCentered />
           </div>
           {/* <main className="min-h-screen flex flex-col items-center">
 
         </main> */}
-       </MantineProvider>
+        </MantineProvider>
       </body>
     </html>
   );
