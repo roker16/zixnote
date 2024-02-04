@@ -1,9 +1,10 @@
 "use client";
 import { NestedIndexItem } from "@/utils/transformFlatToNested";
 import React, { useState } from "react";
+import { Text } from '@mantine/core';
+
 import { MdExpandMore, MdSunny } from "react-icons/md";
 import ActionButtons from "./ActionButtons";
-
 
 interface TableOfContentProps {
   topLevelIndexItem?: NestedIndexItem;
@@ -23,7 +24,7 @@ const TableOfContent: React.FC<TableOfContentProps> = ({
   const paddingLeft = indent * 2;
 
   return (
-    <ul className=" flex flex-col items-start bg-base-200 text-left ">
+    <ul className=" flex flex-col items-start text-left gap-2">
       {data.map((item) => (
         <li key={item.index_id} style={{ paddingLeft: `${paddingLeft}px` }}>
           <div className="flex items-center group">
@@ -36,7 +37,7 @@ const TableOfContent: React.FC<TableOfContentProps> = ({
               className={`flex cursor-pointer  ${
                 item.parent_index_id === null
                   ? "text-secondary font-medium italic"
-                  : "opacity-70 group-hover:opacity-100 "
+                  : " group-hover:text-blue-400 text-sm "
               }`}
             >
               <div className="flex flex-row flex-nowrap items-center">
@@ -55,9 +56,9 @@ const TableOfContent: React.FC<TableOfContentProps> = ({
                 <div>{item.index_name}</div>
               </div>
             </div>
-            <div className="invisible items-center group-hover:visible">
+            {/* <div className="invisible items-center group-hover:visible">
               <ActionButtons data={item} />
-            </div>
+            </div> */}
           </div>
 
           {item.children &&
@@ -66,7 +67,7 @@ const TableOfContent: React.FC<TableOfContentProps> = ({
             ) && (
               <TableOfContent
                 data={item.children}
-                indent={indent + (item.parent_index_id === null ? 16 : -2)}
+                indent={indent + (item.parent_index_id === null ? 8 : -2)}
                 topLevelIndexItem={topLevelIndex ? topLevelIndex : item}
                 toggledIds={toggledIds}
                 handleToggle={handleToggle}

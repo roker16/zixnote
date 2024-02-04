@@ -13,7 +13,7 @@ export default function SyllabusFilter() {
 
   return (
     <Tabs  variant="pills" radius="md" defaultValue="school" w={"75%"}>
-      <Tabs.List bg={"var(--mantine-color-blue-1)"} p={"xs"} justify="center">
+      <Tabs.List bg={"var(--mantine-primary-color-1)"} p={"xs"} justify="center">
         <Tabs.Tab value="school" leftSection={<IconPhoto style={iconStyle} /> } >
           School
         </Tabs.Tab>

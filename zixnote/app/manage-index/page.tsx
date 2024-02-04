@@ -3,7 +3,7 @@ import { createClient } from "@/utils/supabase/server";
 
 import { transformFlatToNested } from "@/utils/transformFlatToNested";
 import { cookies } from "next/headers";
-import CreateForm from "./component/CreateForm";
+
 import SyllabusFilter from "./component/SyllabusFilter";
 import IndexTitle from "./component/IndexTitle";
 import { Space } from "@mantine/core";
@@ -22,19 +22,38 @@ export default async function Index({
   // const syll_index = await getIndex(searchParams?.id);
   const school = await getSchool();
   return (
-    <div className="w-full flex flex-col items-center bg-slate-200">
+    <div className="w-full flex flex-col items-center">
       {typeof school !== "string" && <SyllabusFilter />}
       <Space h="md" />
-      {searchParams?.id && <IndexTitle />}
-      {typeof syll_index === "string" ? (
-        <p>Error: {syll_index}</p>
-      ) : syll_index === null || syll_index?.length === 0 ? (
-        <p className="opacity-50 italic">Relevant data does not exist!</p>
-      ) : (
-        <div>
-          <NestedIndex data={transformFlatToNested(syll_index)} />
+      <Space h="md" />
+      <div className="grid grid-cols-9 w-full min-h-lvh">
+        {/* 3 parts */}
+        <div className="col-span-2 ">
+          <div className="p-2 min-h-dvh rounded-r-md bg-gray-100">
+            {searchParams?.id && searchParams?.name && (
+              <IndexTitle
+                id={Number(searchParams?.id)}
+                name={searchParams?.name as string}
+              />
+            )}
+            {typeof syll_index === "string" ? (
+              <p>Error: {syll_index}</p>
+            ) : syll_index === null || syll_index?.length === 0 ? (
+              <p className="opacity-50 italic">Relevant data does not exist!</p>
+            ) : (
+              <div>
+                <NestedIndex data={transformFlatToNested(syll_index)} />
+              </div>
+            )}
+          </div>
         </div>
-      )}
+
+        {/* 7 parts */}
+        <div className="col-span-6">{/* Your content here */}</div>
+
+        {/* 2 parts */}
+        <div className="col-span-1 bg-blue-200">{/* Your content here */}</div>
+      </div>
     </div>
   );
 }
@@ -66,7 +85,7 @@ type ExtractArrayElementType<T> = T extends (infer U)[] ? U : never;
 export type ElementTypeOfGetIndex =
   ExtractArrayElementType<ReturnTypeOfGetIndex>;
 
-  const getSchool = async () => {
+const getSchool = async () => {
   const supabase = createClient(cookies());
 
   const { data: school, error } = await supabase

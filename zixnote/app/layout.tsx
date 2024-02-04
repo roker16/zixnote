@@ -39,7 +39,7 @@ export default async function RootLayout({
             {/* <TopNavBar user={user} /> */}
             <HeaderMegaMenu user={user} />
             {/* Other content goes here */}
-            <div className="h-full bg-red-300">{children}</div>
+            <div className="h-full">{children}</div>
             <FooterCentered />
           </div>
           {/* <main className="min-h-screen flex flex-col items-center">
