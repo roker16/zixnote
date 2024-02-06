@@ -1,3 +1,14 @@
-@tailwind base;
+/* @tailwind base; //dont do this when using mantine*/ 
 @tailwind components;
 @tailwind utilities;
+/* 
+* Thanks to @layer rule, tailwind base get lower "priority" 
+* than mantine css rules even if they have same specificity.
+* Thanks to this, we CAN use preflight reset from tailwind. if you don't do this
+* it will mess up mantine component, Button style gone in my case
+* https://github.com/PauliCZ44/MantineTW/blob/main/src/index.css
+*https://github.com/orgs/mantinedev/discussions/1672#discussioncomment-5987110
+/
+/* @layer tailwind {
+  @tailwind base;
+} */

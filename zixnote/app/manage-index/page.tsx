@@ -13,6 +13,7 @@ export default async function Index({
 }: {
   searchParams?: { [key: string]: string | string[] | undefined };
 }) {
+
   let syll_index: any;
   if (searchParams?.id) {
     syll_index = await getIndex(Number(searchParams?.id));
@@ -25,10 +26,9 @@ export default async function Index({
     <div className="w-full flex flex-col items-center">
       {typeof school !== "string" && <SyllabusFilter />}
       <Space h="md" />
-      <Space h="md" />
       <div className="grid grid-cols-9 w-full min-h-lvh">
         {/* 3 parts */}
-        <div className="col-span-2 ">
+        <div className="col-span-3 ">
           <div className="p-2 min-h-dvh rounded-r-md bg-gray-100">
             {searchParams?.id && searchParams?.name && (
               <IndexTitle
@@ -52,7 +52,7 @@ export default async function Index({
         <div className="col-span-6">{/* Your content here */}</div>
 
         {/* 2 parts */}
-        <div className="col-span-1 bg-blue-200">{/* Your content here */}</div>
+        <div className="col-span-0 bg-blue-200">{/* Your content here */}</div>
       </div>
     </div>
   );
@@ -74,7 +74,8 @@ const getIndex = async (indexId: number) => {
     )
     .eq("syllabus_id", indexId);
   if (error) {
-    return error.message;
+    throw(error)
+    // return error.message;
   }
   return syll_index;
 };

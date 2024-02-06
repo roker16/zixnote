@@ -8,11 +8,12 @@ import { ElementTypeOfGetIndex } from "../page";
 import { DeleteForm } from "./DeleteForm";
 import EditForm from "./EditForm";
 import CreateForm from "./CreateForm";
+import { Center, Group } from "@mantine/core";
 export type ActionType = "create" | "edit" | "delete"; // Accept string as well
 
 const ActionButtons = ({ data }: { data?: ElementTypeOfGetIndex }) => {
   return (
-    <div className="flex flex-row flex-nowrap items-center">
+    <Group justify="center" gap="1px" >
       <CreateForm parentId={data?.index_id} syllabusId={data?.syllabus_id!} />
       <EditForm
         id={data?.index_id!}
@@ -26,7 +27,7 @@ const ActionButtons = ({ data }: { data?: ElementTypeOfGetIndex }) => {
         isIconButton={true}
         revalidatePathName={"/manage-index"}
       />
-    </div>
+    </Group>
   );
 };
 

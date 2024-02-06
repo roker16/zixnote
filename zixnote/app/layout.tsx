@@ -2,10 +2,11 @@ import { FooterCentered } from "@/components/FooterCentered";
 import { HeaderMegaMenu } from "@/components/HeaderMegaMenu";
 import { createClient } from "@/utils/supabase/server";
 import { ColorSchemeScript, MantineProvider } from "@mantine/core";
-import { Notifications } from "@mantine/notifications";
+import { Notifications } from '@mantine/notifications';
 import "@mantine/core/styles.css";
+import '@mantine/notifications/styles.css';
 import { cookies } from "next/headers";
-import "./globals.css";
+import "./globals.css";//this should be always below mantine styles.css
 import { theme } from "./theme";
 const defaultUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
@@ -32,9 +33,9 @@ export default async function RootLayout({
       <head>
         <ColorSchemeScript />
       </head>
-      <body >
+      <body>
         <MantineProvider theme={theme} defaultColorScheme="light">
-          <Notifications  />
+          <Notifications position="top-center"/>
           <div>
             {/* <TopNavBar user={user} /> */}
             <HeaderMegaMenu user={user} />

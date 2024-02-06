@@ -7,6 +7,7 @@ import { MdDelete } from "react-icons/md";
 import CreatableSelect from "react-select/creatable";
 import { DeleteForm } from "../DeleteForm";
 import { School } from "./School";
+import { ActionIcon } from "@mantine/core";
 interface Option1 {
   id: number;
   class_id: number | null;
@@ -119,7 +120,8 @@ export const Books = ({
           value={value}
         />
       </div>
-      <button
+      <ActionIcon
+        radius={"lg"}
         hidden={value === null || value === undefined}
         disabled={isLoading || value === null || value === undefined}
         className="btn btn-circle btn-sm "
@@ -127,7 +129,7 @@ export const Books = ({
       >
         <MdDelete />
         {/* {isLoading ? "Deleting..." : "Delete"} */}
-      </button>
+      </ActionIcon>
     </div>
   );
 };

@@ -3,7 +3,8 @@ import React from "react";
 import { MdDeleteOutline } from "react-icons/md";
 import { useFormStatus } from "react-dom";
 import { deleteItem } from "@/app/action";
-import { revalidatePath } from 'next/cache';
+import { revalidatePath } from "next/cache";
+import { ActionIcon, Button, Center } from "@mantine/core";
 
 export const DeleteForm = ({
   id,
@@ -23,7 +24,11 @@ export const DeleteForm = ({
       <input type="hidden" name="id" value={id} />
       <input type="hidden" name="tableName" value={tableName} />
       <input type="hidden" name="idColumnName" value={idColumnName} />
-      <input type="hidden" name="revalidatePathName" value={revalidatePathName} />
+      <input
+        type="hidden"
+        name="revalidatePathName"
+        value={revalidatePathName}
+      />
       {isIconButton ? (
         <DeleteButton isIconButton={isIconButton} />
       ) : (
@@ -35,19 +40,28 @@ export const DeleteForm = ({
 const DeleteButton = ({ isIconButton }: { isIconButton?: boolean }) => {
   const { pending } = useFormStatus();
 
-  const withIconStyles = "btn btn-sm btn-ghost btn-circle opacity-70";
-  const withLabelStyles = "btn btn-sm btn-ghost opacity-70 ";
-  const buttonStyles = isIconButton ? withIconStyles : withLabelStyles;
-
   return (
-    <button type="submit" disabled={pending} className={buttonStyles}>
-      {pending ? (
-        <div className="loading"></div>
-      ) : isIconButton ? (
-        <MdDeleteOutline />
+    <Center>
+      {!isIconButton ? (
+        <Button disabled={pending} loading={pending} type="submit">
+          Delete
+        </Button>
       ) : (
-        "Delete"
+        <ActionIcon
+          size={"sm"}
+          // disabled={pending}
+          style={{
+            cursor: "pointer",
+          }}
+          loading={pending}
+          type="submit"
+          radius={"lg"}
+          variant={"light"}
+          aria-label="ActionIcon with size as a number"
+        >
+          <MdDeleteOutline size={"16px"} />
+        </ActionIcon>
       )}
-    </button>
+    </Center>
   );
 };

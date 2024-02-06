@@ -7,7 +7,11 @@ import { MdDelete } from "react-icons/md";
 import CreatableSelect from "react-select/creatable";
 import { DeleteForm } from "../DeleteForm";
 import { notifications } from "@mantine/notifications";
+
 import { IconX } from "@tabler/icons-react";
+import { ActionIcon, Button } from "@mantine/core";
+import { PostgrestError } from "@supabase/supabase-js";
+import { showNotifications } from "@/components/Notification";
 interface Option1 {
   id: number;
   school_name: string;
@@ -53,11 +57,7 @@ export const School = ({ action }: { action: (id: number) => void }) => {
   const call = async (inputValue: string) => {
     setError(null);
     setIsLoading(true);
-    // if (inputValue !== "hidd") {
-    //   setError("not saved");
-    //   setIsLoading(false);
-    //   return;
-    // }
+
     const { data, error } = await supabsae
       .from("syll_school")
       .insert([{ school_name: inputValue }])
@@ -83,28 +83,23 @@ export const School = ({ action }: { action: (id: number) => void }) => {
 
       .eq("id", value?.value!);
     if (error) {
-      
-      notifications.show({
-        title: "Default notification",
-        message: `${error.details}`,
-        color: 'red',
-        icon: <IconX />,
-        style: { width: '400px',position:"fixed" ,marginBottom:"200px", marginRight:"20px"},
-       
-      });
-      setIsLoading(false)
-      return
+      showNotifications(error);
+      setIsLoading(false);
+      return;
     }
 
     await wait(5000);
-    setIsLoading(false);
     setOptions((prev) => prev?.filter((item) => item.value !== value?.value));
     setValue(null);
+    setIsLoading(false);
+    showNotifications(null)
   };
   const handleChange = (newValue: Option | null) => {
     setValue(newValue);
     action(Number(newValue?.value));
   };
+  const isDisabled = isLoading || value === null || value === undefined;
+
   return (
     <div className=" flex items-center justify-center">
       {error && <div className="text-error">{error}</div>}
@@ -121,15 +116,28 @@ export const School = ({ action }: { action: (id: number) => void }) => {
           className="text-sm"
         />
       </div>
-      <button
-        hidden={value === null || value === undefined}
-        disabled={isLoading || value === null || value === undefined}
-        className="btn btn-circle btn-sm"
-        onClick={() => handleDelete()}
-      >
-        <MdDelete />
-        {/* {isLoading ? "Deleting..." : "Delete"} */}
-      </button>
+      {DeleteAction(isLoading, isDisabled, handleDelete)}
     </div>
   );
 };
+
+
+
+export function DeleteAction(
+  loading: boolean,
+  isDisabled: boolean,
+  handleDelete: () => Promise<void>
+) {
+  return (
+    <ActionIcon
+      style={{ cursor: "pointer" }}
+      variant="subtle"
+      radius={"lg"}
+      loading={loading}
+      disabled={isDisabled}
+      onClick={() => handleDelete()}
+    >
+      <MdDelete />
+    </ActionIcon>
+  );
+}

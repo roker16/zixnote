@@ -81,6 +81,7 @@ import { MdEdit } from "react-icons/md";
 import { Dialog, Transition } from "@headlessui/react";
 import { Fragment, useState } from "react";
 import { CiEdit } from "react-icons/ci";
+import { ActionIcon } from "@mantine/core";
 
 export default function EditForm({
   id,
@@ -104,13 +105,22 @@ export default function EditForm({
   return (
     <>
       <div className=" inset-0 flex items-center justify-center">
-        <button
+        {/* <button
           type="button"
           onClick={openModal}
           className="btn btn-sm btn-ghost btn-circle opacity-70"
         >
           <CiEdit />
-        </button>
+        </button> */}
+        <ActionIcon
+          size={"sm"}
+          radius={"lg"}
+          variant={"light"}
+          onClick={openModal}
+          aria-label="ActionIcon with size as a number"
+        >
+          <CiEdit size={"16px"} />
+        </ActionIcon>
       </div>
 
       <Transition appear show={isOpen} as={Fragment}>

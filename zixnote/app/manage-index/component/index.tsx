@@ -1,7 +1,7 @@
 "use client";
 import { NestedIndexItem } from "@/utils/transformFlatToNested";
 import React, { useState } from "react";
-import { Text } from '@mantine/core';
+import { ActionIcon, Box, Text } from "@mantine/core";
 
 import { MdExpandMore, MdSunny } from "react-icons/md";
 import ActionButtons from "./ActionButtons";
@@ -9,7 +9,6 @@ import ActionButtons from "./ActionButtons";
 interface TableOfContentProps {
   topLevelIndexItem?: NestedIndexItem;
   data: NestedIndexItem[];
-  indent?: number;
   toggledIds: (number | null)[];
   handleToggle: (index_id: number) => void;
 }
@@ -17,48 +16,43 @@ interface TableOfContentProps {
 const TableOfContent: React.FC<TableOfContentProps> = ({
   topLevelIndexItem: topLevelIndex = null,
   data,
-  indent = 0,
   toggledIds,
   handleToggle,
 }) => {
-  const paddingLeft = indent * 2;
-
   return (
-    <ul className=" flex flex-col items-start text-left gap-2">
+    <ul className={`py-1 list-none ${topLevelIndex ? "pl-6" : "pl-0"}`}>
       {data.map((item) => (
-        <li key={item.index_id} style={{ paddingLeft: `${paddingLeft}px` }}>
+        <li key={item.index_id}>
           <div className="flex items-center group">
-            <div
+            <Box
               onClick={
                 item.parent_index_id === null
                   ? () => handleToggle(item.index_id)
                   : undefined
               }
-              className={`flex cursor-pointer  ${
+              className={`cursor-pointer flex flex-nowrap opacity-80 py-0.5 px-2 ${
                 item.parent_index_id === null
-                  ? "text-secondary font-medium italic"
-                  : " group-hover:text-blue-400 text-sm "
+                  ? "font-medium italic"
+                  : " group-hover:opacity-100 group-hover:bg-slate-200 group-hover:rounded-xl text-sm "
               }`}
             >
-              <div className="flex flex-row flex-nowrap items-center">
-                <span>
-                  {item.parent_index_id == null && (
-                    <button className="btn btn-circle btn-sm btn-ghost">
-                      {!toggledIds.includes(item.index_id) ? (
-                        <MdExpandMore size={16} />
-                      ) : (
-                        <MdSunny />
-                      )}
-                    </button>
-                  )}
-                </span>
+              <span>
+                {item.parent_index_id == null && (
+                  <ActionIcon variant="light" size="sm" radius="lg">
+                    {!toggledIds.includes(item.index_id) ? (
+                      <MdExpandMore size={16} />
+                    ) : (
+                      <MdSunny />
+                    )}
+                  </ActionIcon>
+                )}
+              </span>
 
-                <div>{item.index_name}</div>
-              </div>
-            </div>
-            {/* <div className="invisible items-center group-hover:visible">
+              <div>{item.index_name}</div>
+            </Box>
+            <div className="invisible group-hover:visible px-1 ">
               <ActionButtons data={item} />
-            </div> */}
+            </div>
           </div>
 
           {item.children &&
@@ -67,7 +61,6 @@ const TableOfContent: React.FC<TableOfContentProps> = ({
             ) && (
               <TableOfContent
                 data={item.children}
-                indent={indent + (item.parent_index_id === null ? 8 : -2)}
                 topLevelIndexItem={topLevelIndex ? topLevelIndex : item}
                 toggledIds={toggledIds}
                 handleToggle={handleToggle}
@@ -80,6 +73,9 @@ const TableOfContent: React.FC<TableOfContentProps> = ({
 };
 
 const NestedIndex = ({ data }: { data: NestedIndexItem[] }) => {
+  // this component is only to show/hide chapter topics, because the
+  //state *toggledIds* can not be handled properly by child *TableOfContent* because this
+  // is a recursive component
   const [toggledIds, setToggledIds] = useState<(number | null)[]>([]);
 
   const handleToggle = (index_id: number) => {

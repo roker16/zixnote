@@ -76,7 +76,6 @@ export async function deleteItem(formData: FormData) {
   const tableName = formData.get("tableName");
   const idColumnName = formData.get("idColumnName");
   const revalidatePathName = formData.get("revalidatePathName");
-  console.log("id is ", idColumnName);
   // await wait(5000);
 
   const supabase = createClient(cookies());
