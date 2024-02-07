@@ -19,6 +19,7 @@ import {
   useMantineTheme,
   Avatar,
   Flex,
+  ActionIcon,
 } from "@mantine/core";
 //   import { MantineLogo } from '@mantinex/mantine-logo';
 import { useDisclosure } from "@mantine/hooks";
@@ -31,6 +32,8 @@ import {
   IconCoin,
   IconChevronDown,
   IconUser,
+  IconBrandSnowflake,
+  IconAdjustments,
 } from "@tabler/icons-react";
 import classes from "./HeaderMegaMenu.module.css";
 import { User } from "@supabase/supabase-js";
@@ -97,7 +100,7 @@ export function HeaderMegaMenu({ user }: { user: User | null }) {
   ));
 
   return (
-    <Box >
+    <Box>
       <header className={classes.header}>
         <Group justify="space-between" h="100%">
           <Burger
@@ -105,10 +108,12 @@ export function HeaderMegaMenu({ user }: { user: User | null }) {
             onClick={toggleDrawer}
             hiddenFrom="sm"
           />
-          <Box visibleFrom="sm">
-            <IconUser size={30} />
-          </Box>
-
+          {/* <Box visibleFrom="sm">
+            <IconBrandSnowflake size={30} color={"blue"} opacity={20} />
+          </Box> */}
+          <ActionIcon variant="gradient" size="xl" radius={"xl"} gradient={{ from: 'red', to: 'cyan', deg: 304 }}>
+            <IconBrandSnowflake size={30} />
+          </ActionIcon>
           <Group h="100%" gap={0} visibleFrom="sm">
             <a href="#" className={classes.link}>
               Home

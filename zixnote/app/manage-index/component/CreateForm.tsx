@@ -10,9 +10,10 @@ import {
   Input,
   Modal,
   NumberInput,
+  TextInput,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { MdAdd } from "react-icons/md";
+import { IconPlus } from "@tabler/icons-react";
 
 export default function CreateForm({
   parentId,
@@ -30,26 +31,34 @@ export default function CreateForm({
       <Modal opened={opened} onClose={close} title="Create Index">
         {/* Modal content */}
         <form action={createIndex}>
-          <Flex
-            gap="sm"
-            p={"xs"}
-            direction="column"
-          >
+          <Flex gap="sm" p={"xs"} direction="column">
             <input
               type="hidden"
               name="parentId"
               value={parentId ? parentId : undefined}
             />
-            <input  type="hidden" name="syllabusId" value={syllabusId!} />
-            <Input  placeholder="Index name" name="index" />
-            <NumberInput placeholder="Sequence" name="order" />
+            <input type="hidden" name="syllabusId" value={syllabusId!} />
+            <TextInput
+              label="Index name"
+              required
+              placeholder="Index name"
+              name="index"
+            />
+            <NumberInput
+              label="Sequence"
+              required
+              placeholder="Sequence"
+              name="order"
+            />
             <SubmitButton />
           </Flex>
         </form>
       </Modal>
 
       {label ? (
-        <Button onClick={open} variant="light">{label}</Button>
+        <Button onClick={open} variant="light">
+          {label}
+        </Button>
       ) : (
         <ActionIcon
           size={"sm"}
@@ -58,7 +67,7 @@ export default function CreateForm({
           onClick={open}
           aria-label="ActionIcon with size as a number"
         >
-          <MdAdd size={"16px"} />
+          <IconPlus size={"16px"} />
         </ActionIcon>
       )}
     </>

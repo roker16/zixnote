@@ -3,9 +3,7 @@
 import { createClient } from "@/utils/supabase/client";
 import { Button } from "@mantine/core";
 import {
-  IconBrandGoogle,
-  IconBrandGoogleFilled,
-  IconBrandGoogleHome,
+  IconBrandGoogleFilled
 } from "@tabler/icons-react";
 
 export default function GoogleSignin() {

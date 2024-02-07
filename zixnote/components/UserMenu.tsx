@@ -1,26 +1,24 @@
 import { signOut } from "@/app/action";
 import {
-  Menu,
-  Group,
-  Text,
-  Avatar,
-  useMantineTheme,
   ActionIcon,
+  Avatar,
+  Group,
+  Menu,
+  Text,
   rem,
+  useMantineTheme,
 } from "@mantine/core";
 import { User } from "@supabase/supabase-js";
 import {
-  IconLogout,
-  IconHeart,
-  IconStar,
-  IconMessage,
-  IconSettings,
-  IconPlayerPause,
-  IconTrash,
-  IconSwitchHorizontal,
   IconChevronRight,
-  IconDots,
-  IconUser,
+  IconHeart,
+  IconLogout,
+  IconMessage,
+  IconPlayerPause,
+  IconSettings,
+  IconStar,
+  IconSwitchHorizontal,
+  IconTrash
 } from "@tabler/icons-react";
 
 export function UserMenu({ user }: { user: User | null }) {
@@ -37,7 +35,7 @@ export function UserMenu({ user }: { user: User | null }) {
         <Menu.Target>
           <ActionIcon variant="light" radius={"xl"} size={"lg"}>
             <Avatar
-              src={user?.user_metadata.avatar_url || <IconUser />} // Replace with the path to your default avatar image
+              src={user?.user_metadata.avatar_url } // Replace with the path to your default avatar image
               alt="Avatar"
             />
           </ActionIcon>

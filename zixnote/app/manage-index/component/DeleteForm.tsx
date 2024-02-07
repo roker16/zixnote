@@ -1,10 +1,8 @@
 "use client";
-import React from "react";
-import { MdDeleteOutline } from "react-icons/md";
-import { useFormStatus } from "react-dom";
 import { deleteItem } from "@/app/action";
-import { revalidatePath } from "next/cache";
 import { ActionIcon, Button, Center } from "@mantine/core";
+import { IconTrashX } from "@tabler/icons-react";
+import { useFormStatus } from "react-dom";
 
 export const DeleteForm = ({
   id,
@@ -59,7 +57,7 @@ const DeleteButton = ({ isIconButton }: { isIconButton?: boolean }) => {
           variant={"light"}
           aria-label="ActionIcon with size as a number"
         >
-          <MdDeleteOutline size={"16px"} />
+          <IconTrashX  size={"16px"} />
         </ActionIcon>
       )}
     </Center>

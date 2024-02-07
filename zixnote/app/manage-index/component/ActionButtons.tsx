@@ -1,14 +1,10 @@
 "use client";
-import React from "react";
 
-import { CiEdit } from "react-icons/ci";
-import { IoAdd } from "react-icons/io5";
-import { MdDeleteOutline } from "react-icons/md";
+import { Group } from "@mantine/core";
 import { ElementTypeOfGetIndex } from "../page";
+import CreateForm from "./CreateForm";
 import { DeleteForm } from "./DeleteForm";
 import EditForm from "./EditForm";
-import CreateForm from "./CreateForm";
-import { Center, Group } from "@mantine/core";
 export type ActionType = "create" | "edit" | "delete"; // Accept string as well
 
 const ActionButtons = ({ data }: { data?: ElementTypeOfGetIndex }) => {

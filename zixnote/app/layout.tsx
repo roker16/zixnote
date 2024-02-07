@@ -2,12 +2,15 @@ import { FooterCentered } from "@/components/FooterCentered";
 import { HeaderMegaMenu } from "@/components/HeaderMegaMenu";
 import { createClient } from "@/utils/supabase/server";
 import { ColorSchemeScript, MantineProvider } from "@mantine/core";
-import { Notifications } from '@mantine/notifications';
+import { Notifications } from "@mantine/notifications";
 import "@mantine/core/styles.css";
-import '@mantine/notifications/styles.css';
+import "@mantine/notifications/styles.css";
 import { cookies } from "next/headers";
-import "./globals.css";//this should be always below mantine styles.css
+import "./globals.css"; //this should be always below mantine styles.css
 import { theme } from "./theme";
+import { User } from "@supabase/supabase-js";
+import { getRoles } from "@/utils/getRoles";
+
 const defaultUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
   : "http://localhost:3000";
@@ -27,27 +30,41 @@ export default async function RootLayout({
   const {
     data: { user },
   } = await supabase.auth.getUser();
+
+  const role1 = await getRoles(user);
   // const theme = ["light", "luxury", "dark", "valentine", "wireframe"];
   return (
     <html lang="en">
       <head>
         <ColorSchemeScript />
       </head>
+
       <body>
         <MantineProvider theme={theme} defaultColorScheme="light">
-          <Notifications position="top-center"/>
+          <Notifications position="top-center" />
+          {/* {role1?.map((x) => {
+            return x.roles?.role;
+          })} */}
           <div>
-            {/* <TopNavBar user={user} /> */}
             <HeaderMegaMenu user={user} />
-            {/* Other content goes here */}
             <div className="h-full">{children}</div>
             <FooterCentered />
           </div>
-          {/* <main className="min-h-screen flex flex-col items-center">
-
-        </main> */}
         </MantineProvider>
       </body>
     </html>
   );
+}
+async function getRoless(user: User | null) {
+  "use server";
+  const supabase = createClient(cookies());
+  let role;
+  if (user) {
+    const { data } = await supabase
+      .from("profiles_roles")
+      .select(`role_id,roles(role)`)
+      .eq("profile_id", user?.id);
+    role = data;
+  }
+  return role;
 }
