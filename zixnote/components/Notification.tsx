@@ -1,12 +1,26 @@
 import { notifications } from "@mantine/notifications";
 import { PostgrestError } from "@supabase/supabase-js";
-import { IconX } from "@tabler/icons-react";
+import {
+  IconAlertCircleFilled,
+  IconDiscountCheckFilled,
+} from "@tabler/icons-react";
 
-export function showNotifications(error: PostgrestError | null) {
+export function showNotifications(
+  error: PostgrestError | null,
+  type?: "created" | "deleted" | "updated"
+) {
+  const titles = {
+    created: "Created successfully!",
+    deleted: "Deleted successfully",
+    updated: "Updated successfully",
+  };
+
+  const title = type ? titles[type] : "Something went wrong!";
+
   notifications.show({
-    title: error?"Something went wrong":"Success",
-    message: error ? error?.message : "Executated successfully",
-    // color: "blue",
-    icon: error && <IconX />,
+    title,
+    message: error?.message,
+    icon: error ? <IconAlertCircleFilled /> : <IconDiscountCheckFilled />,
+    ...(error && { color: "red" }),
   });
 }

@@ -12,6 +12,7 @@ import { IconX } from "@tabler/icons-react";
 import { ActionIcon, Button } from "@mantine/core";
 import { PostgrestError } from "@supabase/supabase-js";
 import { showNotifications } from "@/components/Notification";
+import { DeleteAction } from "@/components/DeleteAction";
 interface Option1 {
   id: number;
   school_name: string;
@@ -63,8 +64,13 @@ export const School = ({ action }: { action: (id: number) => void }) => {
       .insert([{ school_name: inputValue }])
       .select()
       .single();
-
+    if (error) {
+      showNotifications(error);
+      setIsLoading(false);
+      return;
+    }
     setIsLoading(false);
+    showNotifications(null, "created");
     setOptions((prev) =>
       prev ? [...prev, createOption(data!)] : [createOption(data!)]
     );
@@ -87,12 +93,10 @@ export const School = ({ action }: { action: (id: number) => void }) => {
       setIsLoading(false);
       return;
     }
-
-    await wait(5000);
     setOptions((prev) => prev?.filter((item) => item.value !== value?.value));
     setValue(null);
     setIsLoading(false);
-    showNotifications(null)
+    showNotifications(null, "deleted");
   };
   const handleChange = (newValue: Option | null) => {
     setValue(newValue);
@@ -122,22 +126,3 @@ export const School = ({ action }: { action: (id: number) => void }) => {
 };
 
 
-
-export function DeleteAction(
-  loading: boolean,
-  isDisabled: boolean,
-  handleDelete: () => Promise<void>
-) {
-  return (
-    <ActionIcon
-      style={{ cursor: "pointer" }}
-      variant="subtle"
-      radius={"lg"}
-      loading={loading}
-      disabled={isDisabled}
-      onClick={() => handleDelete()}
-    >
-      <MdDelete />
-    </ActionIcon>
-  );
-}

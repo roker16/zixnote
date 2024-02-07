@@ -1,25 +1,21 @@
 "use client";
-import { wait } from "@/utils/helper";
+import { DeleteAction } from "@/components/DeleteAction";
+import { showNotifications } from "@/components/Notification";
 import { createClient } from "@/utils/supabase/client";
-import { Database } from "@/utils/supabase/supatype";
-import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
-import { MdDelete } from "react-icons/md";
+import { useEffect, useState } from "react";
 import CreatableSelect from "react-select/creatable";
-import { DeleteForm } from "../DeleteForm";
-import { School } from "./School";
-import { ActionIcon } from "@mantine/core";
-interface Option1 {
+interface DataInput {
   id: number;
   class_id: number | null;
   syllabus_name: string;
 }
-type data = Database["public"]["Tables"]["syll_syllabus_entity"]["Row"];
+
 interface Option {
   readonly label: string;
   readonly value: string;
 }
 
-const createOption = (x: Option1) => ({
+const createOption = (x: DataInput) => ({
   label: x.syllabus_name,
   value: x.id.toString(),
 });
@@ -63,31 +59,27 @@ export const Books = ({
 
   const handleChange = (newValue: Option | null) => {
     setValue(newValue);
-    action(Number(newValue?.value),newValue?.label!);
+    action(Number(newValue?.value), newValue?.label!);
   };
-
-  const call = async (inputValue: string) => {
+  const handleCreate = async (inputValue: string) => {
     setError(null);
     setIsLoading(true);
-    // if (inputValue !== "hidd") {
-    //   setError("not saved");
-    //   setIsLoading(false);
-    //   return;
-    // }
     const { data, error } = await supabsae
       .from("syll_syllabus_entity")
       .insert([{ syllabus_name: inputValue, class_id: classId!, type_id: 1 }])
       .select()
       .single();
-
+    if (error) {
+      showNotifications(error);
+      setIsLoading(false);
+      return;
+    }
+    showNotifications(null, "created");
     setIsLoading(false);
     setOptions((prev) =>
       prev ? [...prev, createOption(data!)] : [createOption(data!)]
     );
     setValue(createOption(data!));
-  };
-  const handleCreate = (inputValue: string) => {
-    call(inputValue);
   };
   const handleDelete = async () => {
     setError(null);
@@ -96,15 +88,18 @@ export const Books = ({
     const { data, error } = await supabsae
       .from("syll_syllabus_entity")
       .delete()
-
       .eq("id", value?.value!);
-
-    await wait(5000);
+    if (error) {
+      showNotifications(error);
+      setIsLoading(false);
+      return;
+    }
+    showNotifications(null, "deleted");
     setIsLoading(false);
     setOptions((prev) => prev?.filter((item) => item.value !== value?.value));
     setValue(null);
   };
-
+  const isDisabled = isLoading || value === null || value === undefined;
   return (
     <div className=" flex items-center px-1 gap-1">
       {error && <div className="text-error">{error}</div>}
@@ -118,18 +113,10 @@ export const Books = ({
           onCreateOption={handleCreate}
           options={options}
           value={value}
+          className="text-sm"
         />
       </div>
-      <ActionIcon
-        radius={"lg"}
-        hidden={value === null || value === undefined}
-        disabled={isLoading || value === null || value === undefined}
-        className="btn btn-circle btn-sm "
-        onClick={() => handleDelete()}
-      >
-        <MdDelete />
-        {/* {isLoading ? "Deleting..." : "Delete"} */}
-      </ActionIcon>
+      {DeleteAction(isLoading, isDisabled, handleDelete)}
     </div>
   );
 };

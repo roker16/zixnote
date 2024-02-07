@@ -8,6 +8,8 @@ import CreatableSelect from "react-select/creatable";
 import { DeleteForm } from "../DeleteForm";
 import { School } from "./School";
 import { ActionIcon } from "@mantine/core";
+import { DeleteAction } from "@/components/DeleteAction";
+import { showNotifications } from "@/components/Notification";
 interface Option1 {
   class_name: string;
   id: number;
@@ -30,7 +32,7 @@ export const Class = ({
   action,
   schoolId,
 }: {
-  action: (id: number) => void ;
+  action: (id: number) => void;
   schoolId: number | undefined;
 }) => {
   const [isLoading, setIsLoading] = useState(false);
@@ -69,17 +71,17 @@ export const Class = ({
   const call = async (inputValue: string) => {
     setError(null);
     setIsLoading(true);
-    // if (inputValue !== "hidd") {
-    //   setError("not saved");
-    //   setIsLoading(false);
-    //   return;
-    // }
     const { data, error } = await supabsae
       .from("syll_class")
       .insert([{ class_name: inputValue, school_id: schoolId! }])
       .select()
       .single();
-
+    if (error) {
+      showNotifications(error);
+      setIsLoading(false);
+      return;
+    }
+    showNotifications(null, "created");
     setIsLoading(false);
     setOptions((prev) =>
       prev ? [...prev, createOption(data!)] : [createOption(data!)]
@@ -96,15 +98,18 @@ export const Class = ({
     const { data, error } = await supabsae
       .from("syll_class")
       .delete()
-
       .eq("id", value?.value!);
-
-    await wait(5000);
+    if (error) {
+      showNotifications(error);
+      setIsLoading(false);
+      return;
+    }
+    showNotifications(null, "deleted");
     setIsLoading(false);
     setOptions((prev) => prev?.filter((item) => item.value !== value?.value));
     setValue(null);
   };
-
+  const isDisabled = isLoading || value === null || value === undefined;
   return (
     <div className=" flex items-center px-1 gap-1">
       {error && <div className="text-error">{error}</div>}
@@ -118,18 +123,10 @@ export const Class = ({
           onCreateOption={handleCreate}
           options={options}
           value={value}
+          className="text-sm"
         />
       </div>
-      {value && <ActionIcon
-        radius={"lg"}
-        // hidden={value === null || value === undefined}
-        disabled={isLoading || value === null || value === undefined}
-        className="btn btn-circle btn-sm "
-        onClick={() => handleDelete()}
-      >
-        <MdDelete />
-        {/* {isLoading ? "Deleting..." : "Delete"} */}
-      </ActionIcon>}
+      {DeleteAction(isLoading, isDisabled, handleDelete)}
     </div>
   );
 };
