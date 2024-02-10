@@ -30,3 +30,15 @@ const createSyllabusSlice: StateCreator<
 export const useBoundStore = create<SyllabusSlice>()((...a) => ({
   ...createSyllabusSlice(...a),
 }));
+
+interface BearState {
+  bears: number;
+  increase: (by: number) => void;
+  decrease:(by: number) => void;
+}
+
+const useBearStore = create<BearState>()((set) => ({
+  bears: 0,
+  increase: (by) => set((state) => ({ bears: state.bears + by })),
+  decrease: (by) => set((state) => ({ bears: state.bears + by })),
+}));

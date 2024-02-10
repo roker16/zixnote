@@ -6,7 +6,7 @@ export type Json =
   | { [key: string]: Json | undefined }
   | Json[]
 
-export interface Database {
+export type Database = {
   public: {
     Tables: {
       profiles: {
@@ -248,16 +248,19 @@ export interface Database {
         Row: {
           id: number
           moderator_id: string
+          status: string | null
           syllabus_id: number
         }
         Insert: {
           id?: number
           moderator_id: string
+          status?: string | null
           syllabus_id: number
         }
         Update: {
           id?: number
           moderator_id?: string
+          status?: string | null
           syllabus_id?: number
         }
         Relationships: [

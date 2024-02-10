@@ -34,6 +34,7 @@ import {
   IconUser,
   IconBrandSnowflake,
   IconAdjustments,
+  IconWriting,
 } from "@tabler/icons-react";
 import classes from "./HeaderMegaMenu.module.css";
 import { User } from "@supabase/supabase-js";
@@ -108,11 +109,14 @@ export function HeaderMegaMenu({ user }: { user: User | null }) {
             onClick={toggleDrawer}
             hiddenFrom="sm"
           />
-          {/* <Box visibleFrom="sm">
-            <IconBrandSnowflake size={30} color={"blue"} opacity={20} />
-          </Box> */}
-          <ActionIcon variant="gradient" size="xl" radius={"xl"} gradient={{ from: 'red', to: 'cyan', deg: 304 }}>
-            <IconBrandSnowflake size={30} />
+          <ActionIcon
+            visibleFrom="sm"
+            variant="gradient"
+            size="lg"
+            radius={"xl"}
+            gradient={{ from: "cyan", to: "blue", deg: 304 }}
+          >
+            <IconWriting size={25} stroke={1} />
           </ActionIcon>
           <Group h="100%" gap={0} visibleFrom="sm">
             <a href="#" className={classes.link}>
