@@ -55,6 +55,7 @@ export default function ModeratorForm({ syllabusId }: { syllabusId: number }) {
       <Flex gap="sm" p="xs" direction="column">
         <Text size="xs" c="red">
           {message}
+          {moderator}
         </Text>
         <TextInput
           label="Moderator email"

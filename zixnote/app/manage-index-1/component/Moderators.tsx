@@ -4,7 +4,8 @@ import { ActionIcon, Badge, Button, Center, Group } from "@mantine/core";
 import { IconTrashX } from "@tabler/icons-react";
 import { useRouter } from "next/navigation";
 import React, { useState, useTransition } from "react";
-import { ElementTypeOfGetModerator } from "../page";
+import { ElementTypeOfGetModerator } from "../@moderator/page";
+
 
 function Moderators({ data }: { data: ElementTypeOfGetModerator[] }) {
   const moderatorsList = data
