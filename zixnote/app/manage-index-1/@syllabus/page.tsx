@@ -2,8 +2,7 @@ import { createClient } from "@/utils/supabase/server";
 
 import { cookies } from "next/headers";
 
-import { wait } from "@/utils/helper";
-import SyllabusFilter from "../component/SyllabusFilter";
+import { ExtractArrayElementType, wait } from "@/utils/helper";
 import { transformFlatToNested } from "@/utils/transformFlatToNested";
 import NestedIndex from "../component";
 import IndexTitle from "../component/IndexTitle";
@@ -26,23 +25,9 @@ export default async function Index({
   } else {
     syll_index = [];
   }
-  const supabase = createClient(cookies());
-  const user = (await supabase.auth.getUser()).data.user;
-  let role;
-  if (user) {
-    const { data: roles } = await supabase
-      .from("profiles_roles")
-      .select(`roles(role)`)
-      .eq("profile_id", user.id);
-    if (roles) {
-      const rolesArray = roles
-        .filter((item) => item.roles?.role) // Filter out null or undefined roles
-        .map((item) => item.roles!.role);
-      role = rolesArray;
-    }
-  }
 
-  const school = await getSchool();
+ 
+  
 
   return (
     <div className="w-full flex flex-col items-center">
@@ -67,17 +52,6 @@ export default async function Index({
   );
 }
 
-const getSchool = async () => {
-  const supabase = createClient(cookies());
-
-  const { data: school, error } = await supabase
-    .from("syll_school")
-    .select(`*`);
-  if (error) {
-    return error.message;
-  }
-  return school;
-};
 const getIndex = async (indexId: number) => {
   const supabase = createClient(cookies());
   wait(10000);
@@ -100,8 +74,5 @@ const getIndex = async (indexId: number) => {
   return syll_index;
 };
 type ReturnTypeOfGetIndex = Awaited<ReturnType<typeof getIndex>>;
-
-type ExtractArrayElementType<T> = T extends (infer U)[] ? U : never;
-
 export type ElementTypeOfGetIndex =
   ExtractArrayElementType<ReturnTypeOfGetIndex>;

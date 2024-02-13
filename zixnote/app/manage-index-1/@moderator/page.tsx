@@ -1,7 +1,3 @@
-import { createClient } from "@/utils/supabase/server";
-
-import { cookies } from "next/headers";
-
 import GoogleSignin from "@/components/GoogleSignin";
 import { Center } from "@mantine/core";
 import Link from "next/link";
@@ -9,7 +5,8 @@ import AskToBeModerator from "../component/AskToBeModerator";
 import ModeratorForm from "../component/ModeratorForm";
 import Moderators from "../component/Moderators";
 import Refresh from "./Refresh";
-import { getUserAndRole } from "./getUserAndRole";
+import { getUserAndRole } from "../../../utils/getUserAndRole";
+import { getModerator } from "./getModerator";
 
 export default async function Index({
   searchParams,
@@ -80,24 +77,3 @@ export default async function Index({
     </div>
   );
 }
-
-type ExtractArrayElementType<T> = T extends (infer U)[] ? U : never;
-
-const getModerator = async (syllabusId: number) => {
-  const supabase = createClient(cookies());
-
-  const { data: moderator, error } = await supabase
-    .from("syll_moderator")
-    .select(`id,profiles(email),status`)
-    .eq("syllabus_id", syllabusId);
-  if (error) {
-    throw error;
-  }
-  return moderator;
-};
-type ReturnTypeOfGetModerator = Awaited<ReturnType<typeof getModerator>>;
-
-// type ExtractArrayElementType<T> = T extends (infer U)[] ? U : never;
-
-export type ElementTypeOfGetModerator =
-  ExtractArrayElementType<ReturnTypeOfGetModerator>;

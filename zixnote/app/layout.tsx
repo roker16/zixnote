@@ -9,7 +9,7 @@ import { cookies } from "next/headers";
 import "./globals.css"; //this should be always below mantine styles.css
 import { theme } from "./theme";
 import { User } from "@supabase/supabase-js";
-import { getRoles } from "@/utils/getRoles";
+
 
 const defaultUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
@@ -31,7 +31,7 @@ export default async function RootLayout({
     data: { user },
   } = await supabase.auth.getUser();
 
-  const role1 = await getRoles(user);
+
   // const theme = ["light", "luxury", "dark", "valentine", "wireframe"];
   return (
     <html lang="en">
