@@ -7,7 +7,7 @@ export const getModerator = async (syllabusId: number) => {
 
   const { data: moderator, error } = await supabase
     .from("syll_moderator")
-    .select(`id,profiles(email),status`)
+    .select(`id,profiles(email),status,syllabus_id`)
     .eq("syllabus_id", syllabusId);
   if (error) {
     throw error;

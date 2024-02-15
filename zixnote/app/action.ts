@@ -84,8 +84,11 @@ export async function deleteItem(formData: FormData) {
     .delete()
     .eq(`${idColumnName}`, id);
   if (error) {
-    console.log(error.message);
-    throw new Error("Failed to create task");
+    if (error.code === "23503") {
+      throw new Error(error.code);
+    } else {
+      throw new Error(error?.message);
+    }
   }
   revalidatePath(`${revalidatePathName}`);
   // return

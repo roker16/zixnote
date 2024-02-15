@@ -6,7 +6,7 @@ import {
 } from "@tabler/icons-react";
 
 export function showNotifications(
-  error: PostgrestError | null,
+  errorMessage: string | null,
   type?: "created" | "deleted" | "updated"
 ) {
   const titles = {
@@ -19,8 +19,8 @@ export function showNotifications(
 
   notifications.show({
     title,
-    message: error?.message,
-    icon: error ? <IconAlertCircleFilled /> : <IconDiscountCheckFilled />,
-    ...(error && { color: "red" }),
+    message: errorMessage,
+    icon: errorMessage ? <IconAlertCircleFilled /> : <IconDiscountCheckFilled />,
+    ...(errorMessage && { color: "red" }),
   });
 }

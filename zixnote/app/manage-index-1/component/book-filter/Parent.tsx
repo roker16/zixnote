@@ -9,18 +9,14 @@ import { School } from "./School";
 
 export default function Parent() {
   const router = useRouter();
-  let [isPending, startTransition] = useTransition()
+  let [isPending, startTransition] = useTransition();
   const [selectedSchool, setSelectedSchool] = useState<number | undefined>(
     undefined
   );
   const [selectedClass, setSelectedClass] = useState<number | undefined>(
     undefined
   );
-  const [selectedBook, setSelectedBook] = useState<number | undefined>(
-    undefined
-  );
 
-  const syllabus = useBoundStore().syllabus;
   const updateSyllabus = useBoundStore().updateSyllabus;
 
   const handleSelectedSchool = (id: number) => {

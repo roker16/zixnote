@@ -2,7 +2,7 @@ import React from "react";
 import NestedIndex from "./component";
 import { cookies } from "next/headers";
 import { createClient } from "@/utils/supabase/server";
-import { transformFlatToNested } from "@/utils/transformFlatToNested";
+import { transformFlatToNested } from "@/app/manage-index-1/transformFlatToNested";
 
 async function page() {
   const supabase = createClient(cookies());

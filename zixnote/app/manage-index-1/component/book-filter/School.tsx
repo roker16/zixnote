@@ -1,29 +1,24 @@
 "use client";
-import { wait } from "@/utils/helper";
 import { createClient } from "@/utils/supabase/client";
-import { Database } from "@/utils/supabase/supatype";
-import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
-import { MdDelete } from "react-icons/md";
+import { useEffect, useState } from "react";
 import CreatableSelect from "react-select/creatable";
-import { DeleteForm } from "../DeleteForm";
-import { notifications } from "@mantine/notifications";
 
-import { IconX } from "@tabler/icons-react";
-import { ActionIcon, Button } from "@mantine/core";
-import { PostgrestError } from "@supabase/supabase-js";
-import { showNotifications } from "@/components/Notification";
 import { DeleteAction } from "@/components/DeleteAction";
-interface Option1 {
+import { showNotifications } from "@/components/Notification";
+import { isDevEnvironment } from "@/utils/helper";
+import { ShowErrorNotification } from "../../../../components/showErrorNotification";
+
+interface InputData {
   id: number;
   school_name: string;
 }
-type data = Database["public"]["Tables"]["syll_school"]["Row"];
+
 interface Option {
   readonly label: string;
   readonly value: string;
 }
 
-const createOption = (x: Option1) => ({
+const createOption = (x: InputData) => ({
   label: x.school_name,
   value: x.id.toString(),
 });
@@ -55,7 +50,7 @@ export const School = ({ action }: { action: (id: number) => void }) => {
     getSchool();
   }, []);
 
-  const call = async (inputValue: string) => {
+  const handleCreate = async (inputValue: string) => {
     setError(null);
     setIsLoading(true);
 
@@ -65,7 +60,11 @@ export const School = ({ action }: { action: (id: number) => void }) => {
       .select()
       .single();
     if (error) {
-      showNotifications(error);
+      if (isDevEnvironment) {
+        showNotifications(error.message);
+      } else {
+        showNotifications("Something went wrong, try again!");
+      }
       setIsLoading(false);
       return;
     }
@@ -75,9 +74,6 @@ export const School = ({ action }: { action: (id: number) => void }) => {
       prev ? [...prev, createOption(data!)] : [createOption(data!)]
     );
     setValue(createOption(data!));
-  };
-  const handleCreate = (inputValue: string) => {
-    call(inputValue);
   };
   const handleDelete = async () => {
     setError(null);
@@ -89,7 +85,7 @@ export const School = ({ action }: { action: (id: number) => void }) => {
 
       .eq("id", value?.value!);
     if (error) {
-      showNotifications(error);
+      ShowErrorNotification(error);
       setIsLoading(false);
       return;
     }

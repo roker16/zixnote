@@ -1,15 +1,11 @@
 "use client";
-import { wait } from "@/utils/helper";
-import { createClient } from "@/utils/supabase/client";
-import { Database } from "@/utils/supabase/supatype";
-import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
-import { MdDelete } from "react-icons/md";
-import CreatableSelect from "react-select/creatable";
-import { DeleteForm } from "../DeleteForm";
-import { School } from "./School";
-import { ActionIcon } from "@mantine/core";
 import { DeleteAction } from "@/components/DeleteAction";
 import { showNotifications } from "@/components/Notification";
+import { createClient } from "@/utils/supabase/client";
+import { Database } from "@/utils/supabase/supatype";
+import { useEffect, useState } from "react";
+import CreatableSelect from "react-select/creatable";
+import { ShowErrorNotification } from "../../../../components/showErrorNotification";
 interface Option1 {
   class_name: string;
   id: number;
@@ -77,7 +73,7 @@ export const Class = ({
       .select()
       .single();
     if (error) {
-      showNotifications(error);
+      ShowErrorNotification(error);
       setIsLoading(false);
       return;
     }
@@ -100,7 +96,7 @@ export const Class = ({
       .delete()
       .eq("id", value?.value!);
     if (error) {
-      showNotifications(error);
+      ShowErrorNotification(error);
       setIsLoading(false);
       return;
     }

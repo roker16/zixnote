@@ -1,4 +1,4 @@
-import { ElementTypeOfGetIndex } from "@/app/manage-index/page";
+import { ElementTypeOfGetIndex } from "@/app/manage-index-1/@syllabus/getIndex";
 
 export interface NestedIndexItem extends ElementTypeOfGetIndex {
   children?: ElementTypeOfGetIndex[];

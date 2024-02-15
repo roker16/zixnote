@@ -4,6 +4,7 @@ import { showNotifications } from "@/components/Notification";
 import { createClient } from "@/utils/supabase/client";
 import { useEffect, useState } from "react";
 import CreatableSelect from "react-select/creatable";
+import { ShowErrorNotification } from "../../../../components/showErrorNotification";
 interface DataInput {
   id: number;
   class_id: number | null;
@@ -70,7 +71,7 @@ export const Books = ({
       .select()
       .single();
     if (error) {
-      showNotifications(error);
+      showNotifications(error.message);
       setIsLoading(false);
       return;
     }
@@ -90,7 +91,7 @@ export const Books = ({
       .delete()
       .eq("id", value?.value!);
     if (error) {
-      showNotifications(error);
+      ShowErrorNotification(error);
       setIsLoading(false);
       return;
     }

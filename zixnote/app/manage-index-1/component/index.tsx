@@ -1,10 +1,35 @@
 "use client";
-import { NestedIndexItem } from "@/utils/transformFlatToNested";
+import { NestedIndexItem } from "@/app/manage-index-1/transformFlatToNested";
+import { ActionIcon, Box } from "@mantine/core";
 import React, { useState } from "react";
-import { ActionIcon, Box, Text } from "@mantine/core";
-
 import { MdExpandMore, MdSunny } from "react-icons/md";
 import ActionButtons from "./ActionButtons";
+
+const NestedIndex = ({ data }: { data: NestedIndexItem[] }) => {
+  // This component is only to show/hide chapter topics, because the
+  //state *toggledIds* can not be handled properly by child *TableOfContent* because this
+  // is a recursive component
+  const [toggledIds, setToggledIds] = useState<(number | null)[]>([]);
+
+  const handleToggle = (index_id: number) => {
+    const updatedIds = toggledIds.includes(index_id)
+      ? toggledIds.filter((id) => id !== index_id)
+      : [...toggledIds, index_id];
+    setToggledIds(updatedIds);
+  };
+
+  return (
+    <div>
+      <TableOfContent
+        data={data}
+        toggledIds={toggledIds}
+        handleToggle={handleToggle}
+      />
+    </div>
+  );
+};
+
+export default NestedIndex;
 
 interface TableOfContentProps {
   topLevelIndexItem?: NestedIndexItem;
@@ -71,29 +96,3 @@ const TableOfContent: React.FC<TableOfContentProps> = ({
     </ul>
   );
 };
-
-const NestedIndex = ({ data }: { data: NestedIndexItem[] }) => {
-  // this component is only to show/hide chapter topics, because the
-  //state *toggledIds* can not be handled properly by child *TableOfContent* because this
-  // is a recursive component
-  const [toggledIds, setToggledIds] = useState<(number | null)[]>([]);
-
-  const handleToggle = (index_id: number) => {
-    const updatedIds = toggledIds.includes(index_id)
-      ? toggledIds.filter((id) => id !== index_id)
-      : [...toggledIds, index_id];
-    setToggledIds(updatedIds);
-  };
-
-  return (
-    <div>
-      <TableOfContent
-        data={data}
-        toggledIds={toggledIds}
-        handleToggle={handleToggle}
-      />
-    </div>
-  );
-};
-
-export default NestedIndex;

@@ -5,6 +5,7 @@ import React from "react";
 import Refresh from "../Refresh";
 
 function page() {
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   const router = useRouter();
   return (
     <div>

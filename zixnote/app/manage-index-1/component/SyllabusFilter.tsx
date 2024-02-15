@@ -7,6 +7,7 @@ import {
   IconSchool
 } from "@tabler/icons-react";
 import Parent from "./book-filter/Parent";
+import { isDevEnvironment } from "@/utils/helper";
 
 export default function SyllabusFilter() {
   const iconStyle = { width: rem(20), height: rem(20) };

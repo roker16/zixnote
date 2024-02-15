@@ -5,7 +5,7 @@ import { Group } from "@mantine/core";
 import CreateForm from "./CreateForm";
 import { DeleteForm } from "./DeleteForm";
 import EditForm from "./EditForm";
-import { ElementTypeOfGetIndex } from "../@syllabus/page";
+import { ElementTypeOfGetIndex } from "../@syllabus/getIndex";
 export type ActionType = "create" | "edit" | "delete"; // Accept string as well
 
 const ActionButtons = ({ data }: { data?: ElementTypeOfGetIndex }) => {
