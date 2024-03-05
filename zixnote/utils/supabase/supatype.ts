@@ -139,19 +139,16 @@ export type Database = {
       syll_department: {
         Row: {
           college_id: number
-          course_name: string
           department_name: string
           id: number
         }
         Insert: {
           college_id: number
-          course_name: string
           department_name: string
           id?: number
         }
         Update: {
           college_id?: number
-          course_name?: string
           department_name?: string
           id?: number
         }
@@ -284,14 +281,17 @@ export type Database = {
         Row: {
           exam_id: number
           id: number
+          name: string
         }
         Insert: {
           exam_id: number
           id?: number
+          name: string
         }
         Update: {
           exam_id?: number
           id?: number
+          name?: string
         }
         Relationships: []
       }

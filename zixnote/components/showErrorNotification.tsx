@@ -3,7 +3,7 @@ import { showNotifications } from "@/components/Notification";
 import { isDevEnvironment } from "@/utils/helper";
 import { PostgrestError } from "@supabase/supabase-js";
 
-export function ShowErrorNotification(error: PostgrestError | null) {
+export function showErrorNotification(error: PostgrestError | null) {
   if (isDevEnvironment) {
     showNotifications((error?.message)!);
   } else {

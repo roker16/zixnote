@@ -4,94 +4,96 @@ import { showNotifications } from "@/components/Notification";
 import { createClient } from "@/utils/supabase/client";
 import { useEffect, useState } from "react";
 import CreatableSelect from "react-select/creatable";
-import { ShowErrorNotification } from "../../../../components/showErrorNotification";
-interface DataInput {
+import { showErrorNotification } from "../../../../components/showErrorNotification";
+interface InputData {
+  exam_id: number;
   id: number;
-  class_id: number | null;
-  syllabus_name: string;
+  name: string;
 }
-
 interface Option {
   readonly label: string;
   readonly value: string;
 }
 
-const createOption = (x: DataInput) => ({
-  label: x.syllabus_name,
+const createOption = (x: InputData) => ({
+  label: x.name,
   value: x.id.toString(),
 });
 
-// const defaultOptions = [createOption({ id: 5, school_name: "City" })];
-
-export const Books = ({
+export const Paper = ({
   action,
-  classId,
+  schoolId,
+  canModerate,
 }: {
-  action: (id: number, name: string) => void;
-  classId: number | undefined;
+  action: (id: number) => void;
+  schoolId: number | undefined;
+  canModerate: boolean;
 }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [options, setOptions] = useState<Option[] | undefined>(undefined);
   const [value, setValue] = useState<Option | null>();
-  const [error, setError] = useState<string | null>(null);
-  const supabsae = createClient();
+  const supabase = createClient();
   useEffect(() => {
     setValue(null);
     const getSchool = async () => {
       setIsLoading(true);
-      const supabase = createClient();
-
-      const { data: books, error } = await supabase
-        .from("syll_syllabus_entity")
-        .select(`id,class_id,syllabus_name`)
-        .eq("class_id", classId!);
+      const { data: _class, error } = await supabase
+        .from("syll_paper")
+        .select(`*`)
+        .eq("exam_id", schoolId!);
       if (error) {
-        setError(error.message);
+        showErrorNotification(error);
         setIsLoading(false);
         return;
       }
-      setOptions(books?.map((x) => createOption(x)));
+      setOptions(_class?.map((x) => createOption(x)));
       setIsLoading(false);
     };
-    if (classId) {
+    if (schoolId) {
       getSchool();
     }
-  }, [classId]);
+  }, [schoolId, supabase]);
 
   const handleChange = (newValue: Option | null) => {
     setValue(newValue);
-    action(Number(newValue?.value), newValue?.label!);
+    action(Number(newValue?.value));
   };
+
   const handleCreate = async (inputValue: string) => {
-    setError(null);
+    if (!canModerate) {
+      showNotifications("You don't have required Permission");
+      return;
+    }
+    if (!schoolId) {
+      showNotifications("No school selected");
+      return;
+    }
     setIsLoading(true);
-    const { data, error } = await supabsae
-      .from("syll_syllabus_entity")
-      .insert([{ syllabus_name: inputValue, class_id: classId!, type_id: 1 }])
+    const { data, error } = await supabase
+      .from("syll_paper")
+      .insert({ "name": inputValue, exam_id: schoolId })
       .select()
       .single();
     if (error) {
-      showNotifications(error.message);
+      showErrorNotification(error);
       setIsLoading(false);
       return;
     }
     showNotifications(null, "created");
     setIsLoading(false);
     setOptions((prev) =>
-      prev ? [...prev, createOption(data!)] : [createOption(data!)]
+      prev ? [...prev, createOption(data)] : [createOption(data)]
     );
     setValue(createOption(data!));
   };
   const handleDelete = async () => {
-    setError(null);
     setIsLoading(true);
-
-    const { data, error } = await supabsae
-      .from("syll_syllabus_entity")
+    const { error } = await supabase
+      .from("syll_class")
       .delete()
       .eq("id", value?.value!);
     if (error) {
-      ShowErrorNotification(error);
+      showErrorNotification(error);
       setIsLoading(false);
       return;
     }
@@ -103,10 +105,9 @@ export const Books = ({
   const isDisabled = isLoading || value === null || value === undefined;
   return (
     <div className=" flex items-center px-1 gap-1">
-      {error && <div className="text-error">{error}</div>}
       <div className="flex-1">
         <CreatableSelect
-          placeholder="Select Book..."
+          placeholder="Select paper..."
           isClearable
           isDisabled={isLoading}
           isLoading={isLoading}
@@ -117,7 +118,7 @@ export const Books = ({
           className="text-sm"
         />
       </div>
-      {DeleteAction(isLoading, isDisabled, handleDelete)}
+      {canModerate && DeleteAction(isLoading, isDisabled, handleDelete)}
     </div>
   );
 };

@@ -1,111 +1,113 @@
 "use client";
+import { DeleteAction } from "@/components/DeleteAction";
+import { showNotifications } from "@/components/Notification";
 import { createClient } from "@/utils/supabase/client";
 import { useEffect, useState } from "react";
 import CreatableSelect from "react-select/creatable";
-
-import { DeleteAction } from "@/components/DeleteAction";
-import { showNotifications } from "@/components/Notification";
-import { isDevEnvironment } from "@/utils/helper";
-import { ShowErrorNotification } from "../../../../components/showErrorNotification";
-
+import { showErrorNotification } from "../../../../components/showErrorNotification";
 interface InputData {
+  exam_id: number;
   id: number;
-  school_name: string;
+  name: string;
 }
-
 interface Option {
   readonly label: string;
   readonly value: string;
 }
 
 const createOption = (x: InputData) => ({
-  label: x.school_name,
+  label: x.name,
   value: x.id.toString(),
 });
 
-// const defaultOptions = [createOption({ id: 5, school_name: "City" })];
-
-export const School = ({ action }: { action: (id: number) => void }) => {
+export const Paper = ({
+  action,
+  schoolId,
+  canModerate,
+}: {
+  action: (id: number) => void;
+  schoolId: number | undefined;
+  canModerate: boolean;
+}) => {
   const [isLoading, setIsLoading] = useState(false);
   const [options, setOptions] = useState<Option[] | undefined>(undefined);
   const [value, setValue] = useState<Option | null>();
-  const [error, setError] = useState<string | null>(null);
-  const supabsae = createClient();
+  const supabase = createClient();
   useEffect(() => {
+    setValue(null);
     const getSchool = async () => {
       setIsLoading(true);
-      const supabase = createClient();
-
-      const { data: school, error } = await supabase
-        .from("syll_school")
-        .select(`*`);
+      const { data: _class, error } = await supabase
+        .from("syll_paper")
+        .select(`*`)
+        .eq("exam_id", schoolId!);
       if (error) {
-        setError(error.message);
+        showErrorNotification(error);
         setIsLoading(false);
         return;
       }
-      setOptions(school?.map((x) => createOption(x)));
+      setOptions(_class?.map((x) => createOption(x)));
       setIsLoading(false);
     };
-    getSchool();
-  }, []);
-
-  const handleCreate = async (inputValue: string) => {
-    setError(null);
-    setIsLoading(true);
-
-    const { data, error } = await supabsae
-      .from("syll_school")
-      .insert([{ school_name: inputValue }])
-      .select()
-      .single();
-    if (error) {
-      if (isDevEnvironment) {
-        showNotifications(error.message);
-      } else {
-        showNotifications("Something went wrong, try again!");
-      }
-      setIsLoading(false);
-      return;
+    if (schoolId) {
+      getSchool();
     }
-    setIsLoading(false);
-    showNotifications(null, "created");
-    setOptions((prev) =>
-      prev ? [...prev, createOption(data!)] : [createOption(data!)]
-    );
-    setValue(createOption(data!));
-  };
-  const handleDelete = async () => {
-    setError(null);
-    setIsLoading(true);
+  }, [schoolId, supabase]);
 
-    const { data, error } = await supabsae
-      .from("syll_school")
-      .delete()
-
-      .eq("id", value?.value!);
-    if (error) {
-      ShowErrorNotification(error);
-      setIsLoading(false);
-      return;
-    }
-    setOptions((prev) => prev?.filter((item) => item.value !== value?.value));
-    setValue(null);
-    setIsLoading(false);
-    showNotifications(null, "deleted");
-  };
   const handleChange = (newValue: Option | null) => {
     setValue(newValue);
     action(Number(newValue?.value));
   };
-  const isDisabled = isLoading || value === null || value === undefined;
 
+  const handleCreate = async (inputValue: string) => {
+    if (!canModerate) {
+      showNotifications("You don't have required Permission");
+      return;
+    }
+    if (!schoolId) {
+      showNotifications("No school selected");
+      return;
+    }
+    setIsLoading(true);
+    const { data, error } = await supabase
+      .from("syll_paper")
+      .insert({ "name": inputValue, exam_id: schoolId })
+      .select()
+      .single();
+    if (error) {
+      showErrorNotification(error);
+      setIsLoading(false);
+      return;
+    }
+    showNotifications(null, "created");
+    setIsLoading(false);
+    setOptions((prev) =>
+      prev ? [...prev, createOption(data)] : [createOption(data)]
+    );
+    setValue(createOption(data!));
+  };
+  const handleDelete = async () => {
+    setIsLoading(true);
+    const { error } = await supabase
+      .from("syll_class")
+      .delete()
+      .eq("id", value?.value!);
+    if (error) {
+      showErrorNotification(error);
+      setIsLoading(false);
+      return;
+    }
+    showNotifications(null, "deleted");
+    setIsLoading(false);
+    setOptions((prev) => prev?.filter((item) => item.value !== value?.value));
+    setValue(null);
+  };
+  const isDisabled = isLoading || value === null || value === undefined;
   return (
-    <div className=" flex items-center justify-center">
-      {error && <div className="text-error">{error}</div>}
+    <div className=" flex items-center px-1 gap-1">
       <div className="flex-1">
         <CreatableSelect
-          placeholder="Select school/board..."
+          placeholder="Select paper..."
           isClearable
           isDisabled={isLoading}
           isLoading={isLoading}
@@ -116,9 +118,7 @@ export const School = ({ action }: { action: (id: number) => void }) => {
           className="text-sm"
         />
       </div>
-      {DeleteAction(isLoading, isDisabled, handleDelete)}
+      {canModerate && DeleteAction(isLoading, isDisabled, handleDelete)}
     </div>
   );
 };
-
-

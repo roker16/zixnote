@@ -2,52 +2,47 @@
 import { DeleteAction } from "@/components/DeleteAction";
 import { showNotifications } from "@/components/Notification";
 import { createClient } from "@/utils/supabase/client";
-import { Database } from "@/utils/supabase/supatype";
 import { useEffect, useState } from "react";
 import CreatableSelect from "react-select/creatable";
-import { ShowErrorNotification } from "../../../../components/showErrorNotification";
-interface Option1 {
+import { showErrorNotification } from "../../../../components/showErrorNotification";
+interface InputData {
   class_name: string;
   id: number;
   school_id: number;
 }
-type data = Database["public"]["Tables"]["syll_school"]["Row"];
 interface Option {
   readonly label: string;
   readonly value: string;
 }
 
-const createOption = (x: Option1) => ({
+const createOption = (x: InputData) => ({
   label: x.class_name,
   value: x.id.toString(),
 });
 
-// const defaultOptions = [createOption({ id: 5, school_name: "City" })];
-
 export const Class = ({
   action,
   schoolId,
+  canModerate,
 }: {
   action: (id: number) => void;
   schoolId: number | undefined;
+  canModerate: boolean;
 }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [options, setOptions] = useState<Option[] | undefined>(undefined);
   const [value, setValue] = useState<Option | null>();
-  const [error, setError] = useState<string | null>(null);
-  const supabsae = createClient();
+  const supabase = createClient();
   useEffect(() => {
     setValue(null);
     const getSchool = async () => {
       setIsLoading(true);
-      const supabase = createClient();
-
       const { data: _class, error } = await supabase
         .from("syll_class")
         .select(`*`)
         .eq("school_id", schoolId!);
       if (error) {
-        setError(error.message);
+        showErrorNotification(error);
         setIsLoading(false);
         return;
       }
@@ -57,46 +52,48 @@ export const Class = ({
     if (schoolId) {
       getSchool();
     }
-  }, [schoolId]);
+  }, [schoolId, supabase]);
 
   const handleChange = (newValue: Option | null) => {
     setValue(newValue);
     action(Number(newValue?.value));
   };
 
-  const call = async (inputValue: string) => {
-    setError(null);
+  const handleCreate = async (inputValue: string) => {
+    if (!canModerate) {
+      showNotifications("You don't have required Permission");
+      return;
+    }
+    if (!schoolId) {
+      showNotifications("No school selected");
+      return;
+    }
     setIsLoading(true);
-    const { data, error } = await supabsae
+    const { data, error } = await supabase
       .from("syll_class")
-      .insert([{ class_name: inputValue, school_id: schoolId! }])
+      .insert([{ class_name: inputValue, school_id: schoolId }])
       .select()
       .single();
     if (error) {
-      ShowErrorNotification(error);
+      showErrorNotification(error);
       setIsLoading(false);
       return;
     }
     showNotifications(null, "created");
     setIsLoading(false);
     setOptions((prev) =>
-      prev ? [...prev, createOption(data!)] : [createOption(data!)]
+      prev ? [...prev, createOption(data)] : [createOption(data)]
     );
     setValue(createOption(data!));
   };
-  const handleCreate = (inputValue: string) => {
-    call(inputValue);
-  };
   const handleDelete = async () => {
-    setError(null);
     setIsLoading(true);
-
-    const { data, error } = await supabsae
+    const { error } = await supabase
       .from("syll_class")
       .delete()
       .eq("id", value?.value!);
     if (error) {
-      ShowErrorNotification(error);
+      showErrorNotification(error);
       setIsLoading(false);
       return;
     }
@@ -108,7 +105,6 @@ export const Class = ({
   const isDisabled = isLoading || value === null || value === undefined;
   return (
     <div className=" flex items-center px-1 gap-1">
-      {error && <div className="text-error">{error}</div>}
       <div className="flex-1">
         <CreatableSelect
           placeholder="Select Class..."
@@ -122,7 +118,7 @@ export const Class = ({
           className="text-sm"
         />
       </div>
-      {DeleteAction(isLoading, isDisabled, handleDelete)}
+      {canModerate && DeleteAction(isLoading, isDisabled, handleDelete)}
     </div>
   );
 };

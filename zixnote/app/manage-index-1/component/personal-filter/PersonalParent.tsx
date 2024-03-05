@@ -3,28 +3,14 @@ import { useBoundStore } from "@/store/zustand";
 import { Group } from "@mantine/core";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
-import { Books } from "./Books";
-import { Class } from "./Class";
-import { School } from "./School";
+import { PersonalBook } from "./PersonalBook";
 
-export default function Parent() {
+export default function PersonalParent({ canModerate }: { canModerate: boolean }) {
   const router = useRouter();
   let [isPending, startTransition] = useTransition();
-  const [selectedSchool, setSelectedSchool] = useState<number | undefined>(
-    undefined
-  );
-  const [selectedClass, setSelectedClass] = useState<number | undefined>(
-    undefined
-  );
 
   const updateSyllabus = useBoundStore().updateSyllabus;
 
-  const handleSelectedSchool = (id: number) => {
-    setSelectedSchool(id);
-  };
-  const handleSelectedClass = (id: number) => {
-    setSelectedClass(id);
-  };
 
   const handleSelectedBook = (id: number, name: string) => {
     const url = new URL(window.location.href);
@@ -41,9 +27,10 @@ export default function Parent() {
     <div>
       {/* {isPending && "Loading......"} */}
       <Group justify="center" grow>
-        <School action={handleSelectedSchool} />
-        <Class action={handleSelectedClass} schoolId={selectedSchool} />
-        <Books action={handleSelectedBook} classId={selectedClass} />
+        <PersonalBook
+          action={handleSelectedBook}
+          canModerate={canModerate}
+        />
       </Group>
     </div>
   );
