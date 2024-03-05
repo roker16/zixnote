@@ -18,15 +18,11 @@ interface Option {
   readonly value: string;
 }
 
-// const createOption = (x: InputData) => ({
-//   label: x.school_name,
-//   value: x.id.toString(),
-// });
-
 type TableNames = keyof Database["public"]["Tables"];
 
 type TablePropertyMappings = {
-  [K in TableNames]?: { // why we use ? here, to make all tablename optional, remove this and see
+  [K in TableNames]?: {
+    // why we use ? here, to make all tablename optional, remove this and see
     labelProperty: keyof Tables<K>;
     idProperty: keyof Tables<K>;
   };
@@ -55,16 +51,31 @@ const createOption = <T extends keyof Database["public"]["Tables"]>(
   const mapping = tablePropertyMappings[tableName];
 
   if (!mapping) {
-    throw new Error(`Unsupported table or properties`);
+    throw new Error(`Unsupported table: ${tableName}`);
   }
 
   const { labelProperty, idProperty } = mapping;
 
   return {
-    label: x[labelProperty as keyof typeof x] as string,
-    value: x[idProperty as keyof typeof x] as string,
+    label: String(x[labelProperty]),
+    value: String(x[idProperty]),
   };
 };
+function getIdPropertyName<T extends TableNames>(
+  tableName: T
+): keyof Tables<T> {
+  const mapping = tablePropertyMappings[tableName];
+
+  if (!mapping) {
+    throw new Error(`Unsupported table: ${tableName}`);
+  }
+
+  if (!mapping.idProperty) {
+    throw new Error(`Table ${tableName} does not have a defined idProperty`);
+  }
+
+  return mapping.idProperty;
+}
 
 export function School<T extends TableNames>({
   action,
@@ -149,12 +160,13 @@ export function School<T extends TableNames>({
   }
 
   const handleDelete = async () => {
+    const k = getIdPropertyName(tableName);
     setIsLoading(true);
 
     const { error } = await supabase
-      .from("syll_school")
+      .from(tableName)
       .delete()
-      .eq("id", value?.value!);
+      .eq(k.toString(), value?.value!);
     if (error) {
       showErrorNotification(error);
       setIsLoading(false);
