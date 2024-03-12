@@ -15,7 +15,7 @@ function IndexTitle({
   return (
     <Group>
       <p className=" font-semibold opacity-90 ">{name}</p>
-      {canModerate && <CreateForm parentId={undefined} syllabusId={id} label="Add Chapter" />}
+      {canModerate && <CreateForm parentId={undefined} syllabusId={id} label="Add Chapter" parentCategoryId={undefined} />}
     </Group>
   );
 }

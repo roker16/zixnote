@@ -8,7 +8,7 @@ import {
   ReturnTypeOfCheckIfModerator,
   checkIfModerator,
 } from "../@moderator/checkIfModerator";
-import { wait } from "@/utils/helper";
+import NoticeText from "@/components/NoticeText";
 
 export default async function Index({
   searchParams,
@@ -36,12 +36,19 @@ export default async function Index({
             canModerate={canModerateIndex(role, data) || false}
           />
         )}
-        {(index === null || index?.length === 0) &&
+
+        {index === null ? (
+          <NoticeText text={"Select Syllabus from filter"} />
+        ) : (
+          (index === null || index?.length === 0) &&
           (canModerateIndex(role, data) || false) && (
-            <div className="opacity-60 italic">
-              Data does not exist, click on add Chapter and start adding data...
-            </div>
-          )}
+            <NoticeText
+              text={
+                "Index is empty, click on Add Chapter and start creating index..."
+              }
+            />
+          )
+        )}
       </div>
     </div>
   );
@@ -53,5 +60,9 @@ function canModerateIndex(
 ) {
   // Customize this logic based on your conditions
   // For example, render NestedIndex if user has the "admin" role or data.status is "enabled"
-  return role?.includes("admin") || (data && data.status === "enabled");
+  return (
+    role?.includes("admin") ||
+    (data && data.status === "enabled") ||
+    data?.personal
+  );
 }

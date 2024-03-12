@@ -17,10 +17,12 @@ import { IconPlus } from "@tabler/icons-react";
 
 export default function CreateForm({
   parentId,
+  parentCategoryId,
   syllabusId,
   label,
 }: {
   parentId: number | null | undefined;
+  parentCategoryId: number | null | undefined;
   syllabusId?: number | null | undefined;
   label?: string;
 }) {
@@ -36,6 +38,11 @@ export default function CreateForm({
               type="hidden"
               name="parentId"
               value={parentId ? parentId : undefined}
+            />
+            <input
+              type="hidden"
+              name="parentCategoryId"
+              value={parentCategoryId ? parentCategoryId + 1 : undefined}
             />
             <input type="hidden" name="syllabusId" value={syllabusId!} />
             <TextInput

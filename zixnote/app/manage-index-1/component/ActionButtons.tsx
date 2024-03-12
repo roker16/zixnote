@@ -11,7 +11,7 @@ export type ActionType = "create" | "edit" | "delete"; // Accept string as well
 const ActionButtons = ({ data }: { data?: ElementTypeOfGetIndex }) => {
   return (
     <Group justify="center" gap="1px" >
-      <CreateForm parentId={data?.index_id} syllabusId={data?.syllabus_id!} />
+      <CreateForm parentId={data?.index_id} syllabusId={data?.syllabus_id!} parentCategoryId={data?.category_id} />
       <EditForm
         id={data?.index_id!}
         name={data?.index_name!}

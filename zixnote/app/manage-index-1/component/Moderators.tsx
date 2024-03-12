@@ -1,22 +1,22 @@
 "use client";
 import { createClient } from "@/utils/supabase/client";
-import { ActionIcon, Badge, Button, Center, Group } from "@mantine/core";
+import { ActionIcon, Badge, Button, Center, Table, Text } from "@mantine/core";
 import { IconTrashX } from "@tabler/icons-react";
 import { useRouter } from "next/navigation";
-import React, { useState, useTransition } from "react";
+import { useState, useTransition } from "react";
 import { ElementTypeOfGetModerator } from "../@moderator/getModerator";
-
 
 function Moderators({ data }: { data: ElementTypeOfGetModerator[] }) {
   const moderatorsList = data
     .sort((a, b) => a.id - b.id)
-    .map((x) => (
-      <Center key={x.id}>
-        <ModeratorItem data={x} />
-      </Center>
-    ));
+    .map((x) => <ModeratorItem key={x.id} data={x} />);
 
-  return <div>{moderatorsList}</div>;
+  return (
+    <Table striped captionSide="top" withRowBorders={true}>
+      <Table.Caption>Current moderators</Table.Caption>
+      <Table.Tbody>{moderatorsList}</Table.Tbody>
+    </Table>
+  );
 }
 
 export default Moderators;
@@ -60,30 +60,42 @@ function ModeratorItem({ data }: { data: ElementTypeOfGetModerator }) {
   };
 
   return (
-    <Group key={data.id} px={"xs"}>
-      <p> {data.profiles?.email}</p>
-      <Badge
-        size="xs"
-        variant="light"
-        color={data.status === "enabled" ? "green" : "red"}
-      >
-        {data.status}
-      </Badge>
-      <Button
-        loading={isPending}
-        variant="light"
-        onClick={() => toggleStatus(data.id, data.status!)}
-      >
-        {data.status === "disabled" ? "Enable" : "Disable"}
-      </Button>
-      <ActionIcon
-        variant="subtle"
-        color="red"
-        loading={isPending}
-        onClick={() => handleDelete(data.id)}
-      >
-        <IconTrashX size={"16px"} />
-      </ActionIcon>
-    </Group>
+    <Table.Tr key={data.id} px={"xs"}>
+      <Table.Td>
+        <Text c={"dimmed"} size="sm">
+          {" "}
+          {data.profiles?.email}
+        </Text>
+      </Table.Td>
+      <Table.Td>
+        <Badge
+          size="xs"
+          variant="light"
+          color={data.status === "enabled" ? "green" : "red"}
+        >
+          {data.status}
+        </Badge>
+      </Table.Td>
+      <Table.Td>
+        <Button
+          loading={isPending || loading}
+          variant="light"
+          size="compact-sm"
+          onClick={() => toggleStatus(data.id, data.status!)}
+        >
+          {data.status === "disabled" ? "Enable" : "Disable"}
+        </Button>
+      </Table.Td>
+      <Table.Td>
+        <ActionIcon
+          variant="subtle"
+          color="red"
+          loading={isPending || loading}
+          onClick={() => handleDelete(data.id)}
+        >
+          <IconTrashX size={"16px"} />
+        </ActionIcon>
+      </Table.Td>
+    </Table.Tr>
   );
 }

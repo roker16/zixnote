@@ -1,5 +1,6 @@
 import { getUserAndRole } from "@/utils/getUserAndRole";
 import SyllabusFilter from "../component/SyllabusFilter";
+import { Demo } from "../Test";
 
 export default async function Index() {
   const { role, user } = await getUserAndRole();
@@ -7,6 +8,7 @@ export default async function Index() {
   return (
     <div className="w-full flex flex-col items-center">
       <SyllabusFilter canModerate={canModerate || false} />
+      {/* <Demo canModerate={canModerate || false}/> */}
     </div>
   );
 }

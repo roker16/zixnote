@@ -176,7 +176,7 @@ export function HeaderMegaMenu({ user }: { user: User | null }) {
               Documentation
             </a>
             <a href="#" className={classes.link}>
-              Academy
+              Pricing
             </a>
           </Group>
 
@@ -229,7 +229,7 @@ export function HeaderMegaMenu({ user }: { user: User | null }) {
             Guide
           </a>
           <a href="#" className={classes.link}>
-            Academy
+            Pricing
           </a>
 
           <Divider my="sm" />

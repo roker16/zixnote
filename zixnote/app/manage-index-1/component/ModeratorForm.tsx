@@ -8,11 +8,13 @@ export default function ModeratorForm({ syllabusId }: { syllabusId: number }) {
   const [moderator, setModerator] = useState("");
   const [message, setMessage] = useState("");
   const [isPending, startTransition] = useTransition();
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
   const supabase = createClient();
 
   const addModerator = async () => {
     setMessage("");
+    setLoading(true);
     try {
       const { data: userData, error: userError } = await supabase
         .from("profiles")
@@ -47,6 +49,8 @@ export default function ModeratorForm({ syllabusId }: { syllabusId: number }) {
       });
     } catch (error) {
       setMessage((error as Error).message);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -55,7 +59,6 @@ export default function ModeratorForm({ syllabusId }: { syllabusId: number }) {
       <Flex gap="sm" p="xs" direction="column">
         <Text size="xs" c="red">
           {message}
-          {moderator}
         </Text>
         <TextInput
           label="Moderator email"
@@ -65,7 +68,7 @@ export default function ModeratorForm({ syllabusId }: { syllabusId: number }) {
           value={moderator}
           onChange={(e) => setModerator(e.target.value)}
         />
-        <Button loading={isPending} onClick={addModerator}>
+        <Button loading={isPending || loading} onClick={addModerator}>
           Add Moderator
         </Button>
       </Flex>

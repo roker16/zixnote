@@ -77,7 +77,7 @@ function getIdPropertyName<T extends TableNames>(
   return mapping.idProperty;
 }
 
-export function School<T extends TableNames>({
+export function FirstCommonFilter<T extends TableNames>({
   action,
   canModerate,
   tableName,
@@ -143,21 +143,45 @@ export function School<T extends TableNames>({
   };
 
   // Helper function to get the correct insert object
-  function getInsertData(
-    tableName: string,
+  type InsertData<T extends TableNames> =
+    Database["public"]["Tables"][T]["Insert"];
+  function getInsertData<T extends TableNames>(
+    tableName: T,
     inputValue: string
-  ): Record<string, any> {
+  ): InsertData<T> {
     switch (tableName) {
       case "syll_school":
-        return { school_name: inputValue };
+        return {
+          school_name: inputValue,
+        } as InsertData<"syll_school">;
       case "syll_college":
-        return { college_name: inputValue };
+        return {
+          college_name: inputValue,
+        } as InsertData<"syll_college">;
       case "syll_exam":
-        return { exam_name: inputValue };
+        return {
+          exam_name: inputValue,
+        } as InsertData<"syll_exam">;
       default:
         throw new Error(`Unsupported table: ${tableName}`);
     }
   }
+
+  // // Helper function to get the correct insert object, same as above see what u want to use.
+  // type InsertData<T extends TableNames> =
+  //   Database["public"]["Tables"][T]["Insert"];
+  //   function getInsertData<T extends TableNames>(
+  //     tableName: T,
+  //     inputValue: string
+  //   ): InsertData<T> {
+  //     const mapping = tablePropertyMappings[tableName];
+
+  //     if (!mapping || !mapping.labelProperty) {
+  //       throw new Error(`Table ${tableName} is not supported or missing idProperty`);
+  //     }
+
+  //     return { [mapping.labelProperty]: inputValue} as InsertData<T>;
+  //   }
 
   const handleDelete = async () => {
     const k = getIdPropertyName(tableName);
@@ -183,11 +207,18 @@ export function School<T extends TableNames>({
   };
   const isDisabled = isLoading || value === null || value === undefined;
 
+  const placeholderMapping: { [K in TableNames]?: string } = {
+    syll_school: "Select school/board...",
+    syll_college: "Select College/University...",
+    syll_exam: "Select exam",
+  };
+
+  const placeholder = placeholderMapping[tableName];
   return (
     <div className=" flex items-center justify-center">
       <div className="flex-1">
         <CreatableSelect
-          placeholder="Select school/board..."
+          placeholder={placeholder}
           isClearable
           isDisabled={isLoading}
           isLoading={isLoading}

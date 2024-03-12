@@ -66,13 +66,13 @@ const TableOfContent: React.FC<TableOfContentProps> = ({
               }
               className={`cursor-pointer flex flex-nowrap opacity-80 py-0.5 px-2 ${
                 item.parent_index_id === null
-                  ? "font-medium italic"
+                  ? "font-medium text-sm "
                   : " group-hover:opacity-100 group-hover:bg-slate-200 group-hover:rounded-xl text-sm "
               }`}
             >
               <span>
                 {item.parent_index_id == null && (
-                  <ActionIcon variant="light" size="sm" radius="lg">
+                  <ActionIcon variant="subtle" size="sm" radius="lg">
                     {!toggledIds.includes(item.index_id) ? (
                       <MdExpandMore size={16} />
                     ) : (
@@ -84,11 +84,13 @@ const TableOfContent: React.FC<TableOfContentProps> = ({
 
               <div>{item.index_name}</div>
             </Box>
-            {canModerate && (
-              <div className="invisible group-hover:visible px-1 ">
-                <ActionButtons data={item} />
-              </div>
-            )}
+            {canModerate &&
+              item.category_id &&
+              (item.category_id < 4) && (
+                <div className="invisible group-hover:visible px-1 ">
+                  <ActionButtons data={item} />
+                </div>
+              )}
           </div>
 
           {item.children &&

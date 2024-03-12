@@ -42,9 +42,6 @@ export default async function RootLayout({
       <body>
         <MantineProvider theme={theme} defaultColorScheme="light">
           <Notifications position="top-center" />
-          {/* {role1?.map((x) => {
-            return x.roles?.role;
-          })} */}
           <div>
             <HeaderMegaMenu user={user} />
             <div className="h-full">{children}</div>
@@ -55,16 +52,4 @@ export default async function RootLayout({
     </html>
   );
 }
-async function getRoless(user: User | null) {
-  "use server";
-  const supabase = createClient(cookies());
-  let role;
-  if (user) {
-    const { data } = await supabase
-      .from("profiles_roles")
-      .select(`role_id,roles(role)`)
-      .eq("profile_id", user?.id);
-    role = data;
-  }
-  return role;
-}
+

@@ -6,6 +6,7 @@ import { useState, useTransition } from "react";
 import { Subject } from "./Subject";
 import { Paper } from "./Paper";
 import { Exam } from "./Exam";
+import { FirstCommonFilter } from "../school-filter/FirstCommonFilter";
 
 export default function ExamParent({ canModerate }: { canModerate: boolean }) {
   const router = useRouter();
@@ -41,7 +42,12 @@ export default function ExamParent({ canModerate }: { canModerate: boolean }) {
     <div>
       {/* {isPending && "Loading......"} */}
       <Group justify="center" grow>
-        <Exam action={handleSelectedSchool} canModerate={canModerate} />
+        <FirstCommonFilter
+          action={handleSelectedSchool}
+          canModerate={canModerate}
+          tableName={"syll_exam"}
+        />
+
         <Paper
           action={handleSelectedClass}
           schoolId={selectedSchool}

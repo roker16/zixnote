@@ -4,6 +4,7 @@ import { Flex, Button } from "@mantine/core";
 import React, { useState, useTransition } from "react";
 import { Transition } from "@headlessui/react";
 import { useRouter } from "next/navigation";
+import NoticeText from "@/components/NoticeText";
 
 function AskToBeModerator({
   userId,
@@ -34,7 +35,9 @@ function AskToBeModerator({
       direction="column"
       wrap="nowrap"
     >
-      <div>You are not an Admin or moderator, Request to be a moderator!</div>
+      <NoticeText
+        text={"You are not an Admin or moderator, Request to be a moderator!"}
+      />
       <div>
         <Button loading={isPending} onClick={() => sendRequest()}>
           Request to be moderator!

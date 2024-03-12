@@ -15,4 +15,5 @@ export const getModerator = async (syllabusId: number) => {
   return moderator;
 };
 type ReturnTypeOfGetModerator = Awaited<ReturnType<typeof getModerator>>;
-export type ElementTypeOfGetModerator = ExtractArrayElementType<ReturnTypeOfGetModerator>;
+export type ElementTypeOfGetModerator =
+  ExtractArrayElementType<ReturnTypeOfGetModerator>;

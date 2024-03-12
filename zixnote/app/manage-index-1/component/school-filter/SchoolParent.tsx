@@ -1,8 +1,6 @@
 "use client";
-import { useBoundStore } from "@/store/zustand";
-import { Group } from "@mantine/core";
-import { useRouter } from "next/navigation";
-import { useState, useTransition } from "react";
+import { Box, Group } from "@mantine/core";
+import { useState } from "react";
 import { Books } from "./Books";
 import { Class } from "./Class";
 import { School } from "./School";
@@ -12,16 +10,12 @@ export default function SchoolParent({
 }: {
   canModerate: boolean;
 }) {
-  const router = useRouter();
-  let [isPending, startTransition] = useTransition();
   const [selectedSchool, setSelectedSchool] = useState<number | undefined>(
     undefined
   );
   const [selectedClass, setSelectedClass] = useState<number | undefined>(
     undefined
   );
-
-  const updateSyllabus = useBoundStore().updateSyllabus;
 
   const handleSelectedSchool = (id: number) => {
     setSelectedSchool(id);
@@ -30,21 +24,9 @@ export default function SchoolParent({
     setSelectedClass(id);
   };
 
-  const handleSelectedBook = (id: number, name: string) => {
-    const url = new URL(window.location.href);
-    url.searchParams.set("id", id.toString());
-    url.searchParams.set("name", name);
-
-    startTransition(() => {
-      router.replace(url.toString());
-    });
-
-    updateSyllabus({ id: id, name: name });
-  };
   return (
-    <div>
-      {/* {isPending && "Loading......"} */}
-      <Group justify="center" grow>
+   
+      <div className="flex flex-col md:flex-row p-1 gap-1"  >
         <School action={handleSelectedSchool} canModerate={canModerate} />
         <Class
           action={handleSelectedClass}
@@ -52,12 +34,10 @@ export default function SchoolParent({
           canModerate={canModerate}
         />
         <Books
-          action={handleSelectedBook}
           classId={selectedClass}
           canModerate={canModerate}
-          isPending={isPending}
         />
-      </Group>
-    </div>
+      </div>
+   
   );
 }

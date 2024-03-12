@@ -2,10 +2,14 @@
 import { DeleteAction } from "@/components/DeleteAction";
 import { showNotifications } from "@/components/Notification";
 import { createClient } from "@/utils/supabase/client";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useTransition } from "react";
 import CreatableSelect from "react-select/creatable";
 import { showErrorNotification } from "../../../../components/showErrorNotification";
 import { Group, Text } from "@mantine/core";
+
+import { useRouter } from "next/navigation";
+import { handleTransition } from "../../handleTransition";
+
 interface DataInput {
   id: number;
 
@@ -22,19 +26,14 @@ const createOption = (x: DataInput) => ({
   value: x.id.toString(),
 });
 
-export const PersonalBook = ({
-  action,
-  canModerate,
-}: {
-  action: (id: number, name: string) => void;
-  canModerate: boolean;
-}) => {
+export const PersonalBook = ({ canModerate }: { canModerate: boolean }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [options, setOptions] = useState<Option[] | undefined>(undefined);
   const [value, setValue] = useState<Option | null>();
   const [userId, setUserId] = useState<string | undefined>(undefined);
   const supabase = createClient();
-
+  const [isPending, startTransition] = useTransition();
+  const router = useRouter();
   useEffect(() => {
     setValue(null);
     const getSchool = async () => {
@@ -65,7 +64,7 @@ export const PersonalBook = ({
 
   const handleChange = (newValue: Option | null) => {
     setValue(newValue);
-    action(Number(newValue?.value), newValue?.label!);
+    handleTransition(newValue?.value, newValue?.label, startTransition, router);
   };
   const handleCreate = async (inputValue: string) => {
     setIsLoading(true);
@@ -83,7 +82,8 @@ export const PersonalBook = ({
     setOptions((prev) =>
       prev ? [...prev, createOption(data)] : [createOption(data)]
     );
-    setValue(createOption(data));
+    // setValue(createOption(data));
+    handleChange({ label: data.syllabus_name, value: data.id.toString() });
     showNotifications(null, "created");
   };
   const handleDelete = async () => {
@@ -98,24 +98,30 @@ export const PersonalBook = ({
       setIsLoading(false);
       return;
     }
-    showNotifications(null, "deleted");
     setIsLoading(false);
     setOptions((prev) => prev?.filter((item) => item.value !== value?.value));
-    setValue(null);
+    handleChange(null);
+    showNotifications(null, "deleted");
   };
   const isDisabled = isLoading || value === null || value === undefined;
   if (!userId) {
-    return <div className="flex justify-center"><Text c="dimmed" fs="italic">You need to login first!</Text></div>;
+    return (
+      <div className="flex justify-center">
+        <Text c="dimmed" fs="italic">
+          You need to login first!
+        </Text>
+      </div>
+    );
   }
 
   return (
-    <Group justify="center">
-      <div className="flex-1 max-w-64">
+    <div className=" flex items-center gap-1 ">
+      <div className="md:w-60 flex-1">
         <CreatableSelect
           placeholder="Select Book..."
           isClearable
-          isDisabled={isLoading}
-          isLoading={isLoading}
+          isDisabled={isLoading || isPending}
+          isLoading={isLoading || isPending}
           onChange={(newValue) => handleChange(newValue)}
           onCreateOption={handleCreate}
           options={options}
@@ -123,7 +129,7 @@ export const PersonalBook = ({
           className="text-sm"
         />
       </div>
-      {canModerate && DeleteAction(isLoading, isDisabled, handleDelete)}
-    </Group>
+      {DeleteAction(isLoading, isDisabled || isPending, handleDelete)}
+    </div>
   );
 };

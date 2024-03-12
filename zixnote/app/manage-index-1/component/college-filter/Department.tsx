@@ -104,8 +104,8 @@ export const Department = ({
   };
   const isDisabled = isLoading || value === null || value === undefined;
   return (
-    <div className=" flex items-center px-1 gap-1">
-      <div className="flex-1">
+    <div className=" flex items-center gap-1 ">
+    <div className="md:w-60 flex-1">
         <CreatableSelect
           placeholder="Select Department..."
           isClearable

@@ -1,12 +1,16 @@
 import GoogleSignin from "@/components/GoogleSignin";
-import { Center } from "@mantine/core";
+import { Box, Center, Space } from "@mantine/core";
 import Link from "next/link";
+import { getUserAndRole } from "../../../utils/getUserAndRole";
 import AskToBeModerator from "../component/AskToBeModerator";
 import ModeratorForm from "../component/ModeratorForm";
 import Moderators from "../component/Moderators";
-import Refresh from "./Refresh";
-import { getUserAndRole } from "../../../utils/getUserAndRole";
 import { getModerator } from "./getModerator";
+
+import { createClient } from "@/utils/supabase/server";
+import { cookies } from "next/headers";
+import NoticeText from "@/components/NoticeText";
+import { Demo } from "../Test";
 
 export default async function Index({
   searchParams,
@@ -19,7 +23,8 @@ export default async function Index({
     searchParams?.id && !isNaN(Number(searchParams.id)) //when we clear selectbox, id sets to NaN in URL
       ? await getModerator(Number(searchParams?.id))
       : [];
-  const centerGrid = () => {
+
+  const centerGrid = async () => {
     if (!user) {
       // Block 1: User is not logged in
       return (
@@ -31,14 +36,30 @@ export default async function Index({
 
     if (!searchParams?.id || isNaN(Number(searchParams.id))) {
       // Block 2: User is logged in, but no syllabus selected
-      return <Center h="200px">Select syllabus from above filter!</Center>;
+      return (
+        <Center h="200px">
+          <NoticeText
+            text={"No syllabus selected, Select syllabus from above filters!"}
+          />
+        </Center>
+      );
     }
-
+    const isSyllabusPersonal = await checkIfPersonal(Number(searchParams?.id));
+    if (isSyllabusPersonal) {
+      return (
+        <NoticeText
+          text={
+            "This is your Personal Index, you can edit it without any permission!"
+          }
+        />
+      );
+    }
     if (searchParams?.id && role?.includes("admin")) {
       // Block 3: User is logged in, syllabus selected, and has admin role
       return (
         <>
           <ModeratorForm syllabusId={Number(searchParams?.id)} />
+          <Space h="xl" />
           <Moderators data={moderator} />
         </>
       );
@@ -53,9 +74,17 @@ export default async function Index({
       return (
         <Center h="200px">
           <div className="italic opacity-60">
-            {userIsModerator.status === "enabled"
-              ? "You are a moderator. You can Modify this Index!"
-              : "You can not modify this Index, You are a moderator, but currently disabled. Wait for permission!!"}
+            {userIsModerator.status === "enabled" ? (
+              <NoticeText
+                text={"You are a moderator. You can Modify this Index!"}
+              />
+            ) : (
+              <NoticeText
+                text={
+                  "You can not modify this Index, You are a moderator, but currently disabled. Wait for permission!!"
+                }
+              />
+            )}
           </div>
         </Center>
       );
@@ -73,10 +102,26 @@ export default async function Index({
   };
 
   return (
-    <div className="w-full flex flex-col items-center">
-      <div className="col-span-5">{centerGrid()}</div>
-      <Link href={"/manage-index-1/total"}>total</Link>
-      {/* <Refresh /> */}
-    </div>
+    <Box visibleFrom="xs">
+      <div className="w-full flex flex-col items-center">
+        <div className="col-span-5">{centerGrid()}</div>
+        <Link href={"/manage-index-1/total"}>total</Link>
+        {/* <Refresh /> */}
+      </div>
+    </Box>
   );
+}
+async function checkIfPersonal(id: number) {
+  const supabase = createClient(cookies());
+  const userId = (await supabase.auth.getUser()).data.user?.id;
+  const { data, error } = await supabase
+    .from("syll_syllabus_entity")
+    .select(`id,type_id, owner_id`)
+    .eq("id", id)
+    .eq("owner_id", userId!);
+
+  if (data && data.length === 0) {
+    return false;
+  }
+  return true;
 }

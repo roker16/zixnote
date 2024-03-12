@@ -63,6 +63,10 @@ export async function createIndex(formData: FormData) {
         formData.get("parentId") !== ""
           ? Number(formData.get("parentId"))
           : null,
+      category_id:
+        formData.get("parentCategoryId") !== ""
+          ? Number(formData.get("parentCategoryId"))
+          : 1,
     },
   ]);
   if (error) {

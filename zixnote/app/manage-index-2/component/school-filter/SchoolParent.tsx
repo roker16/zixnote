@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { Books } from "./Books";
 import { Class } from "./Class";
-import { School } from "./School";
+import { FirstCommonFilter } from "./FirstCommonFilter";
 
 export default function SchoolParent({
   canModerate,
@@ -45,7 +45,7 @@ export default function SchoolParent({
     <div>
       {/* {isPending && "Loading......"} */}
       <Group justify="center" grow>
-        <School action={handleSelectedSchool} canModerate={canModerate} tableName={"syll_school"} />
+        <FirstCommonFilter action={handleSelectedSchool} canModerate={canModerate} tableName={"syll_school"} />
         <Class
           action={handleSelectedClass}
           schoolId={selectedSchool}

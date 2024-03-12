@@ -6,6 +6,7 @@ import { useState, useTransition } from "react";
 import { Course } from "./Course";
 import { Department } from "./Department";
 import { College } from "./College";
+import { FirstCommonFilter } from "../school-filter/FirstCommonFilter";
 
 export default function CollegeParent({
   canModerate,
@@ -41,7 +42,7 @@ export default function CollegeParent({
     <div>
       {/* {isPending && "Loading......"} */}
       <Group justify="center" grow>
-        <College action={handleSelectedCollege} canModerate={canModerate} />
+        <FirstCommonFilter action={handleSelectedCollege} canModerate={canModerate} tableName={"syll_college"} />
         <Department
           action={handleSelectedDepartment}
           schoolId={selectedCollege}

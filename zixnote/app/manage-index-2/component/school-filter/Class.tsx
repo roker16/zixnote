@@ -20,7 +20,7 @@ const createOption = (x: InputData) => ({
   value: x.id.toString(),
 });
 
-export const Class = ({
+export function Class({
   action,
   schoolId,
   canModerate,
@@ -28,7 +28,7 @@ export const Class = ({
   action: (id: number) => void;
   schoolId: number | undefined;
   canModerate: boolean;
-}) => {
+}) {
   const [isLoading, setIsLoading] = useState(false);
   const [options, setOptions] = useState<Option[] | undefined>(undefined);
   const [value, setValue] = useState<Option | null>();
@@ -121,4 +121,4 @@ export const Class = ({
       {canModerate && DeleteAction(isLoading, isDisabled, handleDelete)}
     </div>
   );
-};
+}

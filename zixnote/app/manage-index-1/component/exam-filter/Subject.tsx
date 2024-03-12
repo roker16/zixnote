@@ -2,12 +2,14 @@
 import { DeleteAction } from "@/components/DeleteAction";
 import { showNotifications } from "@/components/Notification";
 import { createClient } from "@/utils/supabase/client";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useTransition } from "react";
 import CreatableSelect from "react-select/creatable";
 import { showErrorNotification } from "../../../../components/showErrorNotification";
+import { useRouter } from "next/navigation";
+import { handleTransition } from "../../handleTransition";
 interface DataInput {
   id: number;
-  class_id: number | null;
+  paper_id: number | null;
   syllabus_name: string;
 }
 
@@ -22,17 +24,17 @@ const createOption = (x: DataInput) => ({
 });
 
 export const Subject = ({
-  action,
   paperId,
   canModerate,
 }: {
-  action: (id: number, name: string) => void;
   paperId: number | undefined;
   canModerate: boolean;
 }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [options, setOptions] = useState<Option[] | undefined>(undefined);
   const [value, setValue] = useState<Option | null>();
+  const [isPending, startTransition] = useTransition();
+  const router = useRouter();
   const supabase = createClient();
   useEffect(() => {
     setValue(null);
@@ -40,8 +42,8 @@ export const Subject = ({
       setIsLoading(true);
       const { data: books, error } = await supabase
         .from("syll_syllabus_entity")
-        .select(`id,class_id,syllabus_name`)
-        .eq("class_id", paperId!);
+        .select(`id,paper_id,syllabus_name`)
+        .eq("paper_id", paperId!);
       if (error) {
         showErrorNotification(error);
         setIsLoading(false);
@@ -57,7 +59,7 @@ export const Subject = ({
 
   const handleChange = (newValue: Option | null) => {
     setValue(newValue);
-    action(Number(newValue?.value), newValue?.label!);
+    handleTransition(newValue?.value, newValue?.label, startTransition, router);
   };
   const handleCreate = async (inputValue: string) => {
     if (!canModerate) {
@@ -83,7 +85,7 @@ export const Subject = ({
     setOptions((prev) =>
       prev ? [...prev, createOption(data)] : [createOption(data)]
     );
-    setValue(createOption(data));
+    handleChange({ label: data.syllabus_name, value: data.id.toString() });
     showNotifications(null, "created");
   };
   const handleDelete = async () => {
@@ -98,15 +100,15 @@ export const Subject = ({
       setIsLoading(false);
       return;
     }
-    showNotifications(null, "deleted");
     setIsLoading(false);
     setOptions((prev) => prev?.filter((item) => item.value !== value?.value));
-    setValue(null);
+    handleChange(null);
+    showNotifications(null, "deleted");
   };
   const isDisabled = isLoading || value === null || value === undefined;
   return (
-    <div className=" flex items-center px-1 gap-1">
-      <div className="flex-1">
+    <div className=" flex items-center gap-1 ">
+    <div className="md:w-60 flex-1">
         <CreatableSelect
           placeholder="Select Subject..."
           isClearable
@@ -119,7 +121,8 @@ export const Subject = ({
           className="text-sm"
         />
       </div>
-      {canModerate && DeleteAction(isLoading, isDisabled, handleDelete)}
+      {canModerate &&
+        DeleteAction(isLoading, isDisabled || isPending, handleDelete)}
     </div>
   );
 };
