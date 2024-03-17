@@ -39,6 +39,7 @@ import {
 import classes from "./HeaderMegaMenu.module.css";
 import { User } from "@supabase/supabase-js";
 import { UserMenu } from "./UserMenu";
+import { NotesSearch } from "./NotesSearch";
 
 const mockdata = [
   {
@@ -118,82 +119,87 @@ export function HeaderMegaMenu({ user }: { user: User | null }) {
           >
             <IconWriting size={25} stroke={1} />
           </ActionIcon>
-          <Group h="100%" gap={0} visibleFrom="sm">
-            <a href="#" className={classes.link}>
-              Home
-            </a>
-            <HoverCard
-              width={600}
-              position="bottom"
-              radius="md"
-              shadow="md"
-              withinPortal
-            >
-              <HoverCard.Target>
-                <a href="#" className={classes.link}>
-                  <Center inline>
-                    <Box component="span" mr={5}>
-                      Features
-                    </Box>
-                    <IconChevronDown
-                      style={{ width: rem(16), height: rem(16) }}
-                      color={theme.colors.blue[6]}
-                    />
-                  </Center>
-                </a>
-              </HoverCard.Target>
-
-              <HoverCard.Dropdown style={{ overflow: "hidden" }}>
-                <Group justify="space-between" px="md">
-                  <Text fw={500}>Features</Text>
-                  <Anchor href="#" fz="xs">
-                    View all
-                  </Anchor>
-                </Group>
-
-                <Divider my="sm" />
-
-                <SimpleGrid cols={2} spacing={0}>
-                  {links}
-                </SimpleGrid>
-
-                <div className={classes.dropdownFooter}>
-                  <Group justify="space-between">
-                    <div>
-                      <Text fw={500} fz="sm">
-                        Get started
-                      </Text>
-                      <Text size="xs" c="dimmed">
-                        Their food sources have decreased, and their numbers
-                      </Text>
-                    </div>
-                    <Button variant="default">Get started</Button>
-                  </Group>
-                </div>
-              </HoverCard.Dropdown>
-            </HoverCard>
-            <a href="#" className={classes.link}>
-              Documentation
-            </a>
-            <a href="#" className={classes.link}>
-              Pricing
-            </a>
-          </Group>
-
-          <Group justify="flex-end">
-            {" "}
-            {user ? (
-              <UserMenu user={user} />
-            ) : (
-              <Button
-                component="a"
-                href="/login"
-                style={{ textDecoration: "none" }}
-                variant="link"
+          <Flex w={{base:"240px",md:"400px"}}>
+            <NotesSearch />
+          </Flex>
+          <Group h="100%">
+            <Group h="100%" justify="flex-end" gap={0} visibleFrom="sm">
+              <a href="#" className={classes.link}>
+                Home
+              </a>
+              <HoverCard
+                width={600}
+                position="bottom"
+                radius="md"
+                shadow="md"
+                withinPortal
               >
-                Log In
-              </Button>
-            )}
+                <HoverCard.Target>
+                  <a href="#" className={classes.link}>
+                    <Center inline>
+                      <Box component="span" mr={5}>
+                        Features
+                      </Box>
+                      <IconChevronDown
+                        style={{ width: rem(16), height: rem(16) }}
+                        color={theme.colors.blue[6]}
+                      />
+                    </Center>
+                  </a>
+                </HoverCard.Target>
+
+                <HoverCard.Dropdown style={{ overflow: "hidden" }}>
+                  <Group justify="space-between" px="md">
+                    <Text fw={500}>Features</Text>
+                    <Anchor href="#" fz="xs">
+                      View all
+                    </Anchor>
+                  </Group>
+
+                  <Divider my="sm" />
+
+                  <SimpleGrid cols={2} spacing={0}>
+                    {links}
+                  </SimpleGrid>
+
+                  <div className={classes.dropdownFooter}>
+                    <Group justify="space-between">
+                      <div>
+                        <Text fw={500} fz="sm">
+                          Get started
+                        </Text>
+                        <Text size="xs" c="dimmed">
+                          Their food sources have decreased, and their numbers
+                        </Text>
+                      </div>
+                      <Button variant="default">Get started</Button>
+                    </Group>
+                  </div>
+                </HoverCard.Dropdown>
+              </HoverCard>
+              <a href="#" className={classes.link}>
+                Documentation
+              </a>
+              <a href="#" className={classes.link}>
+                Pricing
+              </a>
+            </Group>
+
+            <Group justify="flex-end">
+              {" "}
+              {user ? (
+                <UserMenu user={user} />
+              ) : (
+                <Button
+                  component="a"
+                  href="/login"
+                  style={{ textDecoration: "none" }}
+                  variant="link"
+                >
+                  Log In
+                </Button>
+              )}
+            </Group>
           </Group>
         </Group>
       </header>

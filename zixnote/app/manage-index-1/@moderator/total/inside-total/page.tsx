@@ -2,19 +2,18 @@
 
 import { useRouter } from "next/navigation";
 import React from "react";
+import Refresh from "../../Refresh";
 
-import Link from "next/link";
 
 function Page() {
 
   const router = useRouter();
   return (
-    <div>
+    <div className="bg-red-300">
       <button type="button" onClick={() => router.back()}>
         Go back
       </button>
-      <Link href={"/manage-index-1/total/inside-total"}>insdie total</Link>
-      {/* <Refresh /> */}
+      <Refresh />
     </div>
   );
 }
