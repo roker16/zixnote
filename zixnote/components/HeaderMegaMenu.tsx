@@ -1,45 +1,41 @@
 "use client";
 import {
-  HoverCard,
-  Group,
-  Button,
-  UnstyledButton,
-  Text,
-  SimpleGrid,
-  ThemeIcon,
+  ActionIcon,
   Anchor,
-  Divider,
-  Center,
   Box,
   Burger,
-  Drawer,
+  Button,
+  Center,
   Collapse,
-  ScrollArea,
-  rem,
-  useMantineTheme,
-  Avatar,
+  Divider,
+  Drawer,
   Flex,
-  ActionIcon,
+  Group,
+  HoverCard,
+  ScrollArea,
+  SimpleGrid,
+  Text,
+  ThemeIcon,
+  UnstyledButton,
+  rem,
+  useMantineTheme
 } from "@mantine/core";
 //   import { MantineLogo } from '@mantinex/mantine-logo';
 import { useDisclosure } from "@mantine/hooks";
+import { User } from "@supabase/supabase-js";
 import {
-  IconNotification,
-  IconCode,
   IconBook,
   IconChartPie3,
-  IconFingerprint,
-  IconCoin,
   IconChevronDown,
-  IconUser,
-  IconBrandSnowflake,
-  IconAdjustments,
-  IconWriting,
+  IconCode,
+  IconCoin,
+  IconFingerprint,
+  IconNotification,
+  IconWriting
 } from "@tabler/icons-react";
 import classes from "./HeaderMegaMenu.module.css";
-import { User } from "@supabase/supabase-js";
-import { UserMenu } from "./UserMenu";
 import { NotesSearch } from "./NotesSearch";
+import { UserMenu } from "./UserMenu";
 
 const mockdata = [
   {
@@ -119,9 +115,7 @@ export function HeaderMegaMenu({ user }: { user: User | null }) {
           >
             <IconWriting size={25} stroke={1} />
           </ActionIcon>
-          <Flex w={{base:"240px",md:"400px"}}>
-            <NotesSearch />
-          </Flex>
+          
           <Group h="100%">
             <Group h="100%" justify="flex-end" gap={0} visibleFrom="sm">
               <a href="#" className={classes.link}>

@@ -1,17 +1,13 @@
 "use client";
+
 import { NestedIndexItem } from "@/app/manage-index/transformFlatToNested";
 import { ActionIcon, Box } from "@mantine/core";
-import React, { useState } from "react";
+import { useRouter } from "next/navigation";
+import React, { startTransition, useState, useTransition } from "react";
 import { MdExpandMore, MdSunny } from "react-icons/md";
-import ActionButtons from "./ActionButtons";
+import { handleTransitionNotes } from "../handleTransition1";
 
-const NestedIndex = ({
-  data,
-  canModerate,
-}: {
-  data: NestedIndexItem[];
-  canModerate: boolean;
-}) => {
+const NestedIndex = ({ data }: { data: NestedIndexItem[] }) => {
   // This component is only to show/hide chapter topics, because the
   //state *toggledIds* can not be handled properly by child *TableOfContent* because this
   // is a recursive component
@@ -30,7 +26,6 @@ const NestedIndex = ({
         data={data}
         toggledIds={toggledIds}
         handleToggle={handleToggle}
-        canModerate={canModerate}
       />
     </div>
   );
@@ -43,7 +38,6 @@ interface TableOfContentProps {
   data: NestedIndexItem[];
   toggledIds: (number | null)[];
   handleToggle: (index_id: number) => void;
-  canModerate: boolean;
 }
 
 const TableOfContent: React.FC<TableOfContentProps> = ({
@@ -51,8 +45,12 @@ const TableOfContent: React.FC<TableOfContentProps> = ({
   data,
   toggledIds,
   handleToggle,
-  canModerate,
 }) => {
+  const router = useRouter();
+  const [isPending, startTransition] = useTransition();
+  const handleUpdateParams = (id: number, heading: string) => {
+    handleTransitionNotes(id.toString(), heading, startTransition, router);
+  };
   return (
     <ul className={`py-1 list-none ${topLevelIndex ? "pl-6" : "pl-0"}`}>
       {data.map((item) => (
@@ -62,17 +60,17 @@ const TableOfContent: React.FC<TableOfContentProps> = ({
               onClick={
                 item.parent_index_id === null
                   ? () => handleToggle(item.index_id)
-                  : undefined
+                  : () => handleUpdateParams(item.index_id, item.index_name)
               }
               className={`cursor-pointer flex flex-nowrap opacity-80 py-0.5 px-2 ${
                 item.parent_index_id === null
-                  ? "font-medium italic"
+                  ? "font-medium text-sm "
                   : " group-hover:opacity-100 group-hover:bg-slate-200 group-hover:rounded-xl text-sm "
               }`}
             >
               <span>
                 {item.parent_index_id == null && (
-                  <ActionIcon variant="light" size="sm" radius="lg">
+                  <ActionIcon variant="subtle" size="sm" radius="lg">
                     {!toggledIds.includes(item.index_id) ? (
                       <MdExpandMore size={16} />
                     ) : (
@@ -84,11 +82,6 @@ const TableOfContent: React.FC<TableOfContentProps> = ({
 
               <div>{item.index_name}</div>
             </Box>
-            {canModerate && (
-              <div className="invisible group-hover:visible px-1 ">
-                <ActionButtons data={item} />
-              </div>
-            )}
           </div>
 
           {item.children &&
@@ -100,7 +93,6 @@ const TableOfContent: React.FC<TableOfContentProps> = ({
                 topLevelIndexItem={topLevelIndex ? topLevelIndex : item}
                 toggledIds={toggledIds}
                 handleToggle={handleToggle}
-                canModerate={canModerate}
               />
             )}
         </li>

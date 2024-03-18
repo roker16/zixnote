@@ -31,7 +31,7 @@ export function FooterCentered() {
   ));
 
   return (
-    <div className={classes.footer}>
+    <div className={classes.footer} >
       <div className={classes.inner}>
         <IconBrandTwitter
           style={{ width: rem(18), height: rem(18) }}
