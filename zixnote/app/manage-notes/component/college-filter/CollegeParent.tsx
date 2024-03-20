@@ -26,7 +26,7 @@ export default function CollegeParent({
   };
 
   return (
-    <div className="flex flex-col md:flex-row p-1 gap-1"  >
+    <div className="flex flex-col p-1 gap-1"  >
       {/* {isPending && "Loading......"} */}
      
         <College action={handleSelectedCollege} canModerate={canModerate} />

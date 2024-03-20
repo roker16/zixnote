@@ -21,7 +21,7 @@ export default function ExamParent({ canModerate }: { canModerate: boolean }) {
   };
 
   return (
-    <div className="flex flex-col md:flex-row p-1 gap-1"  >
+    <div className="flex flex-col p-1 gap-1"  >
       {/* {isPending && "Loading......"} */}
     
         <Exam action={handleSelectedSchool} canModerate={canModerate} />

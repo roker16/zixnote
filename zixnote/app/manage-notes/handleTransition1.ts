@@ -25,7 +25,7 @@ export function handleTransitionNotes(
   }
 
   startTransition(() => {
-    router.push(url.toString());
+    router.push(url.toString(),{scroll:false});
   });
   // return null
 }

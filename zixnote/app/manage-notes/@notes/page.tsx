@@ -4,6 +4,7 @@ import { getUserAndRole } from "../../../utils/getUserAndRole";
 
 import { createClient } from "@/utils/supabase/server";
 import { cookies } from "next/headers";
+import { wait } from "@/utils/helper";
 
 export default async function Index({
   searchParams,
@@ -16,13 +17,11 @@ export default async function Index({
   const selectedName = searchParams?.headingname;
 
   return (
-    <Box visibleFrom="xs">
+    <Box>
       <div className="w-full flex flex-col items-center">
         {selectedTopicId}
         {selectedName}
-        <Link href={"/manage-index/total"}>total</Link>
-        <Link href={"/manage-index/total/inside-total"}>insdie total</Link>
-        {/* <Refresh /> */}
+      
       </div>
     </Box>
   );

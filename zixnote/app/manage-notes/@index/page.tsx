@@ -4,6 +4,8 @@ import { getIndex } from "./getIndex";
 import { getUserAndRole } from "@/utils/getUserAndRole";
 
 import { transformFlatToNested } from "../transformFlatToNested";
+import { Suspense } from "react";
+import { wait } from "@/utils/helper";
 
 export default async function Index({
   searchParams,
@@ -16,11 +18,11 @@ export default async function Index({
 
   return (
     <div className="w-full flex flex-col items-center">
-      <div className="p-2 min-h-dvh w-full rounded-r-md bg-gray-100">
+      <div className="p-2 w-full rounded-r-md bg-gray-100">
         {indexId && searchParams?.name ? (
           <IndexTitle id={indexId} name={searchParams.name as string} />
         ) : null}
-        {index && <NestedIndex data={transformFlatToNested(index)} />}
+          {index && <NestedIndex data={transformFlatToNested(index)} />}
       </div>
     </div>
   );

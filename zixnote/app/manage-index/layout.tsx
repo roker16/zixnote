@@ -1,5 +1,4 @@
 "use client";
-import { useSelectedLayoutSegment } from "next/navigation";
 import { Suspense } from "react";
 import BottomNavigation from "../BottomNav";
 export default function ManageSyllabusLayout({

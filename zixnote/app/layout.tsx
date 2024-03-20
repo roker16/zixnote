@@ -43,9 +43,9 @@ export default async function RootLayout({
         <MantineProvider theme={theme} defaultColorScheme="light">
           <Notifications position="top-center" />
           <div>
-            <HeaderMegaMenu user={user} />
+            {/* <HeaderMegaMenu user={user} /> */}
             <div className="h-full">{children}</div>
-            <FooterCentered />
+            {/* <FooterCentered /> */}
           </div>
         </MantineProvider>
       </body>

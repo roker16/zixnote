@@ -1,17 +1,17 @@
-import React from "react";
-import { Paper, Button, ActionIcon, Group } from "@mantine/core";
+import { ActionIcon, Button, Group, Paper } from "@mantine/core";
 import {
-  IconAdjustments,
-  IconDeviceTabletOff,
   IconFolderOpen,
   IconHome,
   IconListDetails,
-  IconRestore,
   IconShare,
 } from "@tabler/icons-react";
-import { IconContext } from "react-icons/lib";
+import React, { useState } from "react";
 
-function BottomNavigation() {
+import { Drawer } from "@mantine/core";
+import { useDisclosure } from "@mantine/hooks";
+import { TablerIconsProps } from "@tabler/icons-react";
+
+export default function BottomNavigation() {
   return (
     <Paper
       style={{
@@ -19,32 +19,78 @@ function BottomNavigation() {
         bottom: 0,
         left: 0,
         width: "100%",
-        zIndex: 1000, // Ensure it stays on top of other content
+        zIndex: 1000,
       }}
       p="sm"
       shadow="md"
       radius={0}
-      //   bg="gray"
     >
       <Group justify="space-around">
-        <ActionIcon variant="light" radius="xl" aria-label="Settings">
-          <IconHome style={{ width: "70%", height: "70%" }} stroke={1.5} />
-        </ActionIcon>
-        <ActionIcon variant="light" radius="xl" aria-label="Settings">
-          <IconListDetails style={{ width: "70%", height: "70%" }} stroke={1.5} />
-        </ActionIcon>
-        <ActionIcon variant="light"  radius="xl" aria-label="Settings">
-          <IconShare style={{ width: "70%", height: "70%" }} stroke={1.5} />
-        </ActionIcon>
-        <ActionIcon variant="light" radius="xl" aria-label="Settings">
-          <IconFolderOpen
-            style={{ width: "70%", height: "70%" }}
-            stroke={1.5}
-          />
-        </ActionIcon>
+        <DrawerButton icon={IconHome} title="Home">
+          hello1
+          {/* Home Drawer Content */}
+        </DrawerButton>
+        <DrawerButton icon={IconListDetails} title="Details">
+          hello2
+          <BottomNavCompOne />
+          {/* Details Drawer Content */}
+        </DrawerButton>
+        <DrawerButton icon={IconShare} title="Share">
+          hello3
+          {/* Share Drawer Content */}
+        </DrawerButton>
+        <DrawerButton icon={IconFolderOpen} title="Files">
+          hello4
+          {/* Files Drawer Content */}
+        </DrawerButton>
       </Group>
     </Paper>
   );
 }
 
-export default BottomNavigation;
+function DrawerButton({
+  icon: Icon,
+  title,
+  children,
+}: {
+  icon: (props: TablerIconsProps) => JSX.Element;
+  title: string;
+  children: React.ReactNode;
+}) {
+  const [opened, { open, close }] = useDisclosure(false);
+  const [counter, setCounter] = useState(1);
+  return (
+    <>
+      <Drawer opened={opened} onClose={close} title={title}>
+        <Button
+          onClick={() => {
+            setCounter(counter + 1);
+          }}
+        >
+          Counter
+        </Button>
+        counter is {counter}
+        <BottomNavCompOne />
+        {children}
+      </Drawer>
+
+      <ActionIcon variant="light" radius="xl" onClick={open}>
+        <Icon style={{ width: "70%", height: "70%" }} stroke={1.5} />
+      </ActionIcon>
+    </>
+  );
+}
+
+function BottomNavCompOne() {
+  const [counter, setcounter] = useState(1);
+  return (
+    <div>
+      {counter}
+      <Button
+        onClick={() => {
+          setcounter(counter + 1);
+        }}
+      ></Button>
+    </div>
+  );
+}

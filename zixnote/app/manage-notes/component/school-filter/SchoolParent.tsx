@@ -26,7 +26,7 @@ export default function SchoolParent({
 
   return (
    
-      <div className="flex flex-col md:flex-row p-1 gap-1"  >
+      <div className="flex flex-col p-1 gap-1"  >
         <School action={handleSelectedSchool} canModerate={canModerate} />
         <Class
           action={handleSelectedClass}

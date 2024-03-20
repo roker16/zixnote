@@ -9,7 +9,7 @@ export default function PersonalParent({
   canModerate: boolean;
 }) {
   return (
-    <div className="flex flex-col md:flex-row p-1 gap-1 justify-center">
+    <div className="flex flex-col  p-1 gap-1 justify-center">
       <PersonalBook canModerate={canModerate} />
     </div>
   );

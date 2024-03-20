@@ -1,8 +1,8 @@
 "use client";
 
 import { NestedIndexItem } from "@/app/manage-index/transformFlatToNested";
-import { ActionIcon, Box } from "@mantine/core";
-import { useRouter } from "next/navigation";
+import { ActionIcon, Box, Button, useMantineTheme } from "@mantine/core";
+import { useRouter, useSearchParams } from "next/navigation";
 import React, { startTransition, useState, useTransition } from "react";
 import { MdExpandMore, MdSunny } from "react-icons/md";
 import { handleTransitionNotes } from "../handleTransition1";
@@ -11,7 +11,7 @@ const NestedIndex = ({ data }: { data: NestedIndexItem[] }) => {
   // This component is only to show/hide chapter topics, because the
   //state *toggledIds* can not be handled properly by child *TableOfContent* because this
   // is a recursive component
-  const [toggledIds, setToggledIds] = useState<(number | null)[]>([]);
+  const [toggledIds, setToggledIds] = useState<(number | null)[]>([2222222]);
 
   const handleToggle = (index_id: number) => {
     const updatedIds = toggledIds.includes(index_id)
@@ -48,6 +48,9 @@ const TableOfContent: React.FC<TableOfContentProps> = ({
 }) => {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
+  const theme = useMantineTheme();
+  const searchParams = useSearchParams();
+  const selectedTopic = searchParams.get("headingid");
   const handleUpdateParams = (id: number, heading: string) => {
     handleTransitionNotes(id.toString(), heading, startTransition, router);
   };
@@ -80,7 +83,15 @@ const TableOfContent: React.FC<TableOfContentProps> = ({
                 )}
               </span>
 
-              <div>{item.index_name}</div>
+              <div
+                className={`${
+                  item.index_id === Number(selectedTopic)
+                    ? `text-pink-700 font-semibold "`
+                    : ""
+                }`}
+              >
+                {item.index_name}
+              </div>
             </Box>
           </div>
 
