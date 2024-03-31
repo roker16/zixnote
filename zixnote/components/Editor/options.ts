@@ -1,31 +1,32 @@
 import { SunEditorOptions } from "suneditor/src/options";
 import katex from "katex";
 import "katex/dist/katex.min.css"; // import here not in suneditor file
+
 export const options: SunEditorOptions = {
   rtl: false,
-  hideToolbar: true, //not working set directly this options in suneditor
+  // hideToolbar: true, //not working set directly this options in suneditor
   mode: "classic",
   katex: katex,
-  
-
+  height: "auto",
   resizingBar: false, // for hiding bottom bar
   //   className:"card shadow-xl",
-  callBackSave: (contents) => {
-    alert(contents);
-  },
-  imageUploadUrl:"http://localhost:3000/api/uploadImage",
+  // callBackSave: (contents) => {
+  //   alert(contents);
+  // },
+  imageUploadUrl: `${window.location.origin}/api/uploadImage`,
   imageGalleryUrl:
     "https://etyswjpn79.execute-api.ap-northeast-1.amazonaws.com/suneditor-demo",
   videoFileInput: false,
   tabDisable: false,
   buttonList: [
     [
-      "undo",
-      "redo",
+      
+      // "undo",
+      // "redo",
       "font",
       "fontSize",
       "formatBlock",
-      "paragraphStyle",
+      // "paragraphStyle",
       "blockquote",
       "bold",
       "underline",
@@ -35,28 +36,29 @@ export const options: SunEditorOptions = {
       "superscript",
       "fontColor",
       "hiliteColor",
-      "textStyle",
+      // "textStyle",
       "removeFormat",
       "outdent",
       "indent",
       "align",
-      "horizontalRule",
+      // "horizontalRule",
       "list",
-      "lineHeight",
+      // "lineHeight",
       "table",
       "link",
-      "image",
-      "video",
-      "audio",
+
+      // "video",
+      // "audio",
       "math",
-      "imageGallery",
+      // "imageGallery",
       "fullScreen",
-      "showBlocks",
-      "codeView",
-      "preview",
+      // "showBlocks",
+      // "codeView",
+      // "preview",
       "print",
       "save",
-      "template",
+      // "template",
+      "image",
     ],
   ],
 };

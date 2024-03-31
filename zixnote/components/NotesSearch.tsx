@@ -13,11 +13,13 @@ export function NotesSearch(props?: TextInputProps) {
 
   return (
     <TextInput
-      radius="md"
+      radius="xl"
       size={"sm"}
-      style={{ width: "100%" }}
-      placeholder="Search Notes..."
-      rightSectionWidth={42}
+      w={325}
+    
+      // style={{ width: "100%" }}
+      placeholder="Search your notes..."
+      // rightSectionWidth={42}
       leftSection={
         <IconSearch style={{ width: rem(18), height: rem(18) }} stroke={1.5} />
       }

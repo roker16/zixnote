@@ -10,7 +10,6 @@ import "./globals.css"; //this should be always below mantine styles.css
 import { theme } from "./theme";
 import { User } from "@supabase/supabase-js";
 
-
 const defaultUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
   : "http://localhost:3000";
@@ -31,7 +30,6 @@ export default async function RootLayout({
     data: { user },
   } = await supabase.auth.getUser();
 
-
   // const theme = ["light", "luxury", "dark", "valentine", "wireframe"];
   return (
     <html lang="en">
@@ -44,7 +42,7 @@ export default async function RootLayout({
           <Notifications position="top-center" />
           <div>
             {/* <HeaderMegaMenu user={user} /> */}
-            <div className="h-full">{children}</div>
+            <div>{children}</div>
             {/* <FooterCentered /> */}
           </div>
         </MantineProvider>
@@ -52,4 +50,3 @@ export default async function RootLayout({
     </html>
   );
 }
-

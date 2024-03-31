@@ -1,10 +1,13 @@
-import { Box } from "@mantine/core";
-import Link from "next/link";
+import { Box, Center, Flex, Text } from "@mantine/core";
 import { getUserAndRole } from "../../../utils/getUserAndRole";
 
+import GoogleSignin from "@/components/GoogleSignin";
 import { createClient } from "@/utils/supabase/server";
 import { cookies } from "next/headers";
-import { wait } from "@/utils/helper";
+import SunEditorTest from "@/components/Editor/Suneditor";
+import Notes from "./notes";
+import { Suspense } from "react";
+import { MyAlert } from "./MyAlert";
 
 export default async function Index({
   searchParams,
@@ -12,31 +15,64 @@ export default async function Index({
   searchParams?: { [key: string]: string | string[] | undefined };
 }) {
   const { user, role } = await getUserAndRole();
-
+  if (!user) {
+    return (
+      <Center>
+        <GoogleSignin />
+      </Center>
+    );
+  }
+  const selectedSyllabus = searchParams?.id;
+  if (!selectedSyllabus) {
+    return (
+      <Center>
+        <MyAlert
+          title={"Select Syllabus"}
+          detail={"Select syllabus from left panel."}
+        />
+      </Center>
+    );
+  }
   const selectedTopicId = searchParams?.headingid;
   const selectedName = searchParams?.headingname;
 
+  if (!selectedTopicId) {
+    return (
+      <Center>
+        <MyAlert
+          title={"Select Topic"}
+          detail={"Select topic from index to view or create notes."}
+        />
+      </Center>
+    );
+  }
+
+  const data = await getNotes(Number(selectedTopicId), user.id);
+
   return (
-    <Box>
-      <div className="w-full flex flex-col items-center">
-        {selectedTopicId}
-        {selectedName}
+    // <Box>
+    <div className="mx-0">
+      <Suspense fallback={<div>loading...</div>}>
+        <Center>
+          <Text fw={500}>{selectedName}</Text>
+        </Center>
+
+        {/* {selectedName}
+        {user.id} */}
+      </Suspense>
       
-      </div>
-    </Box>
+      <Notes topicId={selectedTopicId as string} userId={user.id} />
+    </div>
+    // </Box>
   );
 }
-async function checkIfPersonal(id: number) {
+async function getNotes(indexId: number, userId: string) {
   const supabase = createClient(cookies());
-  const userId = (await supabase.auth.getUser()).data.user?.id;
   const { data, error } = await supabase
-    .from("syll_syllabus_entity")
-    .select(`id,type_id, owner_id`)
-    .eq("id", id)
-    .eq("owner_id", userId!);
+    .from("notes")
+    .select(`*`)
+    .eq("index_id_fk", indexId)
+    .eq("owner_fk", userId);
 
-  if (data && data.length === 0) {
-    return false;
-  }
-  return true;
+  return data;
 }

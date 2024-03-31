@@ -1,0 +1,26 @@
+.sticky-header {
+    width: 100%;
+    background-color: #333;
+    padding: 20px 0;
+    transition: background-color 5s ease;
+  }
+  
+  .sticky {
+    position: fixed;
+    top: 0;
+    z-index: 1000;
+  }
+  
+  .content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+  
+  .sticky-text {
+    color: #ff6600; /* Change color when sticky */
+  }
+  

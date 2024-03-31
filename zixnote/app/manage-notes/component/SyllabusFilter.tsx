@@ -73,11 +73,11 @@ export default function SyllabusFilter({
         handleTabChange(selectedTab!);
       }}
       variant="pills"
-      radius="md"
+      radius="xl"
     >
-      <Tabs.List p="xs" justify="center">
+      <Tabs.List p={"xs"} justify="center">
         {tabsData.map(({ value, icon, label }) => (
-          <Tabs.Tab key={value} value={value} leftSection={icon}>
+          <Tabs.Tab key={value} value={value} leftSection={icon} py={8}>
             {label}
           </Tabs.Tab>
         ))}
