@@ -18,7 +18,7 @@ import { useDisclosure, useHeadroom } from "@mantine/hooks";
 import { User } from "@supabase/supabase-js";
 import { IconEdit, IconNotebook } from "@tabler/icons-react";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 export default function ManageSyllabusLayout({
   children,
   filter,
@@ -192,7 +192,7 @@ export default function ManageSyllabusLayout({
       </AppShell.Navbar>
       <AppShell.Main pt={`calc(${rem(60)} + var(--mantine-spacing-md))`}>
         <Space h={80} />
-        {notes}
+        <Suspense fallback={<div>loading...</div>}>{notes}</Suspense>
       </AppShell.Main>
       {/* <AppShell.Aside p="md">Aside</AppShell.Aside> */}
       {/* <AppShell.Footer p="md">Footer</AppShell.Footer> */}
