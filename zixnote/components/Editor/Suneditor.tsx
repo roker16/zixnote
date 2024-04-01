@@ -84,40 +84,43 @@ function SunEditorTest({
       owner_fk: "44ea6393-ec00-4a4e-bec5-144eb86f8ed7",
       index_id_fk: 234,
     });
-
+  if (typeof window === "undefined") {
+    // We are on the server
+    return;
+  }
   return (
     <div>
       <Radio.Group
         value={value}
         onChange={setValue}
-         py={"xs"}
-       
+        py={"xs"}
+
         // defaultValue="read"
         // name="favoriteFramework"
       >
         <Group mt="xs">
-          <Radio value="read" label="Read"  />
+          <Radio value="read" label="Read" />
           <Radio value="edit" label="Edit" />
         </Group>
       </Radio.Group>
 
       <EditorStyle title={value}>
-      {/* {notesContent} */}
-      <SunEditor
-        // width="auto"
-        // setContents={notesContent || "hello"}
-        defaultValue={notesContent || "Hello"}
-        setOptions={{
-          ...options,
-          callBackSave: (contents) => {
-            onSubmitHandler(contents);
-          },
-        }}
-        hideToolbar={value !== "edit"}
-        setDefaultStyle="font-family: arial; font-size: 12px;"
-        disable={false}
-        readOnly={value !== "edit"}
-      />
+        {/* {notesContent} */}
+        <SunEditor
+          // width="auto"
+          // setContents={notesContent || "hello"}
+          defaultValue={notesContent || "Hello"}
+          setOptions={{
+            ...options,
+            callBackSave: (contents) => {
+              onSubmitHandler(contents);
+            },
+          }}
+          hideToolbar={value !== "edit"}
+          setDefaultStyle="font-family: arial; font-size: 12px;"
+          disable={false}
+          readOnly={value !== "edit"}
+        />
       </EditorStyle>
     </div>
   );

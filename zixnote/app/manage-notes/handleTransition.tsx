@@ -8,6 +8,7 @@ export function handleTransition(
   startTransition: TransitionStartFunction,
   router: AppRouterInstance
 ) {
+
   // const router = useRouter();
   const url = new URL(window.location.href);
   url.searchParams.delete("headingid");

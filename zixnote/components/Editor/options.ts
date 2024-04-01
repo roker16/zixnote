@@ -2,6 +2,8 @@ import { SunEditorOptions } from "suneditor/src/options";
 import katex from "katex";
 import "katex/dist/katex.min.css"; // import here not in suneditor file
 
+export const BASE_URL = "http://localhost:3000"
+
 export const options: SunEditorOptions = {
   rtl: false,
   // hideToolbar: true, //not working set directly this options in suneditor
@@ -13,7 +15,7 @@ export const options: SunEditorOptions = {
   // callBackSave: (contents) => {
   //   alert(contents);
   // },
-  imageUploadUrl: `${window.location.origin}/api/uploadImage`,
+  imageUploadUrl: `${BASE_URL}/api/uploadImage`,
   imageGalleryUrl:
     "https://etyswjpn79.execute-api.ap-northeast-1.amazonaws.com/suneditor-demo",
   videoFileInput: false,

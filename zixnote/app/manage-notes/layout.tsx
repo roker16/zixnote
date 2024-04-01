@@ -56,14 +56,14 @@ export default function ManageSyllabusLayout({
         breakpoint: "md",
         collapsed: { mobile: !opened },
       }}
-      // aside={{
-      //   width: 0,
-      //   breakpoint: "lg",
-      //   collapsed: { desktop: false, mobile: true },
-      // }}
+      aside={{
+        width: 150,
+        breakpoint: "lg",
+        collapsed: { desktop: false, mobile: true },
+      }}
     >
       <AppShell.Header>
-        <Group h="100%" px="md">
+        <Group h="100%" px="md" >
           <Burger opened={opened} onClick={toggle} hiddenFrom="md" size="sm" />
           <IconNotebook size={30} />
           <Button
@@ -194,7 +194,7 @@ export default function ManageSyllabusLayout({
         <Space h={80} />
         <Suspense fallback={<div>loading...</div>}>{notes}</Suspense>
       </AppShell.Main>
-      {/* <AppShell.Aside p="md">Aside</AppShell.Aside> */}
+      <AppShell.Aside p="md">Aside</AppShell.Aside>
       {/* <AppShell.Footer p="md">Footer</AppShell.Footer> */}
     </AppShell>
   );
