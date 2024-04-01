@@ -84,10 +84,6 @@ function SunEditorTest({
       owner_fk: "44ea6393-ec00-4a4e-bec5-144eb86f8ed7",
       index_id_fk: 234,
     });
-  if (typeof window === "undefined") {
-    // We are on the server
-    return;
-  }
   return (
     <div>
       <Radio.Group
