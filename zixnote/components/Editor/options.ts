@@ -1,8 +1,9 @@
 import { SunEditorOptions } from "suneditor/src/options";
 import katex from "katex";
 import "katex/dist/katex.min.css"; // import here not in suneditor file
+import { BASE_URL, isDevEnvironment } from "@/utils/helper";
 
-export const BASE_URL = "http://localhost:3000"
+
 
 export const options: SunEditorOptions = {
   rtl: false,
@@ -22,7 +23,6 @@ export const options: SunEditorOptions = {
   tabDisable: false,
   buttonList: [
     [
-      
       // "undo",
       // "redo",
       "font",
