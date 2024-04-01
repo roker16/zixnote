@@ -16,7 +16,7 @@ export const options: SunEditorOptions = {
   // callBackSave: (contents) => {
   //   alert(contents);
   // },
-  imageUploadUrl: `${BASE_URL}/api/uploadImage`,
+  imageUploadUrl: `${BASE_URL}/api/uploadImage`, 
   imageGalleryUrl:
     "https://etyswjpn79.execute-api.ap-northeast-1.amazonaws.com/suneditor-demo",
   videoFileInput: false,
