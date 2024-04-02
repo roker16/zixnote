@@ -8,6 +8,7 @@ import SunEditorTest from "@/components/Editor/Suneditor";
 import Notes from "./notes";
 import { Suspense } from "react";
 import { MyAlert } from "./MyAlert";
+import CreateNotesForm from "../component/CreateNotesForm";
 
 export default async function Index({
   searchParams,
@@ -52,16 +53,14 @@ export default async function Index({
   return (
     // <Box>
     <div className="mx-0">
-      <Suspense fallback={<div>loading...</div>}>
-        <Center>
-          <Text fw={500}>{selectedName}</Text>
-        </Center>
+      <Center>
+        <Text fw={500}>{selectedName}</Text>
+      </Center>
 
-        {/* {selectedName}
-        {user.id} */}
-      </Suspense>
-      
       <Notes topicId={selectedTopicId as string} userId={user.id} />
+      <Center h={"100px"}>
+        <CreateNotesForm />
+      </Center>
     </div>
     // </Box>
   );

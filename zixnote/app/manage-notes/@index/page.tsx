@@ -18,7 +18,7 @@ export default async function Index({
 
   return (
     <div className="w-full flex flex-col items-center">
-      <div className="p-2 w-full rounded-r-md bg-gray-100">
+      <div className="p-2 w-full rounded-r-md">
         {indexId && searchParams?.name ? (
           <IndexTitle id={indexId} name={searchParams.name as string} />
         ) : null}

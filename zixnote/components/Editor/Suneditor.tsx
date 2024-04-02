@@ -31,9 +31,11 @@ export const EditorStyle = styled.div`
 function SunEditorTest({
   notesId,
   notesContent,
+ 
 }: {
   notesId: number;
   notesContent: string | undefined | null;
+
 }) {
   const [id, setId] = useState<number | undefined>(notesId);
   useEffect(() => {
@@ -41,7 +43,6 @@ function SunEditorTest({
   }, [notesId]);
 
   const searchParams = useSearchParams();
-
   const headingId = searchParams.get("headingid");
   const supabase = createClient();
 
@@ -66,7 +67,7 @@ function SunEditorTest({
   //       : { notes_hindi: newcontent }
   //   )
   //   .eq("id", 7);
-  const { trigger: insert } = useUpdateMutation(
+  const { trigger: update } = useUpdateMutation(
     supabase.from("notes"),
     ["id"],
     null,
@@ -77,12 +78,12 @@ function SunEditorTest({
   );
 
   const onSubmitHandler = async (e: string) =>
-    await insert({
+    await update({
       id: notesId,
       notes_english: e,
-      order: 1,
-      owner_fk: "44ea6393-ec00-4a4e-bec5-144eb86f8ed7",
-      index_id_fk: 234,
+      // // order: 1,
+      // owner_fk: "44ea6393-ec00-4a4e-bec5-144eb86f8ed7",
+      // index_id_fk: Number(headingId),
     });
   return (
     <div>

@@ -16,7 +16,7 @@
 .sun-editor .se-toolbar.se-toolbar-sticky {
   /* Replace with the actual class of your header */
   position: sticky !important;
-  top: 52px !important; /* 100px below the top */
+  top: 50px !important; /* 100px below the top */
   /* background-color: #f2d8d8; */
   /* z-index: 400 !important; */
 }

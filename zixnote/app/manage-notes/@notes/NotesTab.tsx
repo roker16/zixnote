@@ -3,9 +3,12 @@ import Suneditor from "@/components/Editor/Suneditor";
 import { createClient } from "@/utils/supabase/client";
 import { Tabs, Skeleton } from "@mantine/core";
 import { useQuery } from "@supabase-cache-helpers/postgrest-swr";
+import { useSearchParams } from "next/navigation";
 
 function NotesTab({ notesId }: { notesId: number }) {
   const supabase = createClient();
+
+  
   const { data, count } = useQuery(
     notesId
       ? supabase

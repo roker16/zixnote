@@ -11,6 +11,7 @@ import {
   SegmentedControl,
   Space,
   Tabs,
+  alpha,
   rem,
   useMantineTheme,
 } from "@mantine/core";
@@ -32,6 +33,7 @@ export default function ManageSyllabusLayout({
 }) {
   const [opened, { toggle }] = useDisclosure();
   const [value, setValue] = useState("react");
+  const [activeTab, setActiveTab] = useState<string | null>("first");
   const theme = useMantineTheme();
   const pinned = useHeadroom({ fixedAt: 120 });
   const supabase = createClient();
@@ -48,22 +50,22 @@ export default function ManageSyllabusLayout({
     <AppShell
       layout="alt"
       header={{ height: 60, collapsed: !pinned, offset: false }}
-      padding={{ base: 5, md: "md", xl: 90 }}
+      padding={{ base: 0, md: 0, xl: 90 }}
       // header={{ height: 50 }}
       // footer={{ height: 60 }}
       navbar={{
-        width: 350,
+        width: 300,
         breakpoint: "md",
         collapsed: { mobile: !opened },
       }}
       aside={{
-        width: 150,
+        width: 0,
         breakpoint: "lg",
         collapsed: { desktop: false, mobile: true },
       }}
     >
-      <AppShell.Header>
-        <Group h="100%" px="md" >
+      <AppShell.Header withBorder={true}>
+        <Group h="100%" px="md" bg={theme.colors.indigo[0]}>
           <Burger opened={opened} onClick={toggle} hiddenFrom="md" size="sm" />
           <IconNotebook size={30} />
           <Button
@@ -98,31 +100,32 @@ export default function ManageSyllabusLayout({
             <NotesSearch />
           </Flex> */}
         </Group>
-        {/*         
+
         <Paper
-          shadow="xl"
-          bg={"yellow"}
+          // shadow="xs"
+          // bg={alpha("--var(--mantine-color-gray-2)",0.74)}
           h={50}
           style={{ position: "sticky", top: "0px", zIndex: "100" }}
         >
           <Tabs
+            value={activeTab}
+            onChange={setActiveTab}
             defaultValue="first"
             variant="pills"
-            color={theme.colors.gray[7]}
+            color={theme.colors.indigo[7]}
             radius="xl"
-            bg={"yellow"}
+            bg={theme.colors.indigo[1]}
             p={8}
           >
             <Tabs.List justify="center">
               <Tabs.Tab value="first">Notes</Tabs.Tab>
               <Tabs.Tab value="second">Shared</Tabs.Tab>
               <Tabs.Tab value="third">Trend</Tabs.Tab>
-           
             </Tabs.List>
           </Tabs>
-        </Paper> */}
+        </Paper>
 
-        <Paper
+        {/* <Paper
           shadow="xs"
           bg={!pinned ? theme.colors.gray[2] : "white"}
           radius={"0px"}
@@ -139,26 +142,28 @@ export default function ManageSyllabusLayout({
             h={50}
             size={"md"}
             value={value}
-            variant="light"
+         
             radius="xl"
             // style={{"backgroundColor":theme.primaryColor,"opacity":"90%"}}
             color={!pinned ? theme.colors.indigo[6] : theme.colors.gray[8]}
             bg={!pinned ? theme.colors.gray[2] : "white"}
             onChange={setValue}
             data={[
-              { label: "Notes", value: "react" },
-              { label: "Sharing", value: "ng" },
-              { label: "Shared", value: "vue" },
+              { label: "Button1", value: "react" },
+              { label: "Button2", value: "ng" },
+              { label: "Button3", value: "vue" },
               { label: "Svelte1", value: "svelte" },
 
-              // { label: "Svelte", value: "svelte1" },
-              // { label: "Svelte", value: "svelte11" },
             ]}
           />
-        </Paper>
+        </Paper> */}
       </AppShell.Header>
-      <AppShell.Navbar p="xs">
-        <Group justify="space-between">
+      <AppShell.Navbar
+        withBorder={false}
+        h={"full"}
+        bg={"var(--mantine-color-indigo-0)"}
+      >
+        <Group justify="space-between" p={2} bg={"var(--mantine-color-indigo-0)"}>
           <Group>
             <UserMenu user={user} />
 
@@ -176,15 +181,7 @@ export default function ManageSyllabusLayout({
           <Burger opened={opened} onClick={toggle} hiddenFrom="sm" size="sm" />
         </Group>
 
-        {/* <Accordion variant="default" defaultValue="Apples">
-          <Accordion.Item value={"item.value"}>
-            <Accordion.Control>{"Change Index"}</Accordion.Control>
-            <Accordion.Panel>{filter}</Accordion.Panel>
-          </Accordion.Item>
-        </Accordion> */}
-
-        {/* <AppShell.Section component={ScrollArea}> */}
-        <ScrollArea scrollbarSize={4} scrollHideDelay={0} offsetScrollbars>
+        <ScrollArea scrollbarSize={4} scrollHideDelay={0} h={"100vh"}>
           {filter}
           {index}
         </ScrollArea>
@@ -192,9 +189,17 @@ export default function ManageSyllabusLayout({
       </AppShell.Navbar>
       <AppShell.Main pt={`calc(${rem(60)} + var(--mantine-spacing-md))`}>
         <Space h={80} />
-        <Suspense fallback={<div>loading...</div>}>{notes}</Suspense>
+        {activeTab === "first" && (
+          <Suspense fallback={<div>loading...</div>}>{notes}</Suspense>
+        )}
+        {activeTab === "second" && (
+          <div>Second Tab</div>
+        )}
+        {activeTab === "third" && (
+              <div>Third Tab</div>
+        )}
       </AppShell.Main>
-      <AppShell.Aside p="md">Aside</AppShell.Aside>
+      {/* <AppShell.Aside withBorder={true} p="md">Aside</AppShell.Aside> */}
       {/* <AppShell.Footer p="md">Footer</AppShell.Footer> */}
     </AppShell>
   );
