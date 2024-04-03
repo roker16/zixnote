@@ -14,7 +14,7 @@ import { User } from "@supabase/supabase-js";
 const TopNavBar = ({ user }: { user: User | null }) => {
   return (
     <Grid bg={"red"} justify="flex-center" align="flex-center">
-      <Grid.Col bg="cyan" span={3}>
+      <Grid.Col bg="indigo" span={3}>
         {" "}
         <div style={{ display: "flex", alignItems: "center" }}>
           <img
@@ -30,7 +30,7 @@ const TopNavBar = ({ user }: { user: User | null }) => {
       <Grid.Col bg="gray" span={6}>
         2
       </Grid.Col>
-      <Grid.Col bg="cyan" span={3} >
+      <Grid.Col bg="indigo" span={3} >
         <Group justify="flex-end" bg="red" >
           {" "}
           {user ? (

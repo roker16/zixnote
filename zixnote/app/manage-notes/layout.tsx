@@ -50,7 +50,7 @@ export default function ManageSyllabusLayout({
     <AppShell
       layout="alt"
       header={{ height: 60, collapsed: !pinned, offset: false }}
-      padding={{ base: 0, md: 0, xl: 90 }}
+      padding={{ base: 0, md: 4, xl: 90 }}
       // header={{ height: 50 }}
       // footer={{ height: 60 }}
       navbar={{
@@ -65,7 +65,7 @@ export default function ManageSyllabusLayout({
       }}
     >
       <AppShell.Header withBorder={true}>
-        <Group h="100%" px="md" bg={theme.colors.indigo[0]}>
+        <Group h="100%" px="md" bg={theme.colors.gray[0]}>
           <Burger opened={opened} onClick={toggle} hiddenFrom="md" size="sm" />
           <IconNotebook size={30} />
           <Button
@@ -112,9 +112,9 @@ export default function ManageSyllabusLayout({
             onChange={setActiveTab}
             defaultValue="first"
             variant="pills"
-            color={theme.colors.indigo[7]}
+            // color={theme.colors.indigo[7]}
             radius="xl"
-            bg={theme.colors.indigo[1]}
+            bg={theme.colors.gray[1]}
             p={8}
           >
             <Tabs.List justify="center">
@@ -161,10 +161,10 @@ export default function ManageSyllabusLayout({
       <AppShell.Navbar
         withBorder={false}
         h={"full"}
-        bg={"var(--mantine-color-indigo-0)"}
+        bg={"var(--mantine-color-gray-0)"}
       >
-        <Group justify="space-between" p={2} bg={"var(--mantine-color-indigo-0)"}>
-          <Group>
+        <Group justify="space-between" p={2} bg={"var(--mantine-color-gray-0)"}>
+          <Group p={6}>
             <UserMenu user={user} />
 
             <Button
@@ -178,7 +178,7 @@ export default function ManageSyllabusLayout({
               Index
             </Button>
           </Group>
-          <Burger opened={opened} onClick={toggle} hiddenFrom="sm" size="sm" />
+          <Burger opened={opened} onClick={toggle} hiddenFrom="md" size="sm" />
         </Group>
 
         <ScrollArea scrollbarSize={4} scrollHideDelay={0} h={"100vh"}>

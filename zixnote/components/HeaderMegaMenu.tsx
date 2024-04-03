@@ -111,7 +111,7 @@ export function HeaderMegaMenu({ user }: { user: User | null }) {
             variant="gradient"
             size="lg"
             radius={"xl"}
-            gradient={{ from: "cyan", to: "blue", deg: 304 }}
+            gradient={{ from: "indigo", to: "blue", deg: 304 }}
           >
             <IconWriting size={25} stroke={1} />
           </ActionIcon>

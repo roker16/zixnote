@@ -12,7 +12,7 @@ function IndexTitle({
 }) {
   return (
     <Group>
-      <p className=" font-semibold opacity-90 ">{name}</p>
+      <p className=" font-semibold text-sm opacity-80 ">{name}</p>
     </Group>
   );
 }

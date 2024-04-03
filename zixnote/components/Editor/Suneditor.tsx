@@ -19,6 +19,7 @@ import {
 } from "@supabase-cache-helpers/postgrest-swr";
 import styled from "styled-components";
 import { Button, Group, Radio, SegmentedControl } from "@mantine/core";
+import { Course } from '../../app/manage-index-2/component/college-filter/Course';
 const SunEditor = dynamic(() => import("suneditor-react"), {
   ssr: false,
 });
@@ -95,9 +96,9 @@ function SunEditorTest({
         // defaultValue="read"
         // name="favoriteFramework"
       >
-        <Group mt="xs">
-          <Radio value="read" label="Read" />
-          <Radio value="edit" label="Edit" />
+        <Group px={6}>
+          <Radio value="read" label="Read" size="xs" variant="outline" color="green"/>
+          <Radio value="edit" label="Edit" size="xs" variant="outline" color="red"/>
         </Group>
       </Radio.Group>
 
@@ -114,7 +115,7 @@ function SunEditorTest({
             },
           }}
           hideToolbar={value !== "edit"}
-          setDefaultStyle="font-family: arial; font-size: 12px;"
+          setDefaultStyle="font-family: arial; font-size: 16px;"
           disable={false}
           readOnly={value !== "edit"}
         />

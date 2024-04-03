@@ -53,8 +53,9 @@ function Notes({ topicId, userId }: { topicId: string; userId: string }) {
       <Accordion.Item
         key={item.id}
         value={item.id.toString()}
-        bg={"var(--mantine-color-gray-0)"}
+        bg={"var(--mantine-color-gray-1)"}
         my={"xs"}
+        
       >
         <Center>
           <Menu shadow="md" width={200} position="bottom-start">
@@ -94,7 +95,7 @@ function Notes({ topicId, userId }: { topicId: string; userId: string }) {
 
           <Accordion.Control>{item.title + item.id}</Accordion.Control>
         </Center>
-        <Accordion.Panel>
+        <Accordion.Panel >
           {value?.includes(item.id.toString()) && (
             <NotesTab notesId={item.id!} />
           )}

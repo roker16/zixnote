@@ -4,7 +4,7 @@ export const theme = createTheme({
   // fontFamily: "Verdana, sans-serif",
   // fontFamilyMonospace: "Monaco, Courier, monospace",
   // headings: { fontFamily: "Greycliff CF, sans-serif" },
-  primaryColor: "indigo",
+  primaryColor: "cyan",
   primaryShade: 7,
   colors: {
     "ocean-blue": [
@@ -19,7 +19,7 @@ export const theme = createTheme({
       "#128797",
       "#147885",
     ],
-    "bright-pink": [
+    "brightred": [
       "#F0BBDD",
       "#ED9BCF",
       "#EC7CC3",
