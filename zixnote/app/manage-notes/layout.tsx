@@ -117,7 +117,7 @@ export default function ManageSyllabusLayout({
             bg={theme.colors.gray[1]}
             p={8}
           >
-            <Tabs.List justify="center">
+            <Tabs.List justify={"center"}>
               <Tabs.Tab value="first">Notes</Tabs.Tab>
               <Tabs.Tab value="second">Shared</Tabs.Tab>
               <Tabs.Tab value="third">Trend</Tabs.Tab>

@@ -1,5 +1,5 @@
-import { FooterCentered } from "@/components/FooterCentered";
-import { HeaderMegaMenu } from "@/components/HeaderMegaMenu";
+import { FooterCentered } from "@/components/landing/FooterCentered";
+import { HeaderMegaMenu } from "@/components/landing/HeaderMegaMenu";
 import { createClient } from "@/utils/supabase/server";
 import { ColorSchemeScript, MantineProvider } from "@mantine/core";
 import { Notifications } from "@mantine/notifications";
@@ -41,9 +41,9 @@ export default async function RootLayout({
         <MantineProvider theme={theme} defaultColorScheme="light">
           <Notifications position="top-center" />
           <div>
-            {/* <HeaderMegaMenu user={user} /> */}
+            
             <div>{children}</div>
-            {/* <FooterCentered /> */}
+           
           </div>
         </MantineProvider>
       </body>

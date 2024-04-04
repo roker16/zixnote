@@ -27,7 +27,7 @@ function NotesTab({ notesId }: { notesId: number }) {
   return (
     <div>
       <Tabs defaultValue="english" >
-        <Tabs.List>
+        <Tabs.List >
           <Tabs.Tab value="english">English</Tabs.Tab>
           <Tabs.Tab value="hindi">Hindi</Tabs.Tab>
         </Tabs.List>

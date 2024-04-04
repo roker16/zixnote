@@ -34,8 +34,9 @@ import {
   IconWriting
 } from "@tabler/icons-react";
 import classes from "./HeaderMegaMenu.module.css";
-import { NotesSearch } from "./NotesSearch";
-import { UserMenu } from "./UserMenu";
+import { NotesSearch } from "../NotesSearch";
+import { UserMenu } from "../UserMenu";
+import Link from "next/link";
 
 const mockdata = [
   {
@@ -111,16 +112,19 @@ export function HeaderMegaMenu({ user }: { user: User | null }) {
             variant="gradient"
             size="lg"
             radius={"xl"}
-            gradient={{ from: "indigo", to: "blue", deg: 304 }}
+            gradient={{ from: "var(--mantine-color-cyan-4)", to: "var(--mantine-color-cyan-7)", deg: 304 }}
           >
             <IconWriting size={25} stroke={1} />
           </ActionIcon>
           
           <Group h="100%">
             <Group h="100%" justify="flex-end" gap={0} visibleFrom="sm">
-              <a href="#" className={classes.link}>
-                Home
-              </a>
+              <Link href="/manage-notes" className={classes.link}>
+                Notes
+              </Link>
+              <Link href="/manage-index" className={classes.link}>
+                Manage Syllabus
+              </Link>
               <HoverCard
                 width={600}
                 position="bottom"
