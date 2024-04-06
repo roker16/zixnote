@@ -3,8 +3,10 @@ import { UserMenu } from "@/components/UserMenu";
 import { createClient } from "@/utils/supabase/client";
 import {
   AppShell,
+  Box,
   Burger,
   Button,
+  Center,
   Group,
   Paper,
   ScrollArea,
@@ -17,7 +19,7 @@ import {
 } from "@mantine/core";
 import { useDisclosure, useHeadroom } from "@mantine/hooks";
 import { User } from "@supabase/supabase-js";
-import { IconEdit, IconNotebook } from "@tabler/icons-react";
+import { IconDotsVertical, IconEdit, IconNotebook } from "@tabler/icons-react";
 import Link from "next/link";
 import { Suspense, useEffect, useState } from "react";
 export default function ManageSyllabusLayout({
@@ -49,10 +51,10 @@ export default function ManageSyllabusLayout({
   return (
     <AppShell
       layout="alt"
-      header={{ height: 60, collapsed: !pinned, offset: false }}
+      header={{ height: 50, offset: false }}
       padding={{ base: 0, md: 4, xl: 90 }}
       // header={{ height: 50 }}
-      // footer={{ height: 60 }}
+      // footer={{ height: 50 }}
       navbar={{
         width: 300,
         breakpoint: "md",
@@ -65,42 +67,6 @@ export default function ManageSyllabusLayout({
       }}
     >
       <AppShell.Header withBorder={true}>
-        <Group h="100%" px="md" bg={theme.colors.gray[0]}>
-          <Burger opened={opened} onClick={toggle} hiddenFrom="md" size="sm" />
-          <IconNotebook size={30} />
-          <Button
-            variant="subtle"
-            size="compact-sm"
-            color={"dark"}
-            component={Link}
-            href="/manage-index"
-          >
-            Pricing
-          </Button>
-          <Button
-            variant="subtle"
-            size="compact-sm"
-            color="dark"
-            component={Link}
-            href="/manage-index"
-          >
-            Guide
-          </Button>
-          <Button
-            variant="subtle"
-            size="compact-sm"
-            color="dark"
-            component={Link}
-            href="/manage-index"
-            rightSection={<IconEdit size={14} />}
-          >
-            Index
-          </Button>
-          {/* <Flex justify={"center"}>
-            <NotesSearch />
-          </Flex> */}
-        </Group>
-
         <Paper
           // shadow="xs"
           // bg={alpha("--var(--mantine-color-gray-2)",0.74)}
@@ -118,12 +84,34 @@ export default function ManageSyllabusLayout({
 
             // p={8}
           >
-            <Tabs.List justify={"center"}  h={50} >
-              <Tabs.Tab value="first">Notes</Tabs.Tab>
+            <Tabs.List justify={"space-between"} h={50}>
+              <Group h="100%">
+                <Burger
+                  opened={opened}
+                  onClick={toggle}
+                  hiddenFrom="md"
+                  size="sm"
+                />
+                <IconNotebook
+                  style={{
+                    marginTop: "auto",
+                    marginBottom: "auto",
+                  }}
+                />
+                {/* <MantineLogo size={30} /> */}
+              </Group>
 
-              <Tabs.Tab value="second">Shared</Tabs.Tab>
-              <Tabs.Tab value="third">Trend</Tabs.Tab>
-              <Tabs.Tab value="forth">Notes</Tabs.Tab>
+              <Group gap={0}>
+                {" "}
+                <Tabs.Tab value="first">Notes</Tabs.Tab>
+                <Tabs.Tab value="second">Shared</Tabs.Tab>
+                <Tabs.Tab value="third">Trend</Tabs.Tab>
+                <Tabs.Tab value="forth">Notes</Tabs.Tab>
+                {/* <Tabs.Tab value="fifth">Notes</Tabs.Tab> */}
+              </Group>
+              <Center>
+                <IconDotsVertical />
+              </Center>
             </Tabs.List>
           </Tabs>
         </Paper>
@@ -190,7 +178,7 @@ export default function ManageSyllabusLayout({
         </ScrollArea>
         {/* </AppShell.Section> */}
       </AppShell.Navbar>
-      <AppShell.Main pt={`calc(${rem(60)} + var(--mantine-spacing-md))`}>
+      <AppShell.Main pt={`calc(${rem(50)} + var(--mantine-spacing-md))`}>
         <Space h={80} />
         {activeTab === "first" && (
           <Suspense fallback={<div>loading...</div>}>{notes}</Suspense>
@@ -203,3 +191,5 @@ export default function ManageSyllabusLayout({
     </AppShell>
   );
 }
+
+
