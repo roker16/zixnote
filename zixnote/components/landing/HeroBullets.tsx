@@ -27,10 +27,11 @@ export function HeroBullets() {
             Designed for <span className={classes.highlight}>Teachers</span>{" "}
             <span className={classes.highlight}>Students</span>{" "}
             <span className={classes.highlight}>Examinee</span>{" "}
-            <span className={classes.highlight}>Writers</span>{" "}
-            <span className={classes.highlight}>Researchers</span> & skill
-            learner who seek to effortlessly create, edit, share, and securely
-            store their notes indefinitely.
+            <span className={classes.highlight}>Writers</span>
+            {" & "}
+            <span className={classes.highlight}>Researchers</span> who seek to
+            effortlessly create, edit, share, and securely store their notes
+            indefinitely.
           </Text>
 
           <List
@@ -48,17 +49,21 @@ export function HeroBullets() {
             }
           >
             <List.Item>
-              <b>Rich & colorfull notes</b> – Enrich your notes with all rich
-              features like Colorfull texts, Maths & equations, tables, images,
-              link, video and many more.
+              <b>Rich & colorfull notes</b> – Enrich your notes with Colorfull
+              texts, Maths & equations, tables, images, link, video and many
+              more.
             </List.Item>
             <List.Item>
               <b>Access notes anywhere, at any device</b> – all packages have
               MIT license, you can use Mantine in any project
             </List.Item>
             <List.Item>
-              <b>Share and distribute notes</b> – focus ring will appear only
-              when user navigates with keyboard
+              <b>Share and distribute notes</b> – Share notes with other users
+              on Jionote.
+            </List.Item>
+            <List.Item>
+              <b>Export your notes to PDF</b> – Export your digital notes to PDF
+              or print to a hard paper in just one click.
             </List.Item>
           </List>
 

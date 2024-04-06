@@ -1,11 +1,21 @@
 "use client";
 import { createClient } from "@/utils/supabase/client";
 // import { MdAdd, MdEdit } from "react-icons/md";
-import { Box, Button, Checkbox, Group, Modal, NumberInput, TextInput } from "@mantine/core";
+import {
+  Box,
+  Button,
+  Checkbox,
+  Chip,
+  Group,
+  Modal,
+  NumberInput,
+  Textarea,
+  TextInput,
+} from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useDisclosure } from "@mantine/hooks";
 import { useInsertMutation } from "@supabase-cache-helpers/postgrest-swr";
-import { useSearchParams } from "next/navigation";
+import { redirect, useRouter, useSearchParams } from "next/navigation";
 import { title } from "process";
 
 export default function CreateNotesForm({
@@ -21,7 +31,9 @@ export default function CreateNotesForm({
 }) {
   const supabase = createClient();
   const [opened, { open, close }] = useDisclosure(false);
+  // const [value, setValue] = useState('react');
   const searchParams = useSearchParams();
+  const router = useRouter();
   const headingId = searchParams.get("headingid");
   const { trigger: insert } = useInsertMutation(
     supabase.from("notes"),
@@ -36,12 +48,14 @@ export default function CreateNotesForm({
   interface Formvalue {
     title: string;
     order: number;
+    type: string;
   }
 
   const form = useForm<Formvalue>({
     initialValues: {
       title: "",
       order: 0,
+      type: "notes",
     },
 
     validate: {
@@ -51,22 +65,29 @@ export default function CreateNotesForm({
     },
   });
   const onSubmitHandler = async (formData: Formvalue) => {
+    const userId = (await supabase.auth.getSession()).data.session?.user.id;
+    if (!userId) {
+      alert("User not logged In!");
+      router.replace("/login");
+      return;
+    }
     await insert([
       {
         title: formData.title,
         order: formData.order,
-        owner_fk: "44ea6393-ec00-4a4e-bec5-144eb86f8ed7",
+        owner_fk: userId,
         index_id_fk: Number(headingId),
+        type: formData.type,
       },
     ]);
   };
 
   return (
     <>
-      <Modal opened={opened} onClose={close} title="Create Index">
-        <Box maw={340} mx="auto">
+      <Modal opened={opened} onClose={close} title="Create Note">
+        <Box mx="auto">
           <form onSubmit={form.onSubmit((values) => onSubmitHandler(values))}>
-            <TextInput
+            <Textarea
               withAsterisk
               label="Note title"
               placeholder="Note title"
@@ -78,11 +99,27 @@ export default function CreateNotesForm({
               placeholder="Sequence"
               mt="md"
             />
-            <Checkbox
+            <Chip.Group multiple={false} {...form.getInputProps("type")}>
+              <Group justify="flex-start" mt={16} gap={2}>
+                <Chip value="notes" size="xs">
+                  Notes
+                </Chip>
+                <Chip value="question" size="xs">
+                  Question
+                </Chip>
+                <Chip value="test" size="xs">
+                  Class Test
+                </Chip>
+                <Chip value="assignment" size="xs">
+                  Assignment
+                </Chip>
+              </Group>
+            </Chip.Group>
+            {/* <Checkbox
               mt="md"
               label="I agree to sell my privacy"
               {...form.getInputProps("termsOfService", { type: "checkbox" })}
-            />
+            /> */}
 
             <Group justify="flex-end" mt="md">
               <Button type="submit">Submit</Button>

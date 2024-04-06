@@ -111,16 +111,19 @@ export default function ManageSyllabusLayout({
             value={activeTab}
             onChange={setActiveTab}
             defaultValue="first"
-            variant="pills"
+            variant="default"
             // color={theme.colors.indigo[7]}
-            radius="xl"
-            bg={theme.colors.gray[1]}
-            p={8}
+            // radius="xl"
+            bg={theme.colors.gray[0]}
+
+            // p={8}
           >
-            <Tabs.List justify={"center"}>
+            <Tabs.List justify={"center"}  h={50} >
               <Tabs.Tab value="first">Notes</Tabs.Tab>
+
               <Tabs.Tab value="second">Shared</Tabs.Tab>
               <Tabs.Tab value="third">Trend</Tabs.Tab>
+              <Tabs.Tab value="forth">Notes</Tabs.Tab>
             </Tabs.List>
           </Tabs>
         </Paper>
@@ -192,12 +195,8 @@ export default function ManageSyllabusLayout({
         {activeTab === "first" && (
           <Suspense fallback={<div>loading...</div>}>{notes}</Suspense>
         )}
-        {activeTab === "second" && (
-          <div>Second Tab</div>
-        )}
-        {activeTab === "third" && (
-              <div>Third Tab</div>
-        )}
+        {activeTab === "second" && <div>Second Tab</div>}
+        {activeTab === "third" && <div>Third Tab</div>}
       </AppShell.Main>
       {/* <AppShell.Aside withBorder={true} p="md">Aside</AppShell.Aside> */}
       {/* <AppShell.Footer p="md">Footer</AppShell.Footer> */}

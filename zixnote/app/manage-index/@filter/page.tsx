@@ -11,7 +11,7 @@ export default async function Index() {
   return (
     <div className="w-full flex flex-col items-center">
       <Flex w={{ base: "100%", md: "400px" }} p={"2px"} >
-        <NotesSearch />
+        {/* <NotesSearch /> */}
       </Flex>
       <SyllabusFilter canModerate={canModerate || false} />
 

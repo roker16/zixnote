@@ -20,6 +20,9 @@
   /* background-color: #f2d8d8; */
   /* z-index: 400 !important; */
 }
+body {
+  overflow-y: scroll; /* Always show vertical scrollbar to avoid flicker */
+}
 .se-toolbar {
   padding: 4px 40px 0 !important;
 }

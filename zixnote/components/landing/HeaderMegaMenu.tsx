@@ -9,7 +9,6 @@ import {
   Collapse,
   Divider,
   Drawer,
-  Flex,
   Group,
   HoverCard,
   ScrollArea,
@@ -33,10 +32,9 @@ import {
   IconNotification,
   IconWriting
 } from "@tabler/icons-react";
-import classes from "./HeaderMegaMenu.module.css";
-import { NotesSearch } from "../NotesSearch";
-import { UserMenu } from "../UserMenu";
 import Link from "next/link";
+import { UserMenu } from "../UserMenu";
+import classes from "./HeaderMegaMenu.module.css";
 
 const mockdata = [
   {
@@ -125,6 +123,12 @@ export function HeaderMegaMenu({ user }: { user: User | null }) {
               <Link href="/manage-index" className={classes.link}>
                 Manage Syllabus
               </Link>
+              <a href="#" className={classes.link}>
+                Guide
+              </a>
+              <a href="#" className={classes.link}>
+                Pricing
+              </a>
               <HoverCard
                 width={600}
                 position="bottom"
@@ -175,12 +179,7 @@ export function HeaderMegaMenu({ user }: { user: User | null }) {
                   </div>
                 </HoverCard.Dropdown>
               </HoverCard>
-              <a href="#" className={classes.link}>
-                Documentation
-              </a>
-              <a href="#" className={classes.link}>
-                Pricing
-              </a>
+              
             </Group>
 
             <Group justify="flex-end">
@@ -219,7 +218,7 @@ export function HeaderMegaMenu({ user }: { user: User | null }) {
           </a>
           <UnstyledButton className={classes.link} onClick={toggleLinks}>
             <Center inline>
-              <Box component="span" mr={5} ml={"15px"}>
+              <Box component="span" >
                 Features
               </Box>
               <IconChevronDown

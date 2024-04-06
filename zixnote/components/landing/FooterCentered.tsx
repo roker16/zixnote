@@ -11,9 +11,7 @@ import classes from "./FooterCentered.module.css";
 const links = [
   { link: "#", label: "Contact" },
   { link: "#", label: "Privacy" },
-  { link: "#", label: "Blog" },
-  { link: "#", label: "Store" },
-  { link: "#", label: "Careers" },
+  { link: "#", label: "Terms & Conditions" },
 ];
 
 export function FooterCentered() {
