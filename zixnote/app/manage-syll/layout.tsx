@@ -22,17 +22,17 @@ import { User } from "@supabase/supabase-js";
 import { IconDotsVertical, IconEdit, IconNotebook } from "@tabler/icons-react";
 import Link from "next/link";
 import { Suspense, useEffect, useState } from "react";
-import NotesMenu from "./component/NoteMenu";
+
 export default function ManageSyllabusLayout({
   children,
   filter,
-  notes,
-  index,
+  moderator,
+  syllabus,
 }: {
   children: React.ReactNode;
   filter: React.ReactNode;
-  notes: React.ReactNode;
-  index: React.ReactNode;
+  moderator: React.ReactNode;
+  syllabus: React.ReactNode;
 }) {
   const [opened, { toggle }] = useDisclosure();
   const [value, setValue] = useState("react");
@@ -57,7 +57,7 @@ export default function ManageSyllabusLayout({
       // header={{ height: 50 }}
       // footer={{ height: 50 }}
       navbar={{
-        width: 300,
+        width: { base: 350, md: 400 },
         breakpoint: "md",
         collapsed: { mobile: !opened },
       }}
@@ -110,9 +110,7 @@ export default function ManageSyllabusLayout({
                 <Tabs.Tab value="forth">Notes</Tabs.Tab>
                 {/* <Tabs.Tab value="fifth">Notes</Tabs.Tab> */}
               </Group>
-              <Center>
-                <NotesMenu/>
-              </Center>
+              <Center>{/* <NotesMenu/> */}</Center>
             </Tabs.List>
           </Tabs>
         </Paper>
@@ -175,14 +173,14 @@ export default function ManageSyllabusLayout({
 
         <ScrollArea scrollbarSize={4} scrollHideDelay={0} h={"100vh"}>
           {filter}
-          {index}
+          {syllabus}
         </ScrollArea>
         {/* </AppShell.Section> */}
       </AppShell.Navbar>
       <AppShell.Main pt={`calc(${rem(50)} + var(--mantine-spacing-md))`}>
         <Space h={80} />
         {activeTab === "first" && (
-          <Suspense fallback={<div>loading...</div>}>{notes}</Suspense>
+          <Suspense fallback={<div>loading...</div>}>{moderator}</Suspense>
         )}
         {activeTab === "second" && <div>Second Tab</div>}
         {activeTab === "third" && <div>Third Tab</div>}
@@ -192,5 +190,3 @@ export default function ManageSyllabusLayout({
     </AppShell>
   );
 }
-
-
