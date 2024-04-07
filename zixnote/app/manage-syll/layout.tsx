@@ -33,10 +33,8 @@ export default function ManageSyllabusLayout({
   syllabus: React.ReactNode;
 }) {
   const [opened, { toggle }] = useDisclosure();
-  const [value, setValue] = useState("react");
   const [activeTab, setActiveTab] = useState<string | null>("first");
   const theme = useMantineTheme();
-  const pinned = useHeadroom({ fixedAt: 120 });
   const supabase = createClient();
   const [user, setUser] = useState<User | null>(null);
   useEffect(() => {

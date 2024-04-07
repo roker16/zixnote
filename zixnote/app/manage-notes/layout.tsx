@@ -3,23 +3,20 @@ import { UserMenu } from "@/components/UserMenu";
 import { createClient } from "@/utils/supabase/client";
 import {
   AppShell,
-  Box,
   Burger,
   Button,
   Center,
   Group,
   Paper,
   ScrollArea,
-  SegmentedControl,
   Space,
   Tabs,
-  alpha,
   rem,
-  useMantineTheme,
+  useMantineTheme
 } from "@mantine/core";
 import { useDisclosure, useHeadroom } from "@mantine/hooks";
 import { User } from "@supabase/supabase-js";
-import { IconDotsVertical, IconEdit, IconNotebook, IconPencil } from "@tabler/icons-react";
+import { IconNotebook, IconPencil } from "@tabler/icons-react";
 import Link from "next/link";
 import { Suspense, useEffect, useState } from "react";
 import NotesMenu from "./component/NoteMenu";
@@ -35,10 +32,8 @@ export default function ManageSyllabusLayout({
   index: React.ReactNode;
 }) {
   const [opened, { toggle }] = useDisclosure();
-  const [value, setValue] = useState("react");
   const [activeTab, setActiveTab] = useState<string | null>("first");
   const theme = useMantineTheme();
-  const pinned = useHeadroom({ fixedAt: 120 });
   const supabase = createClient();
   const [user, setUser] = useState<User | null>(null);
   useEffect(() => {
@@ -54,8 +49,6 @@ export default function ManageSyllabusLayout({
       layout="alt"
       header={{ height: 50, offset: false }}
       padding={{ base: 0, md: 4, xl: 90 }}
-      // header={{ height: 50 }}
-      // footer={{ height: 50 }}
       navbar={{
         width: 300,
         breakpoint: "md",
@@ -69,8 +62,6 @@ export default function ManageSyllabusLayout({
     >
       <AppShell.Header withBorder={true}>
         <Paper
-          // shadow="xs"
-          // bg={alpha("--var(--mantine-color-gray-2)",0.74)}
           h={50}
           style={{ position: "sticky", top: "0px", zIndex: "100" }}
         >
@@ -79,11 +70,7 @@ export default function ManageSyllabusLayout({
             onChange={setActiveTab}
             defaultValue="first"
             variant="default"
-            // color={theme.colors.indigo[7]}
-            // radius="xl"
             bg={theme.colors.gray[0]}
-
-            // p={8}
           >
             <Tabs.List justify={"space-between"} h={50}>
               <Group h="100%">
@@ -99,7 +86,6 @@ export default function ManageSyllabusLayout({
                     marginBottom: "auto",
                   }}
                 />
-                {/* <MantineLogo size={30} /> */}
               </Group>
 
               <Group gap={0}>
@@ -108,7 +94,6 @@ export default function ManageSyllabusLayout({
                 <Tabs.Tab value="second">Shared</Tabs.Tab>
                 <Tabs.Tab value="third">Trend</Tabs.Tab>
                 <Tabs.Tab value="forth">Notes</Tabs.Tab>
-                {/* <Tabs.Tab value="fifth">Notes</Tabs.Tab> */}
               </Group>
               <Center>
                 <NotesMenu/>
@@ -117,38 +102,6 @@ export default function ManageSyllabusLayout({
           </Tabs>
         </Paper>
 
-        {/* <Paper
-          shadow="xs"
-          bg={!pinned ? theme.colors.gray[2] : "white"}
-          radius={"0px"}
-          h={52}
-          style={{
-            position: "sticky",
-            top: "0px",
-            zIndex: "100",
-          }}
-        >
-          <SegmentedControl
-            fullWidth
-            withItemsBorders={false}
-            h={50}
-            size={"md"}
-            value={value}
-         
-            radius="xl"
-            // style={{"backgroundColor":theme.primaryColor,"opacity":"90%"}}
-            color={!pinned ? theme.colors.indigo[6] : theme.colors.gray[8]}
-            bg={!pinned ? theme.colors.gray[2] : "white"}
-            onChange={setValue}
-            data={[
-              { label: "Button1", value: "react" },
-              { label: "Button2", value: "ng" },
-              { label: "Button3", value: "vue" },
-              { label: "Svelte1", value: "svelte" },
-
-            ]}
-          />
-        </Paper> */}
       </AppShell.Header>
       <AppShell.Navbar
         withBorder={false}
@@ -177,7 +130,6 @@ export default function ManageSyllabusLayout({
           {filter}
           {index}
         </ScrollArea>
-        {/* </AppShell.Section> */}
       </AppShell.Navbar>
       <AppShell.Main pt={`calc(${rem(50)} + var(--mantine-spacing-md))`}>
         <Space h={80} />
@@ -187,8 +139,6 @@ export default function ManageSyllabusLayout({
         {activeTab === "second" && <div>Second Tab</div>}
         {activeTab === "third" && <div>Third Tab</div>}
       </AppShell.Main>
-      {/* <AppShell.Aside withBorder={true} p="md">Aside</AppShell.Aside> */}
-      {/* <AppShell.Footer p="md">Footer</AppShell.Footer> */}
     </AppShell>
   );
 }
