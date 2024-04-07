@@ -19,7 +19,7 @@ import {
 } from "@mantine/core";
 import { useDisclosure, useHeadroom } from "@mantine/hooks";
 import { User } from "@supabase/supabase-js";
-import { IconDotsVertical, IconEdit, IconNotebook } from "@tabler/icons-react";
+import { IconDotsVertical, IconEdit, IconNotebook, IconPencil } from "@tabler/icons-react";
 import Link from "next/link";
 import { Suspense, useEffect, useState } from "react";
 import NotesMenu from "./component/NoteMenu";
@@ -164,8 +164,8 @@ export default function ManageSyllabusLayout({
               size="compact-lg"
               color="dark"
               component={Link}
-              href="/manage-index"
-              rightSection={<IconEdit size={14} />}
+              href="/manage-syll"
+              rightSection={<IconPencil size={24} />}
             >
               Index
             </Button>

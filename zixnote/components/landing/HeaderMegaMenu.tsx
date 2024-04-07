@@ -120,7 +120,7 @@ export function HeaderMegaMenu({ user }: { user: User | null }) {
               <Link href="/manage-notes" className={classes.link}>
                 Notes
               </Link>
-              <Link href="/manage-index" className={classes.link}>
+              <Link href="/manage-syll" className={classes.link}>
                 Manage Syllabus
               </Link>
               <a href="#" className={classes.link}>

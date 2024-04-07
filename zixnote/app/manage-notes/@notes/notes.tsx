@@ -7,13 +7,9 @@ import {
 } from "@supabase-cache-helpers/postgrest-swr";
 import {
   IconDotsVertical,
-  IconEdit,
   IconEditCircle,
-  IconMessageCircle,
   IconPhoto,
-  IconRowRemove,
-  IconSettings,
-  IconTrash,
+  IconTrash
 } from "@tabler/icons-react";
 import { useState } from "react";
 import NotesTab from "./NotesTab";
@@ -93,7 +89,7 @@ function Notes({ topicId, userId }: { topicId: string; userId: string }) {
             </Menu.Dropdown>
           </Menu>
 
-          <Accordion.Control>{item.title + item.id}</Accordion.Control>
+          <Accordion.Control>{item.title}</Accordion.Control>
         </Center>
         <Accordion.Panel >
           {value?.includes(item.id.toString()) && (
