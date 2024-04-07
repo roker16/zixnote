@@ -4,6 +4,7 @@ import { HeroBullets } from "@/components/landing/HeroBullets";
 import { createClient } from "@/utils/supabase/server";
 import { Container } from "@mantine/core";
 import { cookies } from "next/headers";
+import TermsAndConditions from "./TermsAndConditions";
 // import Landing from "./Landing";
 
 export default async function Index() {
@@ -21,8 +22,8 @@ export default async function Index() {
   return (
     <div>
       <HeaderMegaMenu user={user} />
-      <Container size={"xl"} >
-        <HeroBullets />
+      <Container size={"xl"}>
+        <TermsAndConditions />
       </Container>
       <FooterCentered />
     </div>

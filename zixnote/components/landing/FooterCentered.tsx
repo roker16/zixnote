@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import { Anchor, Group, ActionIcon, rem } from "@mantine/core";
 import {
   IconBrandTwitter,
@@ -7,29 +7,27 @@ import {
 } from "@tabler/icons-react";
 // import { MantineLogo } from "@mantinex/mantine-logo";
 import classes from "./FooterCentered.module.css";
+import Link from "next/link";
 
 const links = [
-  { link: "#", label: "Contact" },
-  { link: "#", label: "Privacy" },
-  { link: "#", label: "Terms & Conditions" },
+  { link: "/contact", label: "Contact us" },
+  { link: "/privacy", label: "Privacy Policy" },
+  { link: "/terms-conditions", label: "Terms and Conditions" },
 ];
 
 export function FooterCentered() {
   const items = links.map((link) => (
-    <Anchor
-      c="dimmed"
+    <Link
+      className="no-underline text-sm text-gray-700"
       key={link.label}
       href={link.link}
-      lh={1}
-      onClick={(event) => event.preventDefault()}
-      size="sm"
     >
       {link.label}
-    </Anchor>
+    </Link>
   ));
 
   return (
-    <div className={`${classes.footer}`}  >
+    <div className={`${classes.footer}`}>
       <div className={classes.inner}>
         <IconBrandTwitter
           style={{ width: rem(18), height: rem(18) }}
