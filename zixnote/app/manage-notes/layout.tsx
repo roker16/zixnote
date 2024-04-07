@@ -70,6 +70,7 @@ export default function ManageSyllabusLayout({
             onChange={setActiveTab}
             defaultValue="first"
             variant="default"
+            
             bg={theme.colors.gray[0]}
           >
             <Tabs.List justify={"space-between"} h={50}>
@@ -88,7 +89,7 @@ export default function ManageSyllabusLayout({
                 />
               </Group>
 
-              <Group gap={0}>
+              <Group gap={0} >
                 {" "}
                 <Tabs.Tab value="first">Notes</Tabs.Tab>
                 <Tabs.Tab value="second">Shared</Tabs.Tab>
@@ -132,7 +133,7 @@ export default function ManageSyllabusLayout({
         </ScrollArea>
       </AppShell.Navbar>
       <AppShell.Main pt={`calc(${rem(50)} + var(--mantine-spacing-md))`}>
-        <Space h={80} />
+        <Space h={10} />
         {activeTab === "first" && (
           <Suspense fallback={<div>loading...</div>}>{notes}</Suspense>
         )}

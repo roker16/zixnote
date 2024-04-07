@@ -48,7 +48,7 @@ export default function ManageSyllabusLayout({
   return (
     <AppShell
       layout="alt"
-      header={{ height: 50, offset: false }}
+      header={{ height: 50, offset:false  }}
       padding={{ base: 0, md: 4, xl: 90 }}
       navbar={{
         width: { base: 350, md: 400 },
@@ -125,13 +125,13 @@ export default function ManageSyllabusLayout({
           <Burger opened={opened} onClick={toggle} hiddenFrom="md" size="sm" />
         </Group>
 
-        <ScrollArea scrollbarSize={4} scrollHideDelay={0} h={"100vh"}>
+        <ScrollArea scrollbarSize={4} scrollHideDelay={0} h={"100vh"} >
           {filter}
           {syllabus}
         </ScrollArea>
       </AppShell.Navbar>
-      <AppShell.Main pt={`calc(${rem(50)} + var(--mantine-spacing-md))`}>
-        <Space h={80} />
+      <AppShell.Main pt={`calc(${rem(50)} + var(--mantine-spacing-md))`} >
+        <Space h={10} />
         {activeTab === "first" && (
           <Suspense fallback={<div>loading...</div>}>{moderator}</Suspense>
         )}
