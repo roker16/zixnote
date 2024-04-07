@@ -114,13 +114,13 @@ export default function ManageSyllabusLayout({
 
             <Button
               variant="subtle"
-              size="compact-lg"
+              size="compact-sm"
               color="dark"
               component={Link}
               href="/manage-syll"
-              rightSection={<IconPencil size={24} />}
+              leftSection={<IconPencil size={16} />}
             >
-              Index
+              Create index
             </Button>
           </Group>
           <Burger opened={opened} onClick={toggle} hiddenFrom="md" size="sm" />

@@ -16,7 +16,7 @@ import {
 } from "@mantine/core";
 import { useDisclosure, useHeadroom } from "@mantine/hooks";
 import { User } from "@supabase/supabase-js";
-import { IconNotebook, IconWriting } from "@tabler/icons-react";
+import { IconNotebook, IconNotes, IconWriting } from "@tabler/icons-react";
 import Link from "next/link";
 import { Suspense, useEffect, useState } from "react";
 import NotesMenu from "../manage-notes/component/NoteMenu";
@@ -113,13 +113,13 @@ export default function ManageSyllabusLayout({
 
             <Button
               variant="subtle"
-              size="compact-lg"
+              size="compact-sm"
               color="dark"
               component={Link}
               href="/manage-notes"
-              rightSection={<IconWriting size={24} />}
+              leftSection={<IconNotes size={14} />}
             >
-              Notes
+              Create Notes
             </Button>
           </Group>
           <Burger opened={opened} onClick={toggle} hiddenFrom="md" size="sm" />
