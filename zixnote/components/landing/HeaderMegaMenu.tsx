@@ -126,7 +126,7 @@ export function HeaderMegaMenu({ user }: { user: User | null }) {
               <a href="#" className={classes.link}>
                 Guide
               </a>
-              <a href="#" className={classes.link}>
+              <a href="/pricing" className={classes.link}>
                 Pricing
               </a>
               <HoverCard
