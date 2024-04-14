@@ -1,4 +1,5 @@
 "use client";
+import classes from "./HeaderMegaMenu.module.css";
 import {
   ActionIcon,
   Anchor,
@@ -34,7 +35,7 @@ import {
 } from "@tabler/icons-react";
 import Link from "next/link";
 import { UserMenu } from "../UserMenu";
-import classes from "./HeaderMegaMenu.module.css";
+
 
 const mockdata = [
   {
@@ -103,10 +104,10 @@ export function HeaderMegaMenu({ user }: { user: User | null }) {
           <Burger
             opened={drawerOpened}
             onClick={toggleDrawer}
-            hiddenFrom="sm"
+            hiddenFrom="md"
           />
           <ActionIcon
-            visibleFrom="sm"
+            visibleFrom="md"
             variant="gradient"
             size="lg"
             radius={"xl"}
@@ -116,7 +117,7 @@ export function HeaderMegaMenu({ user }: { user: User | null }) {
           </ActionIcon>
           
           <Group h="100%">
-            <Group h="100%" justify="flex-end" gap={0} visibleFrom="sm">
+            <Group h="100%" justify="flex-end"  gap={0} visibleFrom="md">
               <Link href="/manage-notes" className={classes.link}>
                 Notes
               </Link>
@@ -129,7 +130,7 @@ export function HeaderMegaMenu({ user }: { user: User | null }) {
               <a href="/pricing" className={classes.link}>
                 Pricing
               </a>
-              <HoverCard
+              {/* <HoverCard
                 width={600}
                 position="bottom"
                 radius="md"
@@ -178,7 +179,7 @@ export function HeaderMegaMenu({ user }: { user: User | null }) {
                     </Group>
                   </div>
                 </HoverCard.Dropdown>
-              </HoverCard>
+              </HoverCard> */}
               
             </Group>
 
