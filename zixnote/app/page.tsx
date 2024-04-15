@@ -12,12 +12,6 @@ export default async function Index() {
     data: { user },
   } = await supabase.auth.getUser();
 
-  let { data: syll_index, error } = await supabase
-    .from("syll_index")
-    .select("*");
-
-  // const isSupabaseConnected = canInitSupabaseClient();
-
   return (
     <div>
       <HeaderMegaMenu user={user} />

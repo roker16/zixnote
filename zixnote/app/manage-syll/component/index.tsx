@@ -66,7 +66,7 @@ const TableOfContent: React.FC<TableOfContentProps> = ({
               }
               className={`cursor-pointer flex flex-nowrap opacity-80 py-0.5 px-2 ${
                 item.parent_index_id === null
-                  ? "font-medium text-sm "
+                  ? "font-semibold opacity-90"
                   : " group-hover:opacity-100 group-hover:bg-gray-200 group-hover:rounded-xl text-sm "
               }`}
             >
