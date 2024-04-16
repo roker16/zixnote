@@ -1,9 +1,10 @@
 "use client";
-import { NestedIndexItem } from "@/app/manage-index/transformFlatToNested";
+
 import { ActionIcon, Box } from "@mantine/core";
 import React, { useState } from "react";
 import { MdExpandMore, MdSunny } from "react-icons/md";
 import ActionButtons from "./ActionButtons";
+import { NestedIndexItem } from "../transformFlatToNested";
 
 const NestedIndex = ({
   data,

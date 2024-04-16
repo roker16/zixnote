@@ -1,11 +1,12 @@
 "use client";
 
-import { NestedIndexItem } from "@/app/manage-index/transformFlatToNested";
+
 import { ActionIcon, Box, Button, useMantineTheme } from "@mantine/core";
 import { useRouter, useSearchParams } from "next/navigation";
 import React, { startTransition, useState, useTransition } from "react";
 import { MdExpandMore, MdSunny } from "react-icons/md";
 import { handleTransitionNotes } from "../handleTransition1";
+import { NestedIndexItem } from "../transformFlatToNested";
 
 const NestedIndex = ({ data }: { data: NestedIndexItem[] }) => {
   // This component is only to show/hide chapter topics, because the
@@ -67,8 +68,8 @@ const TableOfContent: React.FC<TableOfContentProps> = ({
               }
               className={`cursor-pointer flex flex-nowrap opacity-80 py-0.5 px-2 ${
                 item.parent_index_id === null
-                  ? "font-semibold text-sm opacity-80 "
-                  : " group-hover:opacity-100 group-hover:bg-gray-200 group-hover:rounded-sm text-sm opacity-60 "
+                  ? "font-bold text-sm opacity-55 "
+                  : " group-hover:opacity-100 group-hover:bg-slate-200 group-hover:rounded-sm text-sm opacity-60 "
               }`}
             >
               <span>

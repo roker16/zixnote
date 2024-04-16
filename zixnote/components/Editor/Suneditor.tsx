@@ -19,7 +19,7 @@ import {
 } from "@supabase-cache-helpers/postgrest-swr";
 import styled from "styled-components";
 import { Button, Group, Radio, SegmentedControl } from "@mantine/core";
-import { Course } from '../../app/manage-index-2/component/college-filter/Course';
+
 const SunEditor = dynamic(() => import("suneditor-react"), {
   ssr: false,
 });
