@@ -60,7 +60,7 @@ export default function ManageSyllabusLayout({
         collapsed: { desktop: false, mobile: true },
       }}
     >
-      <AppShell.Header withBorder={true}>
+      <AppShell.Header withBorder={false}>
         <Paper
           h={50}
           style={{ position: "sticky", top: "0px", zIndex: "100" }}
