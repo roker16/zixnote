@@ -1,6 +1,6 @@
 "use client";
 import { editIndex } from "@/app/action";
-import { SubmitButton } from "@/app/submit-button";
+import { SubmitButton } from "@/components/submit-button";
 import {
   ActionIcon,
   Flex,

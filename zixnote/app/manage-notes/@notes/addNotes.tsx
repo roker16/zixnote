@@ -1,6 +1,6 @@
 "use client";
 import { createIndex } from "@/app/action";
-import { SubmitButton } from "@/app/submit-button";
+import { SubmitButton } from "@/components/submit-button";
 // import { MdAdd, MdEdit } from "react-icons/md";
 
 import {

@@ -39,7 +39,6 @@ export async function editIndex(formData: FormData) {
   revalidatePath("/manage-index");
 }
 export async function createIndex(formData: FormData) {
-  console.log(formData);
   const validatedFields = schema.safeParse({
     index: formData.get("index"),
     order: formData.get("order"),
