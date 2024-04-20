@@ -18,7 +18,7 @@ import {
   ThemeIcon,
   UnstyledButton,
   rem,
-  useMantineTheme
+  useMantineTheme,
 } from "@mantine/core";
 //   import { MantineLogo } from '@mantinex/mantine-logo';
 import { useDisclosure } from "@mantine/hooks";
@@ -31,11 +31,10 @@ import {
   IconCoin,
   IconFingerprint,
   IconNotification,
-  IconWriting
+  IconWriting,
 } from "@tabler/icons-react";
 import Link from "next/link";
 import { UserMenu } from "../UserMenu";
-
 
 const mockdata = [
   {
@@ -106,18 +105,24 @@ export function HeaderMegaMenu({ user }: { user: User | null }) {
             onClick={toggleDrawer}
             hiddenFrom="md"
           />
-          <ActionIcon
-            visibleFrom="md"
-            variant="gradient"
-            size="lg"
-            radius={"xl"}
-            gradient={{ from: "var(--mantine-color-cyan-4)", to: "var(--mantine-color-cyan-7)", deg: 304 }}
-          >
-            <IconWriting size={25} stroke={1} />
-          </ActionIcon>
-          
+          <Link href={"/"}>
+            <ActionIcon
+              visibleFrom="md"
+              variant="gradient"
+              size="lg"
+              radius={"xl"}
+              gradient={{
+                from: "var(--mantine-color-cyan-4)",
+                to: "var(--mantine-color-cyan-7)",
+                deg: 304,
+              }}
+            >
+              <IconWriting size={25} stroke={1} />
+            </ActionIcon>
+          </Link>
+
           <Group h="100%">
-            <Group h="100%" justify="flex-end"  gap={0} visibleFrom="md">
+            <Group h="100%" justify="flex-end" gap={0} visibleFrom="md">
               <Link href="/manage-notes" className={classes.link}>
                 Notes
               </Link>
@@ -180,7 +185,6 @@ export function HeaderMegaMenu({ user }: { user: User | null }) {
                   </div>
                 </HoverCard.Dropdown>
               </HoverCard> */}
-              
             </Group>
 
             <Group justify="flex-end">
@@ -219,9 +223,7 @@ export function HeaderMegaMenu({ user }: { user: User | null }) {
           </a>
           <UnstyledButton className={classes.link} onClick={toggleLinks}>
             <Center inline>
-              <Box component="span" >
-                Features
-              </Box>
+              <Box component="span">Features</Box>
               <IconChevronDown
                 style={{ width: rem(16), height: rem(16) }}
                 color={theme.colors.blue[6]}

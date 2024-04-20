@@ -1,4 +1,4 @@
-import { transformFlatToNested } from "@/app/manage-index/transformFlatToNested";
+
 
 import NestedIndex from "../component";
 import IndexTitle from "../component/IndexTitle";
@@ -9,6 +9,7 @@ import {
   checkIfModerator,
 } from "../@moderator/checkIfModerator";
 import NoticeText from "@/components/NoticeText";
+import { transformFlatToNested } from "../transformFlatToNested";
 
 export default async function Index({
   searchParams,
