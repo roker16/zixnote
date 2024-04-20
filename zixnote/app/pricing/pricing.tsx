@@ -23,7 +23,7 @@ function Pricing() {
         <div className="bg-white rounded-lg shadow-lg p-6 flex flex-col justify-between">
           <div>
             <h2 className="text-xl font-bold mb-4">Monthly</h2>
-            <p className="text-gray-600 mb-4">All Fetaures included.</p>
+            <p className="text-gray-600 mb-4">All features included.</p>
             <p className="text-gray-600 mb-4">
               All future updates shall be provied without any additinal
               charges.
@@ -42,7 +42,7 @@ function Pricing() {
         <div className="bg-white rounded-lg shadow-lg p-6 flex flex-col justify-between">
           <div>
             <h2 className="text-xl font-bold mb-4">Yearly</h2>
-            <p className="text-gray-600 mb-4">All Fetaures included.</p>
+            <p className="text-gray-600 mb-4">All features included.</p>
             <p className="text-gray-600 mb-4">
               All future updates shall be provied without any additinal
               charges.
@@ -67,7 +67,7 @@ function Pricing() {
         <div className="bg-white rounded-lg shadow-lg p-6 flex flex-col justify-between">
           <div>
             <h2 className="text-xl font-bold mb-4">5 years Plan</h2>
-            <p className="text-gray-600 mb-4">All Fetaures included.</p>
+            <p className="text-gray-600 mb-4">All features included.</p>
             <p className="text-gray-600 mb-4">
               All future updates shall be provied without any additinal
               charges.
