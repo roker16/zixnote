@@ -12,7 +12,7 @@ import {
   Space,
   Tabs,
   rem,
-  useMantineTheme
+  useMantineTheme,
 } from "@mantine/core";
 import { useDisclosure, useHeadroom } from "@mantine/hooks";
 import { User } from "@supabase/supabase-js";
@@ -61,16 +61,12 @@ export default function ManageSyllabusLayout({
       }}
     >
       <AppShell.Header withBorder={false}>
-        <Paper
-          h={50}
-          style={{ position: "sticky", top: "0px", zIndex: "100" }}
-        >
+        <Paper h={50} style={{ position: "sticky", top: "0px", zIndex: "100" }}>
           <Tabs
             value={activeTab}
             onChange={setActiveTab}
             defaultValue="first"
             variant="default"
-            
             bg={theme.colors.gray[0]}
           >
             <Tabs.List justify={"space-between"} h={50}>
@@ -81,15 +77,17 @@ export default function ManageSyllabusLayout({
                   hiddenFrom="md"
                   size="sm"
                 />
-                <IconNotebook
-                  style={{
-                    marginTop: "auto",
-                    marginBottom: "auto",
-                  }}
-                />
+                <Link href={"/"}>
+                  <IconNotebook
+                    style={{
+                      marginTop: "auto",
+                      marginBottom: "auto",
+                    }}
+                  />
+                </Link>
               </Group>
 
-              <Group gap={0} >
+              <Group gap={0}>
                 {" "}
                 <Tabs.Tab value="first">Notes</Tabs.Tab>
                 <Tabs.Tab value="second">Shared</Tabs.Tab>
@@ -97,12 +95,11 @@ export default function ManageSyllabusLayout({
                 <Tabs.Tab value="forth">Notes</Tabs.Tab>
               </Group>
               <Center>
-                <NotesMenu/>
+                <NotesMenu />
               </Center>
             </Tabs.List>
           </Tabs>
         </Paper>
-
       </AppShell.Header>
       <AppShell.Navbar
         withBorder={false}
@@ -143,5 +140,3 @@ export default function ManageSyllabusLayout({
     </AppShell>
   );
 }
-
-

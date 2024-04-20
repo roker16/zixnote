@@ -12,7 +12,8 @@ import {
   Space,
   Tabs,
   rem,
-  useMantineTheme
+  ActionIcon,
+  useMantineTheme,
 } from "@mantine/core";
 import { useDisclosure, useHeadroom } from "@mantine/hooks";
 import { User } from "@supabase/supabase-js";
@@ -26,14 +27,16 @@ export default function ManageSyllabusLayout({
   filter,
   moderator,
   syllabus,
+  analytics,
 }: {
   children: React.ReactNode;
   filter: React.ReactNode;
   moderator: React.ReactNode;
   syllabus: React.ReactNode;
+  analytics: React.ReactNode;
 }) {
   const [opened, { toggle }] = useDisclosure();
-  const [activeTab, setActiveTab] = useState<string | null>("first");
+  const [activeTab, setActiveTab] = useState<string | null>("third");
   const theme = useMantineTheme();
   const supabase = createClient();
   const [user, setUser] = useState<User | null>(null);
@@ -48,7 +51,7 @@ export default function ManageSyllabusLayout({
   return (
     <AppShell
       layout="alt"
-      header={{ height: 50, offset:false  }}
+      header={{ height: 50, offset: false }}
       padding={{ base: 0, md: 4, xl: 90 }}
       navbar={{
         width: { base: 350, md: 400 },
@@ -62,10 +65,7 @@ export default function ManageSyllabusLayout({
       }}
     >
       <AppShell.Header withBorder={true}>
-        <Paper
-          h={50}
-          style={{ position: "sticky", top: "0px", zIndex: "100" }}
-        >
+        <Paper h={50} style={{ position: "sticky", top: "0px", zIndex: "100" }}>
           <Tabs
             value={activeTab}
             onChange={setActiveTab}
@@ -74,19 +74,28 @@ export default function ManageSyllabusLayout({
             bg={theme.colors.gray[0]}
           >
             <Tabs.List justify={"space-between"} h={50}>
-              <Group h="100%">
+              <Group h="100%" justify="center" align="center">
                 <Burger
                   opened={opened}
                   onClick={toggle}
                   hiddenFrom="md"
                   size="sm"
                 />
-                <IconNotebook
-                  style={{
-                    marginTop: "auto",
-                    marginBottom: "auto",
-                  }}
-                />
+                <Link href={"/"}>
+                  <ActionIcon
+                    // visibleFrom="md"
+                    variant="gradient"
+                    size="md"
+                    radius={"xl"}
+                    gradient={{
+                      from: "var(--mantine-color-indigo-4)",
+                      to: "var(--mantine-color-indigo-7)",
+                      deg: 304,
+                    }}
+                  >
+                    <IconWriting size={20} stroke={1} />
+                  </ActionIcon>
+                </Link>
               </Group>
 
               <Group gap={0}>
@@ -96,11 +105,12 @@ export default function ManageSyllabusLayout({
                 <Tabs.Tab value="third">Trend</Tabs.Tab>
                 <Tabs.Tab value="forth">Notes</Tabs.Tab>
               </Group>
-              <Center><NotesMenu/> </Center>
+              <Center>
+                <NotesMenu />{" "}
+              </Center>
             </Tabs.List>
           </Tabs>
         </Paper>
-
       </AppShell.Header>
       <AppShell.Navbar
         withBorder={false}
@@ -125,18 +135,18 @@ export default function ManageSyllabusLayout({
           <Burger opened={opened} onClick={toggle} hiddenFrom="md" size="sm" />
         </Group>
 
-        <ScrollArea scrollbarSize={4} scrollHideDelay={0} h={"100vh"} >
+        <ScrollArea scrollbarSize={4} scrollHideDelay={0} h={"100vh"}>
           {filter}
           {syllabus}
         </ScrollArea>
       </AppShell.Navbar>
-      <AppShell.Main pt={`calc(${rem(50)} + var(--mantine-spacing-md))`} >
+      <AppShell.Main pt={`calc(${rem(50)} + var(--mantine-spacing-md))`}>
         <Space h={10} />
         {activeTab === "first" && (
           <Suspense fallback={<div>loading...</div>}>{moderator}</Suspense>
         )}
-        {activeTab === "second" && <div>Second Tab</div>}
-        {activeTab === "third" && <div>Third Tab</div>}
+        {activeTab === "second" && <div>{analytics}</div>}
+        {activeTab === "third" && <div>{analytics}</div>}
       </AppShell.Main>
     </AppShell>
   );
