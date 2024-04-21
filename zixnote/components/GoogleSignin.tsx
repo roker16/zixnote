@@ -21,6 +21,7 @@ export default function GoogleSignin() {
         h={300}
         w={300}
         align="center"
+        p="md"
         bg="var(--mantine-color-gray-0)"
       >
         <Text size="lg" fw={500}>
