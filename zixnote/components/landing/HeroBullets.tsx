@@ -13,6 +13,7 @@ import {
 import { IconCheck } from "@tabler/icons-react";
 import image from "./image.svg";
 import classes from "./HeroBullets.module.css";
+import { useEffect } from "react";
 
 export function HeroBullets() {
   return (
@@ -54,12 +55,13 @@ export function HeroBullets() {
               more.
             </List.Item>
             <List.Item>
-              <b>Access notes anywhere, at any device</b> – all packages have
-              MIT license, you can use Mantine in any project
+              <b>Access notes anywhere, at any device</b> – Don&apos;t burden
+              yourself with the fear of losing your notes. Once created, they
+              are securely stored and accessible on any device, from anywhere.
             </List.Item>
             <List.Item>
               <b>Share and distribute notes</b> – Share notes with other users
-              on Jionote.
+              on Diginote.
             </List.Item>
             <List.Item>
               <b>Export your notes to PDF</b> – Export your digital notes to PDF
@@ -68,16 +70,15 @@ export function HeroBullets() {
           </List>
 
           <Group mt={30}>
-            <Button radius="xl" size="md" className={classes.control}>
-              Get started
-            </Button>
             <Button
-              variant="default"
+              component="a"
+              href="/login"
               radius="xl"
               size="md"
+              onClick={(event) => event.preventDefault()}
               className={classes.control}
             >
-              Source code
+              Get started
             </Button>
           </Group>
         </div>
