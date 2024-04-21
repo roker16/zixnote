@@ -13,7 +13,7 @@ function Page() {
       <button type="button" onClick={() => router.back()}>
         Go back
       </button>
-      <Link href={"/manage-syll/total/inside-total"}>insdie total</Link>
+      {/* <Link href={"/manage-syll/total/inside-total"}>insdie total</Link> */}
       {/* <Refresh /> */}
     </div>
   );

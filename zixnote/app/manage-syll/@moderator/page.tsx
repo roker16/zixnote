@@ -105,8 +105,8 @@ export default async function Index({
     <Box >
       <div className="w-full flex flex-col items-center">
         <div className="col-span-5">{centerGrid()}</div>
-        <Link href={"/manage-syll/total"}>total</Link>
-        <Link href={"/manage-syll/total/inside-total"}>insdie total</Link>
+        {/* <Link href={"/manage-syll/total"}>total</Link> */}
+        {/* <Link href={"/manage-syll/total/inside-total"}>insdie total</Link> */}
         {/* <Refresh /> */}
       </div>
     </Box>
