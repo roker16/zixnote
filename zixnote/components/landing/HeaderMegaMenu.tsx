@@ -112,8 +112,8 @@ export function HeaderMegaMenu({ user }: { user: User | null }) {
               size="lg"
               radius={"xl"}
               gradient={{
-                from: "var(--mantine-color-cyan-4)",
-                to: "var(--mantine-color-cyan-7)",
+                from: "var(--mantine-primary-color-4)",
+                to: "var(--mantine-primary-color-7)",
                 deg: 304,
               }}
             >
