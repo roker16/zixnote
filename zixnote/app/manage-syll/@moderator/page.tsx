@@ -28,7 +28,7 @@ export default async function Index({
     if (!user) {
       // Block 1: User is not logged in
       return (
-        <Center h="200px" w={"full"}>
+        <Center  w={"full"} >
           <GoogleSignin />
         </Center>
       );
