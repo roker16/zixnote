@@ -14,6 +14,7 @@ import { IconCheck } from "@tabler/icons-react";
 import image from "./image.svg";
 import classes from "./HeroBullets.module.css";
 import { useEffect } from "react";
+import { navigateWithLogin } from "@/app/action";
 
 export function HeroBullets() {
   return (
@@ -70,19 +71,19 @@ export function HeroBullets() {
           </List>
 
           <Group mt={30}>
-            <Button
-              component="a"
-              href="/login"
-              radius="xl"
-              size="md"
-              onClick={(event) => event.preventDefault()}
-              className={classes.control}
-            >
-              Get started
-            </Button>
+            <form action={navigateWithLogin}>
+              <Button
+                radius="xl"
+                size="md"
+                className={classes.control}
+                type="submit"
+              >
+                Get started
+              </Button>
+            </form>
           </Group>
         </div>
-        <Image src={image.src} className={classes.image} />
+        <Image src={image.src} className={classes.image} alt="image"/>
       </div>
     </Container>
   );
