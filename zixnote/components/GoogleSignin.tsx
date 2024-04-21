@@ -1,10 +1,7 @@
 "use client";
 
 import { createClient } from "@/utils/supabase/client";
-import { Button } from "@mantine/core";
-import {
-  IconBrandGoogleFilled
-} from "@tabler/icons-react";
+import { Button, Divider, Space, Stack, Text } from "@mantine/core";
 
 export default function GoogleSignin() {
   const supabase = createClient();
@@ -19,28 +16,36 @@ export default function GoogleSignin() {
 
   return (
     <div>
-      <Button
-        variant="default"
-        leftSection={<GoogleIcon />}
-        onClick={() => signin()}
+      <Divider label="A digital notes making platform" labelPosition="center" my="xs" />
+      <Stack
+        h={300}
+        w={300}
+        align="center"
+        bg="var(--mantine-color-gray-0)"
       >
-        Google Sign In
-      </Button>
+        <Text size="lg" fw={500}>
+          Welcome to Dizinote
+        </Text>
+        <Space h={50} />
+        <Button
+          variant="default"
+          leftSection={<GoogleIcon />}
+          onClick={() => signin()}
+        >
+          Sign in with Google
+        </Button>
+      </Stack>
     </div>
   );
 }
 
-
-
-
-
-function GoogleIcon(props: React.ComponentPropsWithoutRef<'svg'>) {
+function GoogleIcon(props: React.ComponentPropsWithoutRef<"svg">) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       preserveAspectRatio="xMidYMid"
       viewBox="0 0 256 262"
-      style={{ width: '0.9rem', height: '0.9rem' }}
+      style={{ width: "0.9rem", height: "0.9rem" }}
       {...props}
     >
       <path
