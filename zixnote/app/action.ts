@@ -101,3 +101,11 @@ export async function signOut() {
   await supabase.auth.signOut();
   return redirect("/");
 }
+export async function navigateWithLogin(data: FormData) {
+  const supabase = createClient(cookies());
+  const { user } = (await supabase.auth.getUser()).data;
+  if (user) {
+    redirect(`/manage-notes`);
+  }
+  redirect(`/login`);
+}
