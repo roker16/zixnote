@@ -36,7 +36,7 @@ export default function ManageSyllabusLayout({
   analytics: React.ReactNode;
 }) {
   const [opened, { toggle }] = useDisclosure();
-  const [activeTab, setActiveTab] = useState<string | null>("third");
+  const [activeTab, setActiveTab] = useState<string | null>("first");
   const theme = useMantineTheme();
   const supabase = createClient();
   const [user, setUser] = useState<User | null>(null);
