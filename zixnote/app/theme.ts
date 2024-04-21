@@ -8,16 +8,16 @@ export const theme = createTheme({
   primaryShade: 9,
   colors: {
     primary: [
-      "#ffe9f1",
-      "#ffd1e0",
-      "#faa1bd",
-      "#f66e99",
-      "#f2437a",
-      "#f02866",
-      "#f0185c",
-      "#d6094d",
-      "#c00043",
-      "#a90039",
+      "#f0f0ff",
+      "#dfdef5",
+      "#bcbae2",
+      "#9794d0",
+      "#7773c1",
+      "#635eb8",
+      "#5954b4",
+      "#4a459f",
+      "#413d8f",
+      "#353480"
     ],
     brightred: [
       "#F0BBDD",
