@@ -7,14 +7,15 @@ export async function GET(request: Request) {
   Cashfree.XEnvironment = Cashfree.Environment.PRODUCTION;
   function generateOrderId() {
     const uniqueId = crypto.randomUUID();
-
     return uniqueId;
   }
+  const orderId = crypto.randomUUID()
+  console.log("order id is " , orderId)
   try {
     var request1 = {
       order_amount: 1.0,
       order_currency: "INR",
-      order_id:  generateOrderId(),
+      order_id:  orderId,
       customer_details: {
         customer_id: "webcodder01",
         customer_phone: "9999999999",
