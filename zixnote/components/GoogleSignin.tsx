@@ -27,7 +27,7 @@ export default function GoogleSignin() {
         <Text size="lg" fw={500}>
           Welcome to Dizinote
         </Text>
-        <Space h={50} />
+        <Space h={40} />
         <Button
           variant="default"
           leftSection={<GoogleIcon />}

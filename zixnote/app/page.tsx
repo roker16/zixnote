@@ -4,6 +4,7 @@ import { HeroBullets } from "@/components/landing/HeroBullets";
 import { createClient } from "@/utils/supabase/server";
 import { Container } from "@mantine/core";
 import { cookies } from "next/headers";
+import Paynow from "./payment/paynow";
 // import Landing from "./Landing";
 
 export default async function Index() {
@@ -18,6 +19,7 @@ export default async function Index() {
       <Container size={"xl"} >
         <HeroBullets />
       </Container>
+      <Paynow/>
       <FooterCentered />
     </div>
   );
