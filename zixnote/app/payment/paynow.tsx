@@ -9,7 +9,7 @@ function Paynow() {
 
   let insitialzeSDK = async function () {
     cashfree = await load({
-      mode: "production",
+      mode: "sandbox",
     });
   };
 
@@ -20,7 +20,7 @@ function Paynow() {
   const getSessionId = async () => {
     console.log("inside get session");
     try {
-      let res = await axios.get("www.dizinote.com/api/payment");
+      let res = await axios.get("https://www.dizinote.com/api/payment");
       console.log("session responnse is ", JSON.stringify(res));
       if (res.data && res.data.payment_session_id) {
         console.log(res.data);
@@ -34,7 +34,7 @@ function Paynow() {
 
   const verifyPayment = async () => {
     try {
-      let res = await axios.post("www.dizinote.com/api/verify", {
+      let res = await axios.post("https://www.dizinote.com/api/verify", {
         orderId: orderId,
       });
 
