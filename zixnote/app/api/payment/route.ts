@@ -4,7 +4,7 @@ import { Cashfree } from "cashfree-pg";
 export async function GET(request: Request) {
   Cashfree.XClientId = process.env.NEXT_PUBLIC_CLIENT_ID;
   Cashfree.XClientSecret = process.env.NEXT_PUBLIC_CLIENT_SECRET;
-  Cashfree.XEnvironment = Cashfree.Environment.SANDBOX;
+  Cashfree.XEnvironment = Cashfree.Environment.PRODUCTION;
   function generateOrderId() {
     const uniqueId = crypto.randomUUID();
 
