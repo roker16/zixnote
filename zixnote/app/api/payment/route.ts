@@ -1,6 +1,6 @@
 import { headers } from "next/headers";
 import { Cashfree } from "cashfree-pg";
-
+export const dynamic = 'force-dynamic' // defaults to auto
 export async function GET(request: Request) {
   Cashfree.XClientId = process.env.NEXT_PUBLIC_CLIENT_ID;
   Cashfree.XClientSecret = process.env.NEXT_PUBLIC_CLIENT_SECRET;
