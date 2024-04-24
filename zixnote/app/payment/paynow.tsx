@@ -3,6 +3,7 @@ import { useState } from "react";
 import axios from "axios";
 // @ts-ignore
 import { load } from "@cashfreepayments/cashfree-js";
+import { BASE_URL } from "@/utils/helper";
 
 function Paynow() {
   let cashfree: any;
@@ -20,7 +21,7 @@ function Paynow() {
   const getSessionId = async () => {
     console.log("inside get session");
     try {
-      let res = await axios.get("https://www.dizinote.com/api/payment");
+      let res = await axios.get(`${BASE_URL}/api/payment`);
       console.log("session responnse is ", JSON.stringify(res));
       if (res.data && res.data.payment_session_id) {
         console.log(res.data);
@@ -34,7 +35,7 @@ function Paynow() {
 
   const verifyPayment = async () => {
     try {
-      let res = await axios.post("https://www.dizinote.com/api/verify", {
+      let res = await axios.post(`${BASE_URL}/api/verify`, {
         orderId: orderId,
       });
 
