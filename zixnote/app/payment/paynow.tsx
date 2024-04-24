@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import { useState } from "react";
 import axios from "axios";
 // @ts-ignore
@@ -13,16 +13,15 @@ function Paynow() {
     });
   };
 
- 
-
   insitialzeSDK();
 
   const [orderId, setOrderId] = useState("");
 
   const getSessionId = async () => {
+    console.log("inside get session");
     try {
-      let res = await axios.get("http://localhost:3000/api/payment");
-
+      let res = await axios.get("https://www.dizinote.com/api/payment");
+      console.log("session responnse is ", JSON.stringify(res));
       if (res.data && res.data.payment_session_id) {
         console.log(res.data);
         setOrderId(res.data.order_id);
@@ -35,7 +34,7 @@ function Paynow() {
 
   const verifyPayment = async () => {
     try {
-      let res = await axios.post("http://localhost:3000/api/verify", {
+      let res = await axios.post("https://www.dizinote.com/api/verify", {
         orderId: orderId,
       });
 
@@ -49,8 +48,10 @@ function Paynow() {
 
   const handleClick = async (e: any) => {
     e.preventDefault();
+    console.log("inside handle click");
     try {
       let sessionId = await getSessionId();
+      console.log("session id is", sessionId);
       let checkoutOptions = {
         paymentSessionId: sessionId,
         redirectTarget: "_modal",
