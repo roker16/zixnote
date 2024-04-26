@@ -1,11 +1,11 @@
 "use client";
 import { useState } from "react";
-import axios from "axios";
 // @ts-ignore
 import { load } from "@cashfreepayments/cashfree-js";
 import { BASE_URL } from "@/utils/helper";
 
 function Paynow({ amount }: { amount: number }) {
+  const [orderId, setOrderId] = useState(9999999);
   let cashfree: any;
 
   let insitialzeSDK = async function () {
@@ -15,8 +15,6 @@ function Paynow({ amount }: { amount: number }) {
   };
 
   insitialzeSDK();
-
-  const [orderId, setOrderId] = useState(9999999);
 
   const getSessionId = async () => {
     console.log("inside get session");
@@ -41,7 +39,7 @@ function Paynow({ amount }: { amount: number }) {
   };
 
   const verifyPayment = async () => {
-    console.log("order id is ",orderId)
+    console.log("order id is ", orderId);
     try {
       let res = await fetch(`${BASE_URL}/api/verify`, {
         method: "POST",
@@ -71,7 +69,7 @@ function Paynow({ amount }: { amount: number }) {
       };
 
       cashfree.checkout(checkoutOptions).then((res: any) => {
-        console.log("payment initialized");
+        console.log("response object is ..." ,JSON.stringify(res));
 
         verifyPayment();
       });
