@@ -1,6 +1,5 @@
 import { Cashfree } from "cashfree-pg";
 
-
 export async function POST(request: Request) {
   Cashfree.XClientId = process.env.NEXT_PUBLIC_CLIENT_ID;
   Cashfree.XClientSecret = process.env.NEXT_PUBLIC_CLIENT_SECRET;
@@ -14,10 +13,16 @@ export async function POST(request: Request) {
       })
       .catch((error) => {
         console.error(error.response.data.message);
-        console.error("verify error is ",JSON.stringify(error));
+        console.error("verify error is ", JSON.stringify(error));
+        return new Response("An error occurred while processing your request.", {
+          status: 500,
+        });
       });
-    } catch (error) {
-    console.error("verify error is ",JSON.stringify(error));
+  } catch (error) {
+    console.error("verify error is ", JSON.stringify(error));
     console.log(error);
+    return new Response("An error occurred while processing your request.", {
+      status: 500,
+    });
   }
 }
