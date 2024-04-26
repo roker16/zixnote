@@ -41,16 +41,17 @@ function Paynow({ amount }: { amount: number }) {
   };
 
   const verifyPayment = async () => {
+    console.log("order id is ",orderId)
     try {
-      let res = await axios.post(`${BASE_URL}/api/verify`, {
+      let res = await fetch(`${BASE_URL}/api/verify`, {
         method: "POST",
         body: JSON.stringify({
           orderid: orderId,
         }),
       });
-
-      if (res && res.data) {
-        console.log(JSON.stringify(res.data));
+      const data = await res.json();
+      if (res && data) {
+        console.log(JSON.stringify(data));
         alert("payment verified");
       }
     } catch (error) {
