@@ -5,7 +5,7 @@ import { load } from "@cashfreepayments/cashfree-js";
 import { BASE_URL } from "@/utils/helper";
 
 function Paynow({ amount }: { amount: number }) {
-  const [orderId, setOrderId] = useState(9999999);
+  // const [orderId, setOrderId] = useState(9999999);
   let cashfree: any;
 
   let insitialzeSDK = async function () {
@@ -29,8 +29,8 @@ function Paynow({ amount }: { amount: number }) {
       console.log("session responnse is ", JSON.stringify(data));
       if (data && data.payment_session_id) {
         console.log(data);
-        setOrderId(data.order_id);
-        return data.payment_session_id;
+        // setOrderId(data.order_id);
+        return { sessionId: data.payment_session_id, orderId: data.order_id };
       }
     } catch (error) {
       console.log("error is ", error);
@@ -38,40 +38,40 @@ function Paynow({ amount }: { amount: number }) {
     }
   };
 
-  
+  const verifyPayment = async (orderId:string) => {
+    console.log("order id is ", orderId);
+    try {
+      let res = await fetch(`${BASE_URL}/api/verify`, {
+        method: "POST",
+        body: JSON.stringify({
+          orderid: orderId,
+        }),
+      });
+      const data = await res.json();
+      if (res && data) {
+        console.log(JSON.stringify(data));
+        alert("payment verified");
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   const handleClick = async (e: any) => {
     e.preventDefault();
     console.log("inside handle click");
     try {
-      let sessionId = await getSessionId();
-      console.log("session id is", sessionId);
+      let data = await getSessionId();
+      console.log("session id is", JSON.stringify(data));
       let checkoutOptions = {
-        paymentSessionId: sessionId,
+        paymentSessionId: data?.sessionId,
         redirectTarget: "_modal",
       };
 
       cashfree.checkout(checkoutOptions).then((res: any) => {
-        console.log("response object is ..." ,JSON.stringify(res));
-        const verifyPayment = async () => {
-          console.log("order id is ", orderId);
-          try {
-            let res = await fetch(`${BASE_URL}/api/verify`, {
-              method: "POST",
-              body: JSON.stringify({
-                orderid: orderId,
-              }),
-            });
-            const data = await res.json();
-            if (res && data) {
-              console.log(JSON.stringify(data));
-              alert("payment verified");
-            }
-          } catch (error) {
-            console.log(error);
-          }
-        };
-        verifyPayment();
+        console.log("response object is ...", JSON.stringify(res));
+
+        verifyPayment(data?.orderId);
       });
     } catch (error) {
       console.log("error is ", error);
@@ -86,7 +86,7 @@ function Paynow({ amount }: { amount: number }) {
         >
           Pay now
         </button>
-        Order id is {orderId}
+        {/* Order id is {orderId} */}
       </div>
     </>
   );
