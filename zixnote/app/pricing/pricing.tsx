@@ -1,4 +1,5 @@
 import React from "react";
+import Paynow from "../payment/paynow";
 
 function Pricing() {
   // Monthly plan price
@@ -25,8 +26,7 @@ function Pricing() {
             <h2 className="text-xl font-bold mb-4">Monthly</h2>
             <p className="text-gray-600 mb-4">All features included.</p>
             <p className="text-gray-600 mb-4">
-              All future updates shall be provied without any additinal
-              charges.
+              All future updates shall be provied without any additinal charges.
             </p>
             <p className="text-gray-600 mb-4">No hidded charges.</p>
           </div>
@@ -34,9 +34,7 @@ function Pricing() {
             <div>
               <span className="text-2xl font-bold">₹{monthlyPrice}</span>
             </div>
-            <button className="bg-cyan-500 text-white px-4 py-2 rounded-md hover:cursor-pointer hover:bg-cyan-600 focus:outline-none border-none">
-              Select
-            </button>
+            <Paynow amount={monthlyPrice} />
           </div>
         </div>
         <div className="bg-white rounded-lg shadow-lg p-6 flex flex-col justify-between">
@@ -44,8 +42,7 @@ function Pricing() {
             <h2 className="text-xl font-bold mb-4">Yearly</h2>
             <p className="text-gray-600 mb-4">All features included.</p>
             <p className="text-gray-600 mb-4">
-              All future updates shall be provied without any additinal
-              charges.
+              All future updates shall be provied without any additinal charges.
             </p>
             <p className="text-gray-600 mb-4">No hidded charges.</p>
           </div>
@@ -59,9 +56,7 @@ function Pricing() {
                 ({yearlyDiscountPercentage.toFixed(2)}% off)
               </span>
             </div>
-            <button className="bg-cyan-500 text-white px-4 py-2 rounded-md hover:cursor-pointer hover:bg-cyan-600 focus:outline-none border-none">
-              Select
-            </button>
+            <Paynow amount={yearlyPrice} />
           </div>
         </div>
         <div className="bg-white rounded-lg shadow-lg p-6 flex flex-col justify-between">
@@ -69,8 +64,7 @@ function Pricing() {
             <h2 className="text-xl font-bold mb-4">5 years Plan</h2>
             <p className="text-gray-600 mb-4">All features included.</p>
             <p className="text-gray-600 mb-4">
-              All future updates shall be provied without any additinal
-              charges.
+              All future updates shall be provied without any additinal charges.
             </p>
             <p className="text-gray-600 mb-4">No hidded charges.</p>
           </div>
@@ -84,9 +78,7 @@ function Pricing() {
                 ({fiveYearDiscountPercentage.toFixed(2)}% off)
               </span>
             </div>
-            <button className="bg-cyan-500 text-white px-4 py-2 rounded-md hover:cursor-pointer hover:bg-cyan-600 focus:outline-none border-none">
-              Select
-            </button>
+            <Paynow amount={fiveYearPrice} />
           </div>
         </div>
       </div>

@@ -5,7 +5,7 @@ import axios from "axios";
 import { load } from "@cashfreepayments/cashfree-js";
 import { BASE_URL } from "@/utils/helper";
 
-function Paynow() {
+function Paynow({ amount }: { amount: number }) {
   let cashfree: any;
 
   let insitialzeSDK = async function () {
@@ -21,15 +21,22 @@ function Paynow() {
   const getSessionId = async () => {
     console.log("inside get session");
     try {
-      let res = await axios.get(`${BASE_URL}/api/payment`);
-      console.log("session responnse is ", JSON.stringify(res));
-      if (res.data && res.data.payment_session_id) {
-        console.log(res.data);
-        setOrderId(res.data.order_id);
-        return res.data.payment_session_id;
+      let res = await fetch(`${BASE_URL}/api/payment`, {
+        method: "POST",
+        body: JSON.stringify({
+          amount: amount,
+        }),
+      });
+      const data = await res.json();
+      console.log("session responnse is ", JSON.stringify(data));
+      if (data && data.payment_session_id) {
+        console.log(data);
+        setOrderId(data.order_id);
+        return data.payment_session_id;
       }
     } catch (error) {
-      console.log(error);
+      console.log("error is ", error);
+      // alert(error);
     }
   };
 
@@ -40,6 +47,7 @@ function Paynow() {
       });
 
       if (res && res.data) {
+        console.log(JSON.stringify(res.data))
         alert("payment verified");
       }
     } catch (error) {
@@ -64,14 +72,18 @@ function Paynow() {
         verifyPayment();
       });
     } catch (error) {
-      console.log(error);
+      console.log("error is ", error);
     }
   };
   return (
     <>
-      <h1>Cashfree payment getway</h1>
       <div className="card">
-        <button onClick={handleClick}>Pay now</button>
+        <button
+          className="bg-cyan-500 text-white px-4 py-2 rounded-md hover:cursor-pointer hover:bg-cyan-600 focus:outline-none border-none"
+          onClick={handleClick}
+        >
+          Pay now
+        </button>
       </div>
     </>
   );

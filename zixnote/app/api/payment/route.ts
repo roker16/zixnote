@@ -1,26 +1,38 @@
-import { headers } from "next/headers";
+import { createClient } from "@/utils/supabase/server";
 import { Cashfree } from "cashfree-pg";
-export const dynamic = 'force-dynamic' // defaults to auto
-export async function GET(request: Request) {
+import { cookies } from "next/headers";
+import { metadata } from "../../layout";
+import { redirect } from "next/navigation";
+
+export const dynamic = "force-dynamic"; // defaults to auto
+export async function POST(request: Request) {
+  const { amount } = await request.json();
+  console.log("amount is ", amount);
+  const supabase = createClient(cookies());
+  const user = (await supabase.auth.getUser()).data.user;
+  const userId = user?.id;
+  const email = user?.email;
+
+  if (!user) {
+    return new Response("user not logged in.", {
+      status: 500,
+    });
+  }
   Cashfree.XClientId = process.env.NEXT_PUBLIC_CLIENT_ID;
   Cashfree.XClientSecret = process.env.NEXT_PUBLIC_CLIENT_SECRET;
   Cashfree.XEnvironment = Cashfree.Environment.PRODUCTION;
-  function generateOrderId() {
-    const uniqueId = crypto.randomUUID();
-    return uniqueId;
-  }
-  const orderId = crypto.randomUUID()
-  console.log("order id is " , orderId)
+
+  const orderId = crypto.randomUUID();
   try {
     var request1 = {
-      order_amount: 1.0,
+      order_amount: Number(amount),
       order_currency: "INR",
-      order_id:  orderId,
+      order_id: orderId,
       customer_details: {
-        customer_id: "webcodder01",
+        customer_id: userId!,
         customer_phone: "9999999999",
-        customer_name: "Web Codder",
-        customer_email: "webcodder@example.com",
+        customer_name: "username",
+        customer_email: email,
       },
     };
 

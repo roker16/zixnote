@@ -19,7 +19,7 @@ export default async function Index() {
       <Container size={"xl"} >
         <HeroBullets />
       </Container>
-      <Paynow/>
+      
       <FooterCentered />
     </div>
   );
