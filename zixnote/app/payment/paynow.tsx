@@ -38,24 +38,7 @@ function Paynow({ amount }: { amount: number }) {
     }
   };
 
-  const verifyPayment = async () => {
-    console.log("order id is ", orderId);
-    try {
-      let res = await fetch(`${BASE_URL}/api/verify`, {
-        method: "POST",
-        body: JSON.stringify({
-          orderid: orderId,
-        }),
-      });
-      const data = await res.json();
-      if (res && data) {
-        console.log(JSON.stringify(data));
-        alert("payment verified");
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  
 
   const handleClick = async (e: any) => {
     e.preventDefault();
@@ -70,7 +53,24 @@ function Paynow({ amount }: { amount: number }) {
 
       cashfree.checkout(checkoutOptions).then((res: any) => {
         console.log("response object is ..." ,JSON.stringify(res));
-
+        const verifyPayment = async () => {
+          console.log("order id is ", orderId);
+          try {
+            let res = await fetch(`${BASE_URL}/api/verify`, {
+              method: "POST",
+              body: JSON.stringify({
+                orderid: orderId,
+              }),
+            });
+            const data = await res.json();
+            if (res && data) {
+              console.log(JSON.stringify(data));
+              alert("payment verified");
+            }
+          } catch (error) {
+            console.log(error);
+          }
+        };
         verifyPayment();
       });
     } catch (error) {
