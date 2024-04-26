@@ -16,7 +16,7 @@ function Paynow({ amount }: { amount: number }) {
 
   insitialzeSDK();
 
-  const [orderId, setOrderId] = useState("");
+  const [orderId, setOrderId] = useState(9999999);
 
   const getSessionId = async () => {
     console.log("inside get session");
@@ -88,6 +88,7 @@ function Paynow({ amount }: { amount: number }) {
         >
           Pay now
         </button>
+        Order id is {orderId}
       </div>
     </>
   );
