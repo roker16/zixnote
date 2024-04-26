@@ -14,8 +14,10 @@ export async function POST(request: Request) {
       })
       .catch((error) => {
         console.error(error.response.data.message);
+        console.error("verify error is ",JSON.stringify(error));
       });
-  } catch (error) {
+    } catch (error) {
+    console.error("verify error is ",JSON.stringify(error));
     console.log(error);
   }
 }
