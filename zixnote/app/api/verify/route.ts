@@ -10,6 +10,7 @@ export async function POST(request: Request) {
     // Parse request body
     const body = await request.json();
     const { orderId } = body;
+    console.log ("order is ",orderId)
 
     // Fetch payments
     const response = await Cashfree.PGOrderFetchPayments("2023-08-01", orderId);
