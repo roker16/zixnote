@@ -25,7 +25,7 @@ export async function POST(request: Request) {
   const orderId = crypto.randomUUID();
   try {
     var request1 = {
-      order_amount: Number(amount),
+      order_amount: 1,
       order_currency: "INR",
       order_id: orderId,
       customer_details: {
