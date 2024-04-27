@@ -3,6 +3,7 @@ import { useState } from "react";
 // @ts-ignore
 import { load } from "@cashfreepayments/cashfree-js";
 import { BASE_URL } from "@/utils/helper";
+import { showNotifications } from "@/components/Notification";
 
 function Paynow({ amount }: { amount: number }) {
   // const [orderId, setOrderId] = useState(9999999);
@@ -17,7 +18,6 @@ function Paynow({ amount }: { amount: number }) {
   insitialzeSDK();
 
   const getSessionId = async () => {
-    console.log("inside get session");
     try {
       let res = await fetch(`${BASE_URL}/api/payment`, {
         method: "POST",
@@ -26,10 +26,7 @@ function Paynow({ amount }: { amount: number }) {
         }),
       });
       const data = await res.json();
-      console.log("session responnse is ", JSON.stringify(data));
       if (data && data.payment_session_id) {
-        console.log(data);
-        // setOrderId(data.order_id);
         return { sessionId: data.payment_session_id, orderId: data.order_id };
       }
     } catch (error) {
@@ -39,7 +36,6 @@ function Paynow({ amount }: { amount: number }) {
   };
 
   const verifyPayment = async (orderId:string) => {
-    console.log("order id is ", orderId);
     try {
       let res = await fetch(`${BASE_URL}/api/verify`, {
         method: "POST",
@@ -49,8 +45,8 @@ function Paynow({ amount }: { amount: number }) {
       });
       const data = await res.json();
       if (res && data) {
-        console.log(JSON.stringify(data));
-        alert("payment verified");
+        showNotifications("Payment verified");
+        // alert("payment verified");
       }
     } catch (error) {
       console.log(error);
@@ -59,18 +55,14 @@ function Paynow({ amount }: { amount: number }) {
 
   const handleClick = async (e: any) => {
     e.preventDefault();
-    console.log("inside handle click");
     try {
       let data = await getSessionId();
-      console.log("session id is", JSON.stringify(data));
       let checkoutOptions = {
         paymentSessionId: data?.sessionId,
         redirectTarget: "_modal",
       };
 
       cashfree.checkout(checkoutOptions).then((res: any) => {
-        console.log("response object is ...", JSON.stringify(res));
-
         verifyPayment(data?.orderId);
       });
     } catch (error) {
