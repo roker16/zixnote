@@ -1,9 +1,10 @@
 "use client";
-import { useState } from "react";
 // @ts-ignore
 import { load } from "@cashfreepayments/cashfree-js";
 import { BASE_URL } from "@/utils/helper";
 import { showNotifications } from "@/components/Notification";
+import { notifications } from "@mantine/notifications";
+import { IconDiscountCheckFilled } from "@tabler/icons-react";
 
 function Paynow({ amount }: { amount: number }) {
   // const [orderId, setOrderId] = useState(9999999);
@@ -45,7 +46,13 @@ function Paynow({ amount }: { amount: number }) {
       });
       const data = await res.json();
       if (res && data) {
-        showNotifications("Payment verified");
+        // showNotifications("Payment verified");
+        notifications.show({
+          title:"Payment verified",
+          message: "Your payment is verified",
+          icon: <IconDiscountCheckFilled />,
+          color:"green"
+        });
         // alert("payment verified");
       }
     } catch (error) {
