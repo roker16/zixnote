@@ -8,7 +8,7 @@ import { IconDiscountCheckFilled } from "@tabler/icons-react";
 import { Button } from "@mantine/core";
 import { createClient } from "@/utils/supabase/client";
 
-function Paynow({ amount, planName }: { amount: number; planName: string }) {
+function Paynow({ amount, planName }: { amount: number; planName?: string }) {
   let cashfree: any;
 
   let insitialzeSDK = async function () {
@@ -57,7 +57,7 @@ function Paynow({ amount, planName }: { amount: number; planName: string }) {
             amount: amount,
             payment_id: "hhh",
             status: "",
-            plan_name: planName,
+            plan_name: "planName",
             user_id: userId,
             start_date: "",
             end_date: "",
