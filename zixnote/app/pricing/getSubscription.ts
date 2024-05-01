@@ -1,4 +1,5 @@
-import { createClient } from "@/utils/supabase/client";
+import { createClient } from '../../utils/supabase/client';
+
 
 export const getSubscription = async (userId: string) => {
   const supabase = createClient();
