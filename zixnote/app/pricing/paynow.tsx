@@ -5,9 +5,10 @@ import { BASE_URL } from "@/utils/helper";
 import { showNotifications } from "@/components/Notification";
 import { notifications } from "@mantine/notifications";
 import { IconDiscountCheckFilled } from "@tabler/icons-react";
+import { Button } from "@mantine/core";
+import { createClient } from "@/utils/supabase/client";
 
-function Paynow({ amount }: { amount: number }) {
-  // const [orderId, setOrderId] = useState(9999999);
+function Paynow({ amount, planName }: { amount: number; planName: string }) {
   let cashfree: any;
 
   let insitialzeSDK = async function () {
@@ -36,7 +37,7 @@ function Paynow({ amount }: { amount: number }) {
     }
   };
 
-  const verifyPayment = async (orderId:string) => {
+  const verifyPayment = async (orderId: string) => {
     try {
       let res = await fetch(`${BASE_URL}/api/verify`, {
         method: "POST",
@@ -46,12 +47,27 @@ function Paynow({ amount }: { amount: number }) {
       });
       const data = await res.json();
       if (res && data) {
+        // update database
+        console.log("payment detail is ",JSON.stringify(data))
+        const supabase = createClient();
+        const userId = (await supabase.auth.getUser()).data.user?.id;
+        const { error } = await supabase
+          .from("subscription")
+          .insert({
+            amount: amount,
+            payment_id: "hhh",
+            status: "",
+            plan_name: planName,
+            user_id: userId,
+            start_date: "",
+            end_date: "",
+          });
         // showNotifications("Payment verified");
         notifications.show({
-          title:"Payment verified",
+          title: "Payment verified",
           message: "Your payment is verified",
           icon: <IconDiscountCheckFilled />,
-          color:"green"
+          color: "green",
         });
         // alert("payment verified");
       }
@@ -78,13 +94,8 @@ function Paynow({ amount }: { amount: number }) {
   };
   return (
     <>
-      <div className="card">
-        <button
-          className="bg-cyan-500 text-white px-4 py-2 rounded-md hover:cursor-pointer hover:bg-cyan-600 focus:outline-none border-none"
-          onClick={handleClick}
-        >
-          Pay now
-        </button>
+      <div>
+        <Button onClick={handleClick}>Pay now</Button>
         {/* Order id is {orderId} */}
       </div>
     </>

@@ -4,7 +4,7 @@ import { HeroBullets } from "@/components/landing/HeroBullets";
 import { createClient } from "@/utils/supabase/server";
 import { Container } from "@mantine/core";
 import { cookies } from "next/headers";
-import Paynow from "./payment/paynow";
+import Paynow from "./pricing/paynow";
 // import Landing from "./Landing";
 
 export default async function Index() {
