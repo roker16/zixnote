@@ -48,20 +48,20 @@ function Paynow({ amount, planName }: { amount: number; planName?: string }) {
       const data = await res.json();
       if (res && data) {
         // update database
-        console.log("payment detail is ",JSON.stringify(data))
+        console.log("payment detail is ", JSON.stringify(data));
+        const endDate = new Date();
+        endDate.setMonth(endDate.getMonth() + 1);
         const supabase = createClient();
         const userId = (await supabase.auth.getUser()).data.user?.id;
-        const { error } = await supabase
-          .from("subscription")
-          .insert({
-            amount: amount,
-            payment_id: "hhh",
-            status: "",
-            plan_name: "planName",
-            user_id: userId,
-            start_date: "",
-            end_date: "",
-          });
+        const { error } = await supabase.from("subscription").insert({
+          amount: 1,
+          payment_id: data[0].cf_payment_id,
+          status: "",
+          plan_name: "planName",
+          user_id: userId,
+          start_date: new Date().toISOString(),
+          end_date: endDate.toISOString(),
+        });
         // showNotifications("Payment verified");
         notifications.show({
           title: "Payment verified",
