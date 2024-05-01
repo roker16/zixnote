@@ -149,6 +149,47 @@ export type Database = {
         }
         Relationships: []
       }
+      subscription: {
+        Row: {
+          amount: number | null
+          end_date: string
+          id: number
+          payment_id: string
+          plan_name: string
+          start_date: string
+          status: string | null
+          user_id: string | null
+        }
+        Insert: {
+          amount?: number | null
+          end_date: string
+          id?: number
+          payment_id: string
+          plan_name: string
+          start_date: string
+          status?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          amount?: number | null
+          end_date?: string
+          id?: number
+          payment_id?: string
+          plan_name?: string
+          start_date?: string
+          status?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "subscription_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       syll_class: {
         Row: {
           class_name: string

@@ -1,5 +1,5 @@
 import React from "react";
-import Paynow from "../payment/paynow";
+import Paynow from "./paynow";
 
 function Pricing() {
   // Monthly plan price
@@ -30,7 +30,7 @@ function Pricing() {
             </p>
             <p className="text-gray-600 mb-4">No hidded charges.</p>
           </div>
-          <div className="flex items-center justify-between mt-4">
+          <div className="flex flex-col lg:flex-row gap-8 md:gap-1 items-center justify-between mt-4">
             <div>
               <span className="text-2xl font-bold">₹{monthlyPrice}</span>
             </div>
@@ -46,7 +46,7 @@ function Pricing() {
             </p>
             <p className="text-gray-600 mb-4">No hidded charges.</p>
           </div>
-          <div className="flex items-center justify-between mt-4">
+          <div className="flex flex-col lg:flex-row gap-8 md:gap-1 items-center justify-between mt-4">
             <div>
               <span className="text-lg text-gray-500 line-through mr-2">
                 ₹{yearlyActualPrice}
@@ -68,7 +68,7 @@ function Pricing() {
             </p>
             <p className="text-gray-600 mb-4">No hidded charges.</p>
           </div>
-          <div className="flex items-center justify-between mt-4">
+          <div className="flex flex-col lg:flex-row gap-8 md:gap-1 items-center justify-between mt-4">
             <div>
               <span className="text-lg text-gray-500 line-through mr-2">
                 ₹{fiveYearActualPrice}
