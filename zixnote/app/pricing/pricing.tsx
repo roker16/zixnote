@@ -1,7 +1,11 @@
 import React from "react";
 import Paynow from "./paynow";
+import { getSubscription } from "./getSubscription";
+import { getUserAndRole } from "@/utils/getUserAndRole";
 
-function Pricing() {
+async function Pricing() {
+  const user = await getUserAndRole();
+  const subscription = user.user && (await getSubscription(user.user.id));
   // Monthly plan price
   const monthlyPrice = 700;
 
@@ -34,7 +38,7 @@ function Pricing() {
             <div>
               <span className="text-2xl font-bold">₹{monthlyPrice}</span>
             </div>
-            <Paynow amount={monthlyPrice} />
+            <Paynow amount={monthlyPrice} planName={"monthly"} />
           </div>
         </div>
         <div className="bg-white rounded-lg shadow-lg p-6 flex flex-col justify-between">
@@ -56,7 +60,7 @@ function Pricing() {
                 ({yearlyDiscountPercentage.toFixed(2)}% off)
               </span>
             </div>
-            <Paynow amount={yearlyPrice} />
+            <Paynow amount={yearlyPrice} planName={"yearly"} />
           </div>
         </div>
         <div className="bg-white rounded-lg shadow-lg p-6 flex flex-col justify-between">
@@ -78,7 +82,7 @@ function Pricing() {
                 ({fiveYearDiscountPercentage.toFixed(2)}% off)
               </span>
             </div>
-            <Paynow amount={fiveYearPrice} />
+            <Paynow amount={fiveYearPrice} planName={"five_year"} />
           </div>
         </div>
       </div>

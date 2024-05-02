@@ -8,7 +8,7 @@ import { IconDiscountCheckFilled } from "@tabler/icons-react";
 import { Button } from "@mantine/core";
 import { createClient } from "@/utils/supabase/client";
 
-function Paynow({ amount, planName }: { amount: number; planName?: string }) {
+function Paynow({ amount, planName }: { amount: number; planName: planType }) {
   let cashfree: any;
 
   let insitialzeSDK = async function () {
@@ -49,15 +49,14 @@ function Paynow({ amount, planName }: { amount: number; planName?: string }) {
       if (res && data) {
         // update database
         console.log("payment detail is ", JSON.stringify(data));
-        const endDate = new Date();
-        endDate.setMonth(endDate.getMonth() + 1);
+        const endDate = calculateEndDate(planName);
         const supabase = createClient();
         const userId = (await supabase.auth.getUser()).data.user?.id;
         const { error } = await supabase.from("subscription").insert({
-          amount: 1,
+          amount: data[0].payment_amount,
           payment_id: data[0].cf_payment_id,
           status: "",
-          plan_name: "planName",
+          plan_name: planName,
           user_id: userId,
           start_date: new Date().toISOString(),
           end_date: endDate.toISOString(),
@@ -65,7 +64,7 @@ function Paynow({ amount, planName }: { amount: number; planName?: string }) {
         // showNotifications("Payment verified");
         notifications.show({
           title: "Payment verified",
-          message: "Your payment is verified",
+          message: "Your subscription is active now!",
           icon: <IconDiscountCheckFilled />,
           color: "green",
         });
@@ -103,3 +102,19 @@ function Paynow({ amount, planName }: { amount: number; planName?: string }) {
 }
 
 export default Paynow;
+
+type planType = "monthly" | "yearly" | "five_year";
+
+const calculateEndDate = (
+  duration: planType
+): Date => {
+  const endDate = new Date();
+  if (duration === "monthly") {
+    endDate.setMonth(endDate.getMonth() + 1); // Add one month
+  } else if (duration === "yearly") {
+    endDate.setFullYear(endDate.getFullYear() + 1); // Add one year
+  } else if (duration === "five_year") {
+    endDate.setFullYear(endDate.getFullYear() + 5); // Add five years
+  }
+  return endDate;
+};

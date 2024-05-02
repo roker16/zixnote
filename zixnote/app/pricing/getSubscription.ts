@@ -1,8 +1,10 @@
-import { createClient } from '../../utils/supabase/client';
+import { createClient } from '@/utils/supabase/server';
+import { cookies } from 'next/headers';
+
 
 
 export const getSubscription = async (userId: string) => {
-  const supabase = createClient();
+  const supabase = createClient(cookies());
   const { data, error } = await supabase
     .from("subscription")
     .select()
