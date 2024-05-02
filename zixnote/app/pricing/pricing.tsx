@@ -2,6 +2,7 @@ import React from "react";
 import Paynow from "./paynow";
 import { getSubscription } from "./getSubscription";
 import { getUserAndRole } from "@/utils/getUserAndRole";
+import { FeatureList } from "./FeatureList";
 
 async function Pricing() {
   const user = await getUserAndRole();
@@ -24,31 +25,23 @@ async function Pricing() {
   return (
     <div className="container mx-auto p-6 bg-gray-100 rounded-lg shadow-md mt-16">
       <h1 className="text-3xl font-bold mb-8">Pricing</h1>
+      {user.user?.id}
+      {JSON.stringify(subscription)}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="bg-white rounded-lg shadow-lg p-6 flex flex-col justify-between">
           <div>
             <h2 className="text-xl font-bold mb-4">Monthly</h2>
-            <p className="text-gray-600 mb-4">All features included.</p>
-            <p className="text-gray-600 mb-4">
-              All future updates shall be provied without any additinal charges.
-            </p>
-            <p className="text-gray-600 mb-4">No hidded charges.</p>
+            <FeatureList />
           </div>
           <div className="flex flex-col lg:flex-row gap-8 md:gap-1 items-center justify-between mt-4">
-            <div>
-              <span className="text-2xl font-bold">₹{monthlyPrice}</span>
-            </div>
+            <span className="text-2xl font-bold mb-4">₹{monthlyPrice}</span>
             <Paynow amount={monthlyPrice} planName={"monthly"} />
           </div>
         </div>
         <div className="bg-white rounded-lg shadow-lg p-6 flex flex-col justify-between">
           <div>
             <h2 className="text-xl font-bold mb-4">Yearly</h2>
-            <p className="text-gray-600 mb-4">All features included.</p>
-            <p className="text-gray-600 mb-4">
-              All future updates shall be provied without any additinal charges.
-            </p>
-            <p className="text-gray-600 mb-4">No hidded charges.</p>
+            <FeatureList />
           </div>
           <div className="flex flex-col lg:flex-row gap-8 md:gap-1 items-center justify-between mt-4">
             <div>
@@ -56,21 +49,17 @@ async function Pricing() {
                 ₹{yearlyActualPrice}
               </span>
               <span className="text-2xl font-bold">₹{yearlyPrice}</span>
-              <span className="text-sm text-green-500 ml-2">
-                ({yearlyDiscountPercentage.toFixed(2)}% off)
-              </span>
             </div>
+            <span className="text-sm text-green-500 mb-6">
+              ({yearlyDiscountPercentage.toFixed(2)}% off)
+            </span>
             <Paynow amount={yearlyPrice} planName={"yearly"} />
           </div>
         </div>
         <div className="bg-white rounded-lg shadow-lg p-6 flex flex-col justify-between">
           <div>
             <h2 className="text-xl font-bold mb-4">5 years Plan</h2>
-            <p className="text-gray-600 mb-4">All features included.</p>
-            <p className="text-gray-600 mb-4">
-              All future updates shall be provied without any additinal charges.
-            </p>
-            <p className="text-gray-600 mb-4">No hidded charges.</p>
+            <FeatureList />
           </div>
           <div className="flex flex-col lg:flex-row gap-8 md:gap-1 items-center justify-between mt-4">
             <div>
@@ -78,10 +67,10 @@ async function Pricing() {
                 ₹{fiveYearActualPrice}
               </span>
               <span className="text-2xl font-bold">₹{fiveYearPrice}</span>
-              <span className="text-sm text-green-500 ml-2">
-                ({fiveYearDiscountPercentage.toFixed(2)}% off)
-              </span>
             </div>
+            <span className="text-sm text-green-500 mb-6">
+              ({fiveYearDiscountPercentage.toFixed(2)}% off)
+            </span>
             <Paynow amount={fiveYearPrice} planName={"five_year"} />
           </div>
         </div>

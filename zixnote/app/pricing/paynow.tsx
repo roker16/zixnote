@@ -4,9 +4,11 @@ import { load } from "@cashfreepayments/cashfree-js";
 import { BASE_URL } from "@/utils/helper";
 import { showNotifications } from "@/components/Notification";
 import { notifications } from "@mantine/notifications";
-import { IconDiscountCheckFilled } from "@tabler/icons-react";
+import { IconDiscountCheckFilled, IconInfoCircle } from "@tabler/icons-react";
 import { Button } from "@mantine/core";
 import { createClient } from "@/utils/supabase/client";
+import { getUserAndRole } from "@/utils/getUserAndRole";
+import { getUserAndRoleClient } from "@/utils/getUserAndRoleClient";
 
 function Paynow({ amount, planName }: { amount: number; planName: planType }) {
   let cashfree: any;
@@ -77,6 +79,16 @@ function Paynow({ amount, planName }: { amount: number; planName: planType }) {
 
   const handleClick = async (e: any) => {
     e.preventDefault();
+    const supabase = createClient();
+    const { user } = (await supabase.auth.getUser()).data;
+    if (!user) {
+      notifications.show({
+        title: "User not logged in!",
+        message: "Login to make payment!",
+        icon: <IconInfoCircle />,
+        color: "var(--mantine-primary-color-6)",
+      });
+    }
     try {
       let data = await getSessionId();
       let checkoutOptions = {
@@ -94,7 +106,7 @@ function Paynow({ amount, planName }: { amount: number; planName: planType }) {
   return (
     <>
       <div>
-        <Button onClick={handleClick}>Pay now</Button>
+        <Button onClick={handleClick}>Subscribe</Button>
         {/* Order id is {orderId} */}
       </div>
     </>
@@ -105,9 +117,7 @@ export default Paynow;
 
 type planType = "monthly" | "yearly" | "five_year";
 
-const calculateEndDate = (
-  duration: planType
-): Date => {
+const calculateEndDate = (duration: planType): Date => {
   const endDate = new Date();
   if (duration === "monthly") {
     endDate.setMonth(endDate.getMonth() + 1); // Add one month
