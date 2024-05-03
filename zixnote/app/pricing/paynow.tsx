@@ -1,14 +1,26 @@
 "use client";
+import { BASE_URL } from "@/utils/helper";
+import { createClient } from "@/utils/supabase/client";
 // @ts-ignore
 import { load } from "@cashfreepayments/cashfree-js";
-import { BASE_URL } from "@/utils/helper";
-import { showNotifications } from "@/components/Notification";
+import { Badge, Button } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
-import { IconDiscountCheckFilled } from "@tabler/icons-react";
-import { Button } from "@mantine/core";
-import { createClient } from "@/utils/supabase/client";
+import {
+  IconCheck,
+  IconDiscountCheckFilled,
+  IconInfoCircle,
+} from "@tabler/icons-react";
+import { getSubscriptionClient } from "./getSubscriptionClient";
 
-function Paynow({ amount, planName }: { amount: number; planName?: string }) {
+function Paynow({
+  amount,
+  planName,
+  subscribed,
+}: {
+  amount: number;
+  planName: planType;
+  subscribed: boolean;
+}) {
   let cashfree: any;
 
   let insitialzeSDK = async function () {
@@ -49,15 +61,14 @@ function Paynow({ amount, planName }: { amount: number; planName?: string }) {
       if (res && data) {
         // update database
         console.log("payment detail is ", JSON.stringify(data));
-        const endDate = new Date();
-        endDate.setMonth(endDate.getMonth() + 1);
+        const endDate = calculateEndDate(planName);
         const supabase = createClient();
         const userId = (await supabase.auth.getUser()).data.user?.id;
         const { error } = await supabase.from("subscription").insert({
-          amount: 1,
+          amount: data[0].payment_amount,
           payment_id: data[0].cf_payment_id,
           status: "",
-          plan_name: "planName",
+          plan_name: planName,
           user_id: userId,
           start_date: new Date().toISOString(),
           end_date: endDate.toISOString(),
@@ -65,7 +76,7 @@ function Paynow({ amount, planName }: { amount: number; planName?: string }) {
         // showNotifications("Payment verified");
         notifications.show({
           title: "Payment verified",
-          message: "Your payment is verified",
+          message: "Your subscription is active now!",
           icon: <IconDiscountCheckFilled />,
           color: "green",
         });
@@ -78,6 +89,35 @@ function Paynow({ amount, planName }: { amount: number; planName?: string }) {
 
   const handleClick = async (e: any) => {
     e.preventDefault();
+    const supabase = createClient();
+    const { user } = (await supabase.auth.getUser()).data;
+    if (!user) {
+      notifications.show({
+        title: "User not logged in!",
+        message: "Login to make payment!",
+        icon: <IconInfoCircle />,
+        color: "var(--mantine-primary-color-6)",
+      });
+      return;
+    }
+    const data = await getSubscriptionClient(user.id);
+
+    if (data && data.length !== 0 && !isExpired(data[0].end_date)) {
+      notifications.show({
+        title: "You are already Subscribed!",
+        message: (
+          <div>
+            <div>
+              Your subscription expiring on{" "}
+              <Badge>{formatDate(data[0].end_date)}</Badge>
+            </div>
+          </div>
+        ),
+        icon: <IconInfoCircle />,
+        color: "var(--mantine-primary-color-6)",
+      });
+      return;
+    }
     try {
       let data = await getSessionId();
       let checkoutOptions = {
@@ -95,7 +135,9 @@ function Paynow({ amount, planName }: { amount: number; planName?: string }) {
   return (
     <>
       <div>
-        <Button onClick={handleClick}>Pay now</Button>
+        <Button rightSection={subscribed && <IconCheck />} onClick={handleClick}>
+          {subscribed ? "Subscribed":"Subscribe"}
+        </Button>
         {/* Order id is {orderId} */}
       </div>
     </>
@@ -103,3 +145,27 @@ function Paynow({ amount, planName }: { amount: number; planName?: string }) {
 }
 
 export default Paynow;
+
+type planType = "monthly" | "yearly" | "five_year";
+
+const calculateEndDate = (duration: planType): Date => {
+  const endDate = new Date();
+  if (duration === "monthly") {
+    endDate.setMonth(endDate.getMonth() + 1); // Add one month
+  } else if (duration === "yearly") {
+    endDate.setFullYear(endDate.getFullYear() + 1); // Add one year
+  } else if (duration === "five_year") {
+    endDate.setFullYear(endDate.getFullYear() + 5); // Add five years
+  }
+  return endDate;
+};
+
+function formatDate(isoDate: string) {
+  const date = new Date(isoDate);
+  return date.toLocaleDateString("en-GB");
+}
+function isExpired(isoDate: string) {
+  const expiringDate = new Date(isoDate);
+  const currentDate = new Date();
+  return currentDate > expiringDate;
+}
