@@ -12,7 +12,7 @@ import {
 async function Pricing() {
   const user = await getUserAndRole();
   const subscription = user.user && (await getSubscriptionServer(user.user.id));
-  const planName = subscription && subscription[0].plan_name;
+  const planName = subscription && subscription.length !==0 && subscription[0].plan_name;
   // Monthly plan price
   const monthlyPrice = 700;
 
@@ -53,11 +53,20 @@ async function Pricing() {
             <Paynow
               amount={monthlyPrice}
               planName={"monthly"}
-              subscribed={planName && planName === "monthly"}
+              subscribed={planName && planName === "monthly" ? true : false}
             />
           </div>
         </div>
         <div className="bg-white rounded-lg shadow-lg p-6 flex flex-col justify-between">
+          <div className="self-end">
+            {planName && planName === "yearly" && (
+              <IconCircleCheck
+                color="var(--mantine-color-green-5)"
+                size={48}
+                stroke={1}
+              />
+            )}
+          </div>
           <div>
             <h2 className="text-xl font-bold mb-4">Yearly</h2>
             <FeatureList />
@@ -69,13 +78,26 @@ async function Pricing() {
               </span>
               <span className="text-2xl font-bold">₹{yearlyPrice}</span>
             </div>
-            <span className="text-sm text-green-500 mb-6">
+            <span className="text-xs text-green-500 mb-6">
               ({yearlyDiscountPercentage.toFixed(2)}% off)
             </span>
-            <Paynow amount={yearlyPrice} planName={"yearly"} />
+            <Paynow
+              amount={yearlyPrice}
+              planName={"yearly"}
+              subscribed={planName && planName === "yearly" ? true : false}
+            />
           </div>
         </div>
         <div className="bg-white rounded-lg shadow-lg p-6 flex flex-col justify-between">
+          <div className="self-end">
+            {planName && planName === "five_year" && (
+              <IconCircleCheck
+                color="var(--mantine-color-green-5)"
+                size={48}
+                stroke={1}
+              />
+            )}
+          </div>
           <div>
             <h2 className="text-xl font-bold mb-4">5 years Plan</h2>
             <FeatureList />
@@ -90,7 +112,11 @@ async function Pricing() {
             <span className="text-sm text-green-500 mb-6">
               ({fiveYearDiscountPercentage.toFixed(2)}% off)
             </span>
-            <Paynow amount={fiveYearPrice} planName={"five_year"} />
+            <Paynow
+              amount={fiveYearPrice}
+              planName={"five_year"}
+              subscribed={planName && planName === "five_year" ? true : false}
+            />
           </div>
         </div>
       </div>

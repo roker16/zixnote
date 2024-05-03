@@ -1,4 +1,4 @@
-import { Box, Center, Flex, Text } from "@mantine/core";
+import { Box, Button, Center, Flex, Text } from "@mantine/core";
 import { getUserAndRole } from "../../../utils/getUserAndRole";
 
 import GoogleSignin from "@/components/GoogleSignin";
@@ -9,6 +9,8 @@ import Notes from "./notes";
 import { Suspense } from "react";
 import { MyAlert } from "./MyAlert";
 import CreateNotesForm from "../component/CreateNotesForm";
+import { getSubscriptionServer } from "@/app/pricing/getSubscriptionServer";
+import Link from "next/link";
 
 export default async function Index({
   searchParams,
@@ -20,6 +22,26 @@ export default async function Index({
     return (
       <Center>
         <GoogleSignin />
+      </Center>
+    );
+  }
+  const subscription = await getSubscriptionServer(user.id);
+  if (subscription && subscription.length === 0) {
+    return (
+      <Center>
+        <MyAlert
+          title={"Subscribe to access all the features"}
+          detail={
+            <div>
+              {/* Subscribe to access all the features{" "} */}
+              <span>
+                <Link  href="/pricing">
+                  Subscribe
+                </Link>
+              </span>
+            </div>
+          }
+        />
       </Center>
     );
   }
