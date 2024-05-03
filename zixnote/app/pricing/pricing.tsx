@@ -30,11 +30,11 @@ async function Pricing() {
     ((60 * monthlyPrice - fiveYearPrice) / (60 * monthlyPrice)) * 100;
 
   return (
-    <div className="container mx-auto p-6 bg-gray-100 rounded-lg shadow-md mt-16">
+    <div className="container mx-auto p-2 lg:p-6 bg-gray-100 rounded-lg shadow-md mt-16">
       <h1 className="text-3xl font-bold mb-8">Pricing</h1>
       {/* {user.user?.id}
       {JSON.stringify(subscription)} */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div className="bg-white rounded-lg shadow-lg p-6 flex flex-col justify-between">
           <div className="self-end">
             {planName && planName === "monthly" && (
@@ -45,12 +45,12 @@ async function Pricing() {
               />
             )}
           </div>
-          <div>
-            <h2 className="text-xl font-bold mb-4">Monthly</h2>
+          {/* <div> */}
+            <h2 className="text-xl font-bold ">Monthly</h2>
+            <span className="text-2xl font-bold">₹{monthlyPrice}</span>
             <FeatureList />
-          </div>
-          <div className="flex flex-col lg:flex-row gap-8 md:gap-1 items-center justify-between mt-4">
-            <span className="text-2xl font-bold mb-4">₹{monthlyPrice}</span>
+          {/* </div> */}
+          <div className=" self-end">
             <Paynow
               amount={monthlyPrice}
               planName={"monthly"}
@@ -70,11 +70,11 @@ async function Pricing() {
           </div>
           <div>
             <h2 className="text-xl font-bold mb-4">Yearly</h2>
-            <div className="self-end">
+            <div className="mb-8">
               <span className="text-lg text-gray-500 line-through mr-2">
                 ₹{yearlyActualPrice}
               </span>
-              <span className="text-2xl font-bold">₹{yearlyPrice}</span>
+              <span className="text-2xl font-bold ">₹{yearlyPrice}</span>
               <span className="text-xs text-green-500 mb-6">
                 ({yearlyDiscountPercentage.toFixed(2)}% off)
               </span>
