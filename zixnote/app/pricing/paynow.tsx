@@ -104,7 +104,7 @@ function Paynow({
 
     if (data && data.length !== 0 && !isExpired(data[0].end_date)) {
       notifications.show({
-        title: "You are already Subscribed!",
+        title: "You have already subscribed!",
         message: (
           <div>
             <div>
