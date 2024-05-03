@@ -1,12 +1,18 @@
 import React from "react";
 import Paynow from "./paynow";
-import { getSubscription } from "./getSubscription";
+import { getSubscriptionServer } from "./getSubscriptionServer";
 import { getUserAndRole } from "@/utils/getUserAndRole";
 import { FeatureList } from "./FeatureList";
+import {
+  IconCheckbox,
+  IconCircleCheckFilled,
+  IconCircleCheck,
+} from "@tabler/icons-react";
 
 async function Pricing() {
   const user = await getUserAndRole();
-  const subscription = user.user && (await getSubscription(user.user.id));
+  const subscription = user.user && (await getSubscriptionServer(user.user.id));
+  const planName = subscription && subscription[0].plan_name;
   // Monthly plan price
   const monthlyPrice = 700;
 
@@ -25,17 +31,30 @@ async function Pricing() {
   return (
     <div className="container mx-auto p-6 bg-gray-100 rounded-lg shadow-md mt-16">
       <h1 className="text-3xl font-bold mb-8">Pricing</h1>
-      {user.user?.id}
-      {JSON.stringify(subscription)}
+      {/* {user.user?.id}
+      {JSON.stringify(subscription)} */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="bg-white rounded-lg shadow-lg p-6 flex flex-col justify-between">
+          <div className="self-end">
+            {planName && planName === "monthly" && (
+              <IconCircleCheck
+                color="var(--mantine-color-green-5)"
+                size={48}
+                stroke={1}
+              />
+            )}
+          </div>
           <div>
             <h2 className="text-xl font-bold mb-4">Monthly</h2>
             <FeatureList />
           </div>
           <div className="flex flex-col lg:flex-row gap-8 md:gap-1 items-center justify-between mt-4">
             <span className="text-2xl font-bold mb-4">₹{monthlyPrice}</span>
-            <Paynow amount={monthlyPrice} planName={"monthly"} />
+            <Paynow
+              amount={monthlyPrice}
+              planName={"monthly"}
+              subscribed={planName && planName === "monthly"}
+            />
           </div>
         </div>
         <div className="bg-white rounded-lg shadow-lg p-6 flex flex-col justify-between">

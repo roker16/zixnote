@@ -3,12 +3,14 @@ import { cookies } from 'next/headers';
 
 
 
-export const getSubscription = async (userId: string) => {
+export const getSubscriptionServer = async (userId: string) => {
   const supabase = createClient(cookies());
+  var currentTimestamp = new Date().toISOString();
   const { data, error } = await supabase
     .from("subscription")
     .select()
-    .eq("user_id", userId);
+    .eq("user_id", userId)
+    .gte("end_date", currentTimestamp);
   if (error) {
     throw error;
   }

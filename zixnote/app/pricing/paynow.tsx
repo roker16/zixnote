@@ -1,16 +1,26 @@
 "use client";
+import { BASE_URL } from "@/utils/helper";
+import { createClient } from "@/utils/supabase/client";
 // @ts-ignore
 import { load } from "@cashfreepayments/cashfree-js";
-import { BASE_URL } from "@/utils/helper";
-import { showNotifications } from "@/components/Notification";
+import { Badge, Button } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
-import { IconDiscountCheckFilled, IconInfoCircle } from "@tabler/icons-react";
-import { Button } from "@mantine/core";
-import { createClient } from "@/utils/supabase/client";
-import { getUserAndRole } from "@/utils/getUserAndRole";
-import { getUserAndRoleClient } from "@/utils/getUserAndRoleClient";
+import {
+  IconCheck,
+  IconDiscountCheckFilled,
+  IconInfoCircle,
+} from "@tabler/icons-react";
+import { getSubscriptionClient } from "./getSubscriptionClient";
 
-function Paynow({ amount, planName }: { amount: number; planName: planType }) {
+function Paynow({
+  amount,
+  planName,
+  subscribed,
+}: {
+  amount: number;
+  planName: planType;
+  subscribed: boolean;
+}) {
   let cashfree: any;
 
   let insitialzeSDK = async function () {
@@ -88,6 +98,25 @@ function Paynow({ amount, planName }: { amount: number; planName: planType }) {
         icon: <IconInfoCircle />,
         color: "var(--mantine-primary-color-6)",
       });
+      return;
+    }
+    const data = await getSubscriptionClient(user.id);
+
+    if (data && data.length !== 0 && !isExpired(data[0].end_date)) {
+      notifications.show({
+        title: "You are already Subscribed!",
+        message: (
+          <div>
+            <div>
+              Your subscription expiring on{" "}
+              <Badge>{formatDate(data[0].end_date)}</Badge>
+            </div>
+          </div>
+        ),
+        icon: <IconInfoCircle />,
+        color: "var(--mantine-primary-color-6)",
+      });
+      return;
     }
     try {
       let data = await getSessionId();
@@ -106,7 +135,9 @@ function Paynow({ amount, planName }: { amount: number; planName: planType }) {
   return (
     <>
       <div>
-        <Button onClick={handleClick}>Subscribe</Button>
+        <Button rightSection={subscribed && <IconCheck />} onClick={handleClick}>
+          {subscribed ? "Subscribed":"Subscribe"}
+        </Button>
         {/* Order id is {orderId} */}
       </div>
     </>
@@ -128,3 +159,13 @@ const calculateEndDate = (duration: planType): Date => {
   }
   return endDate;
 };
+
+function formatDate(isoDate: string) {
+  const date = new Date(isoDate);
+  return date.toLocaleDateString("en-GB");
+}
+function isExpired(isoDate: string) {
+  const expiringDate = new Date(isoDate);
+  const currentDate = new Date();
+  return currentDate > expiringDate;
+}
