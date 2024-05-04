@@ -1,13 +1,12 @@
-import React from "react";
-import Paynow from "./paynow";
-import { getSubscriptionServer } from "./getSubscriptionServer";
 import { getUserAndRole } from "@/utils/getUserAndRole";
+import { IconCheckbox } from "@tabler/icons-react";
 import { FeatureList } from "./FeatureList";
-import {
-  IconCheckbox,
-  IconCircleCheckFilled,
-  IconCircleCheck,
-} from "@tabler/icons-react";
+import { getSubscriptionServer } from "./getSubscriptionServer";
+import Paynow from "./paynow";
+
+const CheckIcon = (
+  <IconCheckbox color= "var(--mantine-color-green-8)" size={24} stroke={1} />
+);
 
 async function Pricing() {
   const user = await getUserAndRole();
@@ -35,20 +34,17 @@ async function Pricing() {
       {/* {user.user?.id}
       {JSON.stringify(subscription)} */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="bg-white rounded-lg shadow-lg p-6 flex flex-col justify-between">
-          <div className="self-end">
-            {planName && planName === "monthly" && (
-              <IconCircleCheck
-                color="var(--mantine-color-green-5)"
-                size={48}
-                stroke={1}
-              />
-            )}
+        <div className="bg-white rounded-lg shadow-lg p-6 flex flex-col justify-end ">
+          <div className="flex justify-between items-center">
+            <h2 className="text-xl font-bold ">Monthly</h2>
+            {planName && planName === "monthly" && CheckIcon}
           </div>
           {/* <div> */}
-            <h2 className="text-xl font-bold ">Monthly</h2>
+
+          <div className="mb-6">
             <span className="text-2xl font-bold">₹{monthlyPrice}</span>
-            <FeatureList />
+          </div>
+          <FeatureList />
           {/* </div> */}
           <div className=" self-end">
             <Paynow
@@ -58,18 +54,12 @@ async function Pricing() {
             />
           </div>
         </div>
-        <div className="bg-white rounded-lg shadow-lg p-6 flex flex-col justify-between">
-          <div className="self-end">
-            {planName && planName === "yearly" && (
-              <IconCircleCheck
-                color="var(--mantine-color-green-5)"
-                size={48}
-                stroke={1}
-              />
-            )}
+        <div className="bg-white rounded-lg shadow-lg p-6 flex flex-col justify-end">
+          <div className="flex justify-between items-center">
+            <h2 className="text-xl font-bold mb-4">Yearly</h2>
+            {planName && planName === "yearly" && CheckIcon}
           </div>
           <div>
-            <h2 className="text-xl font-bold mb-4">Yearly</h2>
             <div className="mb-8">
               <span className="text-lg text-gray-500 line-through mr-2">
                 ₹{yearlyActualPrice}
@@ -81,7 +71,7 @@ async function Pricing() {
             </div>
             <FeatureList />
           </div>
-          <div className="flex flex-col lg:flex-row gap-8 md:gap-1 items-center self-end mt-4">
+          <div className="self-end mt-4">
             <Paynow
               amount={yearlyPrice}
               planName={"yearly"}
@@ -89,15 +79,9 @@ async function Pricing() {
             />
           </div>
         </div>
-        <div className="bg-white rounded-lg shadow-lg p-6 flex flex-col justify-between">
+        <div className="bg-white rounded-lg shadow-lg p-6 flex flex-col justify-end">
           <div className="self-end">
-            {planName && planName === "five_year" && (
-              <IconCircleCheck
-                color="var(--mantine-color-green-5)"
-                size={48}
-                stroke={1}
-              />
-            )}
+            {planName && planName === "five_year" && CheckIcon}
           </div>
           <div>
             <h2 className="text-xl font-bold ">5 years Plan</h2>
