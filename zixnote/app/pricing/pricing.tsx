@@ -1,11 +1,11 @@
 import { getUserAndRole } from "@/utils/getUserAndRole";
-import { IconCheckbox } from "@tabler/icons-react";
+import { IconDiscountCheckFilled } from "@tabler/icons-react";
 import { FeatureList } from "./FeatureList";
 import { getSubscriptionServer } from "./getSubscriptionServer";
 import Paynow from "./paynow";
 
 const CheckIcon = (
-  <IconCheckbox color= "var(--mantine-color-green-8)" size={24} stroke={1} />
+  <IconDiscountCheckFilled  size={36} stroke={1}  />
 );
 
 async function Pricing() {
@@ -34,14 +34,14 @@ async function Pricing() {
       {/* {user.user?.id}
       {JSON.stringify(subscription)} */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="bg-white rounded-lg shadow-lg p-6 flex flex-col justify-end ">
+        <div className="bg-white rounded-lg shadow-lg p-6 flex flex-col justify-start ">
           <div className="flex justify-between items-center">
-            <h2 className="text-xl font-bold ">Monthly</h2>
+            <h2 className="text-xl font-bold">Monthly</h2>
             {planName && planName === "monthly" && CheckIcon}
           </div>
           {/* <div> */}
 
-          <div className="mb-6">
+          <div className="mb-8">
             <span className="text-2xl font-bold">₹{monthlyPrice}</span>
           </div>
           <FeatureList />
@@ -54,18 +54,18 @@ async function Pricing() {
             />
           </div>
         </div>
-        <div className="bg-white rounded-lg shadow-lg p-6 flex flex-col justify-end">
+        <div className="bg-white rounded-lg shadow-lg p-6 flex flex-col justify-start">
           <div className="flex justify-between items-center">
             <h2 className="text-xl font-bold mb-4">Yearly</h2>
             {planName && planName === "yearly" && CheckIcon}
           </div>
           <div>
             <div className="mb-8">
-              <span className="text-lg text-gray-500 line-through mr-2">
+              <span className="text-lg text-gray-500 line-through">
                 ₹{yearlyActualPrice}
               </span>
-              <span className="text-2xl font-bold ">₹{yearlyPrice}</span>
-              <span className="text-xs text-green-500 mb-6">
+              <span className="text-2xl font-bold mx-2">₹{yearlyPrice}</span>
+              <span className="text-xs text-green-500 mb-6 font-semibold">
                 ({yearlyDiscountPercentage.toFixed(2)}% off)
               </span>
             </div>
@@ -79,18 +79,18 @@ async function Pricing() {
             />
           </div>
         </div>
-        <div className="bg-white rounded-lg shadow-lg p-6 flex flex-col justify-end">
+        <div className="bg-white rounded-lg shadow-lg p-6 flex flex-col justify-start">
           <div className="self-end">
             {planName && planName === "five_year" && CheckIcon}
           </div>
           <div>
             <h2 className="text-xl font-bold ">5 years Plan</h2>
             <div className="pb-8">
-              <span className="text-lg text-gray-500 line-through mr-2">
+              <span className="text-lg text-gray-500 line-through">
                 ₹{fiveYearActualPrice}
               </span>
-              <span className="text-2xl font-bold">₹{fiveYearPrice}</span>
-              <span className="text-sm text-green-500 mb-6">
+              <span className="text-2xl font-bold mx-2">₹{fiveYearPrice}</span>
+              <span className="text-xs text-green-500 mb-6 font-semibold">
                 ({fiveYearDiscountPercentage.toFixed(2)}% off)
               </span>
             </div>

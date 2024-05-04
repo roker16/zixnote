@@ -1,10 +1,7 @@
 "use client";
 import { List, ThemeIcon, rem } from "@mantine/core";
 import {
-  IconCheck,
-  IconChecklist,
-  IconCircleCheck,
-  IconCircleDashed,
+    IconCircleCheck
 } from "@tabler/icons-react";
 
 export function FeatureList() {
@@ -21,7 +18,7 @@ export function FeatureList() {
     >
       <List.Item>All features included.</List.Item>
       <List.Item>
-        All future updates shall be provied without any additinal charges.
+        All future updates shall be provied without any additional charges.
       </List.Item>
       <List.Item>No hidded charges.</List.Item>
     </List>
