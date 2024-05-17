@@ -4,19 +4,16 @@ import { createClient } from "@/utils/supabase/client";
 import {
   Box,
   Button,
-  Checkbox,
   Chip,
   Group,
   Modal,
   NumberInput,
-  Textarea,
-  TextInput,
+  Textarea
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useDisclosure } from "@mantine/hooks";
 import { useInsertMutation } from "@supabase-cache-helpers/postgrest-swr";
-import { redirect, useRouter, useSearchParams } from "next/navigation";
-import { title } from "process";
+import { useRouter, useSearchParams } from "next/navigation";
 
 export default function CreateNotesForm({
   parentId,
@@ -35,6 +32,8 @@ export default function CreateNotesForm({
   const searchParams = useSearchParams();
   const router = useRouter();
   const headingId = searchParams.get("headingid");
+
+  
   const { trigger: insert } = useInsertMutation(
     supabase.from("notes"),
     ["id"],

@@ -63,6 +63,61 @@ export type Database = {
           },
         ]
       }
+      notes_sharing: {
+        Row: {
+          can_copy: boolean | null
+          can_edit: boolean | null
+          created_at: string
+          heading_id: number
+          id: number
+          is_public: boolean | null
+          shared_by: string
+          shared_with: string | null
+        }
+        Insert: {
+          can_copy?: boolean | null
+          can_edit?: boolean | null
+          created_at?: string
+          heading_id: number
+          id?: number
+          is_public?: boolean | null
+          shared_by?: string
+          shared_with?: string | null
+        }
+        Update: {
+          can_copy?: boolean | null
+          can_edit?: boolean | null
+          created_at?: string
+          heading_id?: number
+          id?: number
+          is_public?: boolean | null
+          shared_by?: string
+          shared_with?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notes_sharing_heading_id_fkey"
+            columns: ["heading_id"]
+            isOneToOne: false
+            referencedRelation: "syll_index"
+            referencedColumns: ["index_id"]
+          },
+          {
+            foreignKeyName: "notes_sharing_shared_by_fkey"
+            columns: ["shared_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "notes_sharing_shared_with_fkey"
+            columns: ["shared_with"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           avatar_url: string | null

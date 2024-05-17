@@ -11,6 +11,8 @@ import { MyAlert } from "./MyAlert";
 import CreateNotesForm from "../component/CreateNotesForm";
 import { getSubscriptionServer } from "@/app/pricing/getSubscriptionServer";
 import Link from "next/link";
+import { IconShare } from "@tabler/icons-react";
+import ShareButton from "./ShareButton";
 
 export default async function Index({
   searchParams,
@@ -35,9 +37,7 @@ export default async function Index({
             <div>
               {/* Subscribe to access all the features{" "} */}
               <span>
-                <Link  href="/pricing">
-                  Subscribe
-                </Link>
+                <Link href="/pricing">Subscribe</Link>
               </span>
             </div>
           }
@@ -56,7 +56,7 @@ export default async function Index({
       </Center>
     );
   }
-  const selectedTopicId = searchParams?.headingid;
+  const selectedTopicId = searchParams?.headingid as string;
   const selectedName = searchParams?.headingname;
 
   if (!selectedTopicId) {
@@ -76,7 +76,13 @@ export default async function Index({
     // <Box>
     <div className="mx-0">
       <Center>
-        <Text fw={500}>{selectedName}</Text>
+        <div className=" flex items-center gap-1">
+          <ShareButton/>
+          <div className="text-center">
+            {" "}
+            <Text fw={500}>{selectedName}</Text>
+          </div>
+        </div>
       </Center>
 
       <Notes topicId={selectedTopicId as string} userId={user.id} />
