@@ -1,16 +1,23 @@
 import { createClient } from "@/utils/supabase/client";
 import { ActionIcon, Center, Checkbox, Table, Text } from "@mantine/core";
-import { useDeleteMutation, useQuery } from "@supabase-cache-helpers/postgrest-swr";
+import {
+  useDeleteMutation,
+  useQuery,
+} from "@supabase-cache-helpers/postgrest-swr";
 import { IconXboxX } from "@tabler/icons-react";
+import { useSearchParams } from "next/navigation";
 import { useState } from "react";
 function SharedList() {
   const supabase = createClient();
+  const searchParams = useSearchParams();
+  const headingId = searchParams.get("headingid");
   const { data, count } = useQuery(
     supabase
       .from("notes_sharing")
       .select(
         `id,profiles1:profiles!shared_by(email), profiles2:profiles!shared_with(email),can_copy,can_edit`
-      ),
+      )
+      .eq("heading_id", Number(headingId)),
     {
       revalidateOnFocus: false,
       revalidateOnReconnect: false,

@@ -24,13 +24,13 @@ export default function ManageSyllabusLayout({
   children,
   filter,
   notes,
-  ss,
+  sharednotes,
   index,
 }: {
   children: React.ReactNode;
   filter: React.ReactNode;
   notes: React.ReactNode;
-  ss: React.ReactNode;
+  sharednotes: React.ReactNode;
   index: React.ReactNode;
 }) {
   const [opened, { toggle }] = useDisclosure();
@@ -134,12 +134,11 @@ export default function ManageSyllabusLayout({
         </ScrollArea>
       </AppShell.Navbar>
       <AppShell.Main pt={`calc(${rem(50)} + var(--mantine-spacing-md))`}>
-        {ss}
         <Space h={10} />
         {activeTab === "first" && (
           <Suspense fallback={<div>loading...</div>}>{notes}</Suspense>
         )}
-        {activeTab === "second" && <div>{ss}</div>}
+        {activeTab === "second" && <div>{sharednotes}</div>}
         {activeTab === "third" && <div>Third Tab</div>}
       </AppShell.Main>
     </AppShell>

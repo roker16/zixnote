@@ -50,9 +50,18 @@ function ManageSharing() {
     },
   });
   const handleSubmit = async (values: typeof form.values) => {
+    const user = (await supabase.auth.getSession()).data.session?.user;
+    if (user?.email === values.email) {
+      notifications.show({
+        title: "Can't share",
+        message: "Can't share your notes to yourself",
+        icon: <IconInfoCircle />,
+        color: "blue",
+      });
+      return
+    }
     setLoading(true);
 
-    const userid = (await supabase.auth.getSession()).data.session?.user.id;
     const { data, error } = await supabase
       .from("profiles")
       .select(`*`)
@@ -77,7 +86,7 @@ function ManageSharing() {
       .from("notes_sharing")
       .select(`*`)
       .eq("shared_with", data.id)
-      .eq("shared_by", userid!)
+      .eq("shared_by", user?.id!)
       .eq("heading_id", Number(headingId))
       .maybeSingle();
     if (e) {
@@ -98,7 +107,7 @@ function ManageSharing() {
     await insert([
       {
         heading_id: Number(headingId),
-        shared_by: userid,
+        shared_by: user?.id!,
         shared_with: data.id,
         can_copy: values.canCopy,
         can_edit: values.canEdit,
