@@ -1,39 +1,36 @@
 import { createClient } from "@/utils/supabase/client";
-import { ActionIcon, Checkbox, Table, Text } from "@mantine/core";
-import { QueryData } from "@supabase/supabase-js";
+import { ActionIcon, Center, Checkbox, Table, Text } from "@mantine/core";
+import { useDeleteMutation, useQuery } from "@supabase-cache-helpers/postgrest-swr";
 import { IconXboxX } from "@tabler/icons-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 function SharedList() {
   const supabase = createClient();
-//   const countriesWithCitiesQuery = supabase
-//     .from("notes_sharing")
-//     .select(
-//       `id,profiles1:profiles!shared_by(email), profiles2:profiles!shared_with(email),can_copy,can_edit`
-//     );
-
-//   type CountriesWithCities = QueryData<typeof countriesWithCitiesQuery>;
-  const [sharedList, setSharedList] = useState<any>();
-  const [loading, setLoading] = useState(false);
-  useEffect(() => {
-    const getSharedList = async () => {
-      const { data, error } = await supabase
+  const { data, count } = useQuery(
+    supabase
       .from("notes_sharing")
       .select(
         `id,profiles1:profiles!shared_by(email), profiles2:profiles!shared_with(email),can_copy,can_edit`
-      );;
-      setSharedList(data);
-    };
-    getSharedList();
-    console.log("rerendering....")
-  }, [supabase]);
-
-  const handleDelete = async (id: Number) => {
-    const { error } = await supabase
-      .from("notes_sharing")
-      .delete()
-      .eq("id", id);
+      ),
+    {
+      revalidateOnFocus: false,
+      revalidateOnReconnect: false,
+      revalidateIfStale: true,
+    }
+  );
+  const { trigger: deleteNote } = useDeleteMutation(
+    supabase.from("notes_sharing"),
+    ["id"],
+    null,
+    {
+      onSuccess: () => console.log("Success!"),
+    }
+  );
+  const handleDelete = async (id: number) => {
+    await deleteNote({ id: id });
   };
-  const rows = sharedList?.map((p:any) => (
+
+  const [loading, setLoading] = useState(false);
+  const rows = data?.map((p) => (
     <Table.Tr key={(p?.profiles2 as any).email}>
       <Table.Td>
         <Checkbox defaultChecked={p.can_copy!} size="xs" />
@@ -68,7 +65,13 @@ function SharedList() {
           <Table.Th>Email</Table.Th>
         </Table.Tr>
       </Table.Thead>
-      <Table.Tbody>{rows}</Table.Tbody>
+      {loading ? (
+        <Center h={60} w={240}>
+          {"loading...."}
+        </Center>
+      ) : (
+        <Table.Tbody>{rows}</Table.Tbody>
+      )}
     </Table>
   );
 }

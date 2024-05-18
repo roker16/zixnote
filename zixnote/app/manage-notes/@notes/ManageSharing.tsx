@@ -8,11 +8,35 @@ import { IconDiscountCheck, IconInfoCircle } from "@tabler/icons-react";
 import { useSearchParams } from "next/navigation";
 import React, { useState } from "react";
 import SharedList from "./SharedList";
+import { useInsertMutation } from "@supabase-cache-helpers/postgrest-swr";
 
 function ManageSharing() {
   const searchParams = useSearchParams();
   const headingId = searchParams.get("headingid");
   const [loading, setLoading] = useState(false);
+  const supabase = createClient();
+  const { trigger: insert } = useInsertMutation(
+    supabase.from("notes_sharing"),
+    ["id"],
+    null,
+    {
+      onSuccess: () => {
+        setLoading(false);
+        notifications.show({
+          title: "Notes shared!",
+          message: "Notes shared successfully!",
+          icon: <IconInfoCircle />,
+          color: "blue",
+        });
+      },
+      onError: (e) => {
+        showErrorNotification(e);
+        setLoading(false);
+        return;
+      },
+    }
+  );
+
   const form = useForm({
     mode: "uncontrolled",
     initialValues: {
@@ -27,7 +51,7 @@ function ManageSharing() {
   });
   const handleSubmit = async (values: typeof form.values) => {
     setLoading(true);
-    const supabase = createClient();
+
     const userid = (await supabase.auth.getSession()).data.session?.user.id;
     const { data, error } = await supabase
       .from("profiles")
@@ -54,13 +78,14 @@ function ManageSharing() {
       .select(`*`)
       .eq("shared_with", data.id)
       .eq("shared_by", userid!)
-      .eq("heading_id", Number(headingId)).maybeSingle();
+      .eq("heading_id", Number(headingId))
+      .maybeSingle();
     if (e) {
       showErrorNotification(e);
       setLoading(false);
       return;
     }
-    if (k ) {
+    if (k) {
       notifications.show({
         title: "Notes already shared with this user",
         message: "Notes from this topic is already shared with this user",
@@ -70,31 +95,18 @@ function ManageSharing() {
       setLoading(false);
       return;
     }
-    const {error: e2 } = await supabase
-      .from("notes_sharing")
-      .insert({
+    await insert([
+      {
         heading_id: Number(headingId),
         shared_by: userid,
         shared_with: data.id,
         can_copy: values.canCopy,
         can_edit: values.canEdit,
-      });
-    if (e2) {
-      showErrorNotification(e2);
-      setLoading(false);
-      return;
-    }
-    setLoading(false);
-    notifications.show({
-      title: "Notes shared!",
-      message: "Notes shared successfully!",
-      icon: <IconInfoCircle />,
-      color: "blue",
-    });
+      },
+    ]);
   };
   return (
     <Box maw={340} mx="auto">
-     
       <form onSubmit={form.onSubmit(handleSubmit)}>
         <TextInput
           withAsterisk
