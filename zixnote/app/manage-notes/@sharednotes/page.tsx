@@ -11,6 +11,8 @@ import { MyAlert } from "./MyAlert";
 import Notes from "./notes";
 import ShareButton from "./ShareButton";
 import SharedUsersCombobox from "./SharedUsersCombobox";
+import { User } from "@supabase/supabase-js";
+import NotesContainer from "./NotesContainer";
 
 export default async function Index({
   searchParams,
@@ -75,22 +77,19 @@ export default async function Index({
     <div className="mx-0">
       <Center>
         <div className=" flex items-center gap-1">
-          <ShareButton />
           <div className="text-center">
             {" "}
             <Text fw={500}>{selectedName}</Text>
           </div>
         </div>
       </Center>
-      <SharedUsersCombobox userId={user.id} />
-      <Notes topicId={selectedTopicId as string} userId={user.id} />
-      <Center h={"100px"}>
-        <CreateNotesForm />
-      </Center>
+      <NotesContainer user={user} selectedTopicId={selectedTopicId}/>
     </div>
     // </Box>
   );
 }
+
+
 async function getNotes(indexId: number, userId: string) {
   const supabase = createClient(cookies());
   const { data, error } = await supabase

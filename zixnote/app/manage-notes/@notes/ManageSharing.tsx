@@ -10,7 +10,7 @@ import React, { useState } from "react";
 import SharedList from "./SharedList";
 import { useInsertMutation } from "@supabase-cache-helpers/postgrest-swr";
 
-function ManageSharing() {
+function ManageSharing({userId}:{userId:string}) {
   const searchParams = useSearchParams();
   const headingId = searchParams.get("headingid");
   const [loading, setLoading] = useState(false);
@@ -144,7 +144,7 @@ function ManageSharing() {
           </Button>
         </Group>
       </form>
-      <SharedList />
+      <SharedList userId={userId} />
     </Box>
   );
 }

@@ -77,7 +77,7 @@ export default async function Index({
     <div className="mx-0">
       <Center>
         <div className=" flex items-center gap-1">
-          <ShareButton/>
+          <ShareButton userId={user.id}/>
           <div className="text-center">
             {" "}
             <Text fw={500}>{selectedName}</Text>

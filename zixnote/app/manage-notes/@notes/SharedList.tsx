@@ -7,16 +7,17 @@ import {
 import { IconXboxX } from "@tabler/icons-react";
 import { useSearchParams } from "next/navigation";
 import { useState } from "react";
-function SharedList() {
+function SharedList({userId}:{userId:string}) {
   const supabase = createClient();
   const searchParams = useSearchParams();
   const headingId = searchParams.get("headingid");
-  const { data, count } = useQuery(
+  const { data, count } =  useQuery(
     supabase
       .from("notes_sharing")
       .select(
         `id,profiles1:profiles!shared_by(email), profiles2:profiles!shared_with(email),can_copy,can_edit`
       )
+      .eq("shared_by",userId )
       .eq("heading_id", Number(headingId)),
     {
       revalidateOnFocus: false,

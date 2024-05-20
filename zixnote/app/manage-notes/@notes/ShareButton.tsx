@@ -4,7 +4,7 @@ import { useDisclosure } from "@mantine/hooks";
 import { IconShare } from "@tabler/icons-react";
 import ManageSharing from "./ManageSharing";
 
-function ShareButton() {
+function ShareButton({userId}:{userId:string}) {
   const [opened, { open, close }] = useDisclosure(false);
 
   return (
@@ -14,7 +14,7 @@ function ShareButton() {
         onClose={close}
         title={<div className="font-semibold">Share</div>}
       >
-        <ManageSharing />
+        <ManageSharing userId={userId}/>
         {/* Modal content */}
       </Modal>
 
