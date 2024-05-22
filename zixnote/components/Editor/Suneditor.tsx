@@ -1,24 +1,18 @@
 "use client";
-import React, {
-  FormEventHandler,
-  useCallback,
-  useEffect,
-  useState,
-} from "react";
+import { createClient } from "@/utils/supabase/client";
 import dynamic from "next/dynamic";
+import { useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
 import "suneditor/dist/css/suneditor.min.css"; // Import Sun Editor's CSS File
 import { options } from "./options";
-import { createClient } from "@/utils/supabase/client";
-import { useSearchParams } from "next/navigation";
 
-import "katex/dist/katex.min.css"; // import here not in suneditor file
+import { Group, Radio } from "@mantine/core";
 import {
-  useInsertMutation,
   useQuery,
   useUpdateMutation,
 } from "@supabase-cache-helpers/postgrest-swr";
+import "katex/dist/katex.min.css"; // import here not in suneditor file
 import styled from "styled-components";
-import { Button, Group, Radio, SegmentedControl } from "@mantine/core";
 
 const SunEditor = dynamic(() => import("suneditor-react"), {
   ssr: false,
@@ -32,11 +26,11 @@ export const EditorStyle = styled.div`
 function SunEditorTest({
   notesId,
   notesContent,
- 
+  canEdit = true,
 }: {
   notesId: number;
   notesContent: string | undefined | null;
-
+  canEdit?: boolean;
 }) {
   const [id, setId] = useState<number | undefined>(notesId);
   useEffect(() => {
@@ -48,26 +42,7 @@ function SunEditorTest({
   const supabase = createClient();
 
   const [value, setValue] = useState("read");
-  const { data, count } = useQuery(
-    id
-      ? supabase.from("notes").select("id,notes_english").eq("id", id).single()
-      : null,
 
-    {
-      revalidateOnFocus: false,
-      revalidateOnReconnect: false,
-    }
-  );
-
-  // const updateArticleInDatabase = async (newcontent: string | undefined) => {
-  // const { data, error } = await supabase
-  //   .from("notes")
-  //   .update(
-  //     language === "ENGLISH"
-  //       ? { notes_english: newcontent }
-  //       : { notes_hindi: newcontent }
-  //   )
-  //   .eq("id", 7);
   const { trigger: update } = useUpdateMutation(
     supabase.from("notes"),
     ["id"],
@@ -88,19 +63,33 @@ function SunEditorTest({
     });
   return (
     <div>
-      <Radio.Group
-        value={value}
-        onChange={setValue}
-        py={"xs"}
+      {canEdit && (
+        <Radio.Group
+          value={value}
+          onChange={setValue}
+          py={"xs"}
 
-        // defaultValue="read"
-        // name="favoriteFramework"
-      >
-        <Group px={6}>
-          <Radio value="read" label="Read" size="xs" variant="outline" color="green"/>
-          <Radio value="edit" label="Edit" size="xs" variant="outline" color="red"/>
-        </Group>
-      </Radio.Group>
+          // defaultValue="read"
+          // name="favoriteFramework"
+        >
+          <Group px={6}>
+            <Radio
+              value="read"
+              label="Read"
+              size="xs"
+              variant="outline"
+              color="green"
+            />
+            <Radio
+              value="edit"
+              label="Edit"
+              size="xs"
+              variant="outline"
+              color="red"
+            />
+          </Group>
+        </Radio.Group>
+      )}
 
       <EditorStyle title={value}>
         {/* {notesContent} */}

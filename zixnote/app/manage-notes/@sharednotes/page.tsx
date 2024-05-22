@@ -70,7 +70,7 @@ export default async function Index({
     );
   }
 
-  const data = await getNotes(Number(selectedTopicId), user.id);
+ 
 
   return (
     // <Box>
@@ -90,13 +90,4 @@ export default async function Index({
 }
 
 
-async function getNotes(indexId: number, userId: string) {
-  const supabase = createClient(cookies());
-  const { data, error } = await supabase
-    .from("notes")
-    .select(`*`)
-    .eq("index_id_fk", indexId)
-    .eq("owner_fk", userId);
 
-  return data;
-}
