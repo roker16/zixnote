@@ -2,6 +2,7 @@
 import { UserMenu } from "@/components/UserMenu";
 import { createClient } from "@/utils/supabase/client";
 import {
+  ActionIcon,
   AppShell,
   Burger,
   Button,
@@ -12,12 +13,11 @@ import {
   Space,
   Tabs,
   rem,
-  ActionIcon,
   useMantineTheme,
 } from "@mantine/core";
-import { useDisclosure, useHeadroom } from "@mantine/hooks";
+import { useDisclosure } from "@mantine/hooks";
 import { User } from "@supabase/supabase-js";
-import { IconNotebook, IconNotes, IconWriting } from "@tabler/icons-react";
+import { IconNotes, IconWriting } from "@tabler/icons-react";
 import Link from "next/link";
 import { Suspense, useEffect, useState } from "react";
 import NotesMenu from "../manage-notes/component/NoteMenu";

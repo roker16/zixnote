@@ -24,11 +24,13 @@ export default function ManageSyllabusLayout({
   children,
   filter,
   notes,
+  sharednotes,
   index,
 }: {
   children: React.ReactNode;
   filter: React.ReactNode;
   notes: React.ReactNode;
+  sharednotes: React.ReactNode;
   index: React.ReactNode;
 }) {
   const [opened, { toggle }] = useDisclosure();
@@ -95,6 +97,7 @@ export default function ManageSyllabusLayout({
                 <Tabs.Tab value="forth">Notes</Tabs.Tab>
               </Group>
               <Center>
+                
                 <NotesMenu />
               </Center>
             </Tabs.List>
@@ -120,6 +123,7 @@ export default function ManageSyllabusLayout({
             >
               Create index
             </Button>
+          
           </Group>
           <Burger opened={opened} onClick={toggle} hiddenFrom="md" size="sm" />
         </Group>
@@ -134,7 +138,7 @@ export default function ManageSyllabusLayout({
         {activeTab === "first" && (
           <Suspense fallback={<div>loading...</div>}>{notes}</Suspense>
         )}
-        {activeTab === "second" && <div>Second Tab</div>}
+        {activeTab === "second" && <div>{sharednotes}</div>}
         {activeTab === "third" && <div>Third Tab</div>}
       </AppShell.Main>
     </AppShell>

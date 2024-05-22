@@ -1,18 +1,18 @@
-import { Box, Button, Center, Flex, Text } from "@mantine/core";
+import { Center, Text } from "@mantine/core";
 import { getUserAndRole } from "../../../utils/getUserAndRole";
 
+import { getSubscriptionServer } from "@/app/pricing/getSubscriptionServer";
 import GoogleSignin from "@/components/GoogleSignin";
 import { createClient } from "@/utils/supabase/server";
 import { cookies } from "next/headers";
-import SunEditorTest from "@/components/Editor/Suneditor";
-import Notes from "./notes";
-import { Suspense } from "react";
-import { MyAlert } from "./MyAlert";
-import CreateNotesForm from "../component/CreateNotesForm";
-import { getSubscriptionServer } from "@/app/pricing/getSubscriptionServer";
 import Link from "next/link";
-import { IconShare } from "@tabler/icons-react";
+import CreateNotesForm from "../component/CreateNotesForm";
+import { MyAlert } from "./MyAlert";
+import Notes from "./notes";
 import ShareButton from "./ShareButton";
+import SharedUsersCombobox from "./SharedUsersCombobox";
+import { User } from "@supabase/supabase-js";
+import NotesContainer from "./NotesContainer";
 
 export default async function Index({
   searchParams,
@@ -70,36 +70,24 @@ export default async function Index({
     );
   }
 
-  const data = await getNotes(Number(selectedTopicId), user.id);
+ 
 
   return (
     // <Box>
     <div className="mx-0">
       <Center>
         <div className=" flex items-center gap-1">
-          <ShareButton userId={user.id}/>
           <div className="text-center">
             {" "}
             <Text fw={500}>{selectedName}</Text>
           </div>
         </div>
       </Center>
-
-      <Notes topicId={selectedTopicId as string} userId={user.id} />
-      <Center h={"100px"}>
-        <CreateNotesForm />
-      </Center>
+      <NotesContainer user={user} selectedTopicId={selectedTopicId}/>
     </div>
     // </Box>
   );
 }
-async function getNotes(indexId: number, userId: string) {
-  const supabase = createClient(cookies());
-  const { data, error } = await supabase
-    .from("notes")
-    .select(`*`)
-    .eq("index_id_fk", indexId)
-    .eq("owner_fk", userId);
 
-  return data;
-}
+
+

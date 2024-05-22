@@ -85,7 +85,7 @@ async function Pricing() {
           </div>
           <div>
             <h2 className="text-xl font-bold ">5 years Plan</h2>
-            <div className="pb-8">
+            <div className="mb-8">
               <span className="text-lg text-gray-500 line-through">
                 ₹{fiveYearActualPrice}
               </span>
