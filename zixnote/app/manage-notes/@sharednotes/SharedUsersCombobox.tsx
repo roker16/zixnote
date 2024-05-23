@@ -49,6 +49,7 @@ function SharedUsersCombobox({
   return (
     <>
       {value}
+
       {names && names.length !== 0 && (
         // eslint-disable-next-line react/no-unescaped-entities
         <Center>
