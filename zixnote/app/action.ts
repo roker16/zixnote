@@ -82,7 +82,7 @@ export async function deleteItem(formData: FormData) {
 
   const supabase = createClient(cookies());
   const { error } = await supabase
-    .from(`${tableName}`)
+    .from(`${tableName as any}`)
     .delete()
     .eq(`${idColumnName}`, id);
   if (error) {
