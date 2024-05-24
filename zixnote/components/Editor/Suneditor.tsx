@@ -96,7 +96,7 @@ function SunEditorTest({
         <SunEditor
           // width="auto"
           // setContents={notesContent || "hello"}
-          defaultValue={notesContent || "Hello"}
+          defaultValue={notesContent || "<p>No content available for this language, Start writing...<p/>"}
           setOptions={{
             ...options,
             callBackSave: (contents) => {

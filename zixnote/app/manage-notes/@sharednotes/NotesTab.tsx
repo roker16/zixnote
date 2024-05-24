@@ -13,7 +13,7 @@ function NotesTab({ notesId }: { notesId: number }) {
     notesId
       ? supabase
           .from("notes")
-          .select("id,notes_english")
+          .select("id,notes_english,notes_hindi")
           .eq("id", notesId)
           .single()
       : null,
@@ -40,7 +40,7 @@ function NotesTab({ notesId }: { notesId: number }) {
         </Tabs.Panel>
         <Tabs.Panel value="hindi">
           {data && (
-            <Suneditor notesId={notesId} notesContent={data?.notes_english} />
+            <Suneditor notesId={notesId} notesContent={data?.notes_hindi} />
           )}
         </Tabs.Panel>
       </Tabs>

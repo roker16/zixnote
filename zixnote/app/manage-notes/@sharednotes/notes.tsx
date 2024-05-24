@@ -27,6 +27,7 @@ function Notes({ topicId, userId }: { topicId: string; userId: string }) {
     }
   );
   const handleDelete = async (id: number) => {
+    alert("Confirm to delete!")
     await deleteNote({ id: id });
   };
   const { data, count } = useQuery(
@@ -44,7 +45,7 @@ function Notes({ topicId, userId }: { topicId: string; userId: string }) {
   );
 
   const items = data
-    ?.sort((a, b) => a.id - b.id)
+    ?.sort((a, b) => a.order - b.order)
     .map((item) => (
       <Accordion.Item
         key={item.id}

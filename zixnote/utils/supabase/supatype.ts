@@ -11,6 +11,7 @@ export type Database = {
     Tables: {
       notes: {
         Row: {
+          copied_from: string | null
           created_at: string
           id: number
           index_id_fk: number
@@ -23,6 +24,7 @@ export type Database = {
           updated_at: string | null
         }
         Insert: {
+          copied_from?: string | null
           created_at?: string
           id?: number
           index_id_fk: number
@@ -35,6 +37,7 @@ export type Database = {
           updated_at?: string | null
         }
         Update: {
+          copied_from?: string | null
           created_at?: string
           id?: number
           index_id_fk?: number
@@ -47,6 +50,13 @@ export type Database = {
           updated_at?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "notes_copied_from_fkey"
+            columns: ["copied_from"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "public_notes_index_id_fk_fkey"
             columns: ["index_id_fk"]
