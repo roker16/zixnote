@@ -36,7 +36,7 @@ function AskToBeModerator({
       wrap="nowrap"
     >
       <NoticeText
-        text={"You are not an Admin or moderator, Request to be a moderator!"}
+        text={"To Add or Modify to this index you need to be a moderator!"}
       />
       <div>
         <Button loading={isPending} onClick={() => sendRequest()}>

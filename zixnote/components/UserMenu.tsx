@@ -63,7 +63,7 @@ export function UserMenu({ user }: { user: User | null }) {
 
           <Menu.Divider />
 
-          <Menu.Item
+          {/* <Menu.Item
             leftSection={
               <IconHeart
                 style={{ width: rem(16), height: rem(16) }}
@@ -95,9 +95,9 @@ export function UserMenu({ user }: { user: User | null }) {
             }
           >
             Your comments
-          </Menu.Item>
+          </Menu.Item> */}
 
-          <Menu.Label>Settings</Menu.Label>
+          {/* <Menu.Label>Settings</Menu.Label>
           <Menu.Item
             leftSection={
               <IconSettings
@@ -117,7 +117,7 @@ export function UserMenu({ user }: { user: User | null }) {
             }
           >
             Change account
-          </Menu.Item>
+          </Menu.Item> */}
           <form action={signOut}>
             <Menu.Item
               type="submit"
@@ -131,7 +131,7 @@ export function UserMenu({ user }: { user: User | null }) {
               Logout
             </Menu.Item>
           </form>
-          <Menu.Divider />
+          {/* <Menu.Divider />
 
           <Menu.Label>Danger zone</Menu.Label>
           <Menu.Item
@@ -154,7 +154,7 @@ export function UserMenu({ user }: { user: User | null }) {
             }
           >
             Delete account
-          </Menu.Item>
+          </Menu.Item> */}
         </Menu.Dropdown>
       </Menu>
     </Group>

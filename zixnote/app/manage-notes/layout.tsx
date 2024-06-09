@@ -2,6 +2,7 @@
 import { UserMenu } from "@/components/UserMenu";
 import { createClient } from "@/utils/supabase/client";
 import {
+  ActionIcon,
   AppShell,
   Burger,
   Button,
@@ -16,7 +17,7 @@ import {
 } from "@mantine/core";
 import { useDisclosure, useHeadroom } from "@mantine/hooks";
 import { User } from "@supabase/supabase-js";
-import { IconNotebook, IconPencil } from "@tabler/icons-react";
+import { IconNotebook, IconPencil, IconWriting } from "@tabler/icons-react";
 import Link from "next/link";
 import { Suspense, useEffect, useState } from "react";
 import NotesMenu from "./component/NoteMenu";
@@ -80,12 +81,19 @@ export default function ManageSyllabusLayout({
                   size="sm"
                 />
                 <Link href={"/"}>
-                  <IconNotebook
-                    style={{
-                      marginTop: "auto",
-                      marginBottom: "auto",
+                  <ActionIcon
+                    // visibleFrom="md"
+                    variant="gradient"
+                    size="md"
+                    radius={"xl"}
+                    gradient={{
+                      from: "var(--mantine-color-indigo-4)",
+                      to: "var(--mantine-color-indigo-7)",
+                      deg: 304,
                     }}
-                  />
+                  >
+                    <IconWriting size={20} stroke={1} />
+                  </ActionIcon>
                 </Link>
               </Group>
 
@@ -93,12 +101,11 @@ export default function ManageSyllabusLayout({
                 {" "}
                 <Tabs.Tab value="first">Notes</Tabs.Tab>
                 <Tabs.Tab value="second">Shared</Tabs.Tab>
-                <Tabs.Tab value="third">Trend</Tabs.Tab>
-                <Tabs.Tab value="forth">Notes</Tabs.Tab>
+                {/* <Tabs.Tab value="third">Trend</Tabs.Tab>
+                <Tabs.Tab value="forth">Notes</Tabs.Tab> */}
               </Group>
               <Center>
-                
-                <NotesMenu />
+                {/* <NotesMenu /> */}
               </Center>
             </Tabs.List>
           </Tabs>
@@ -123,7 +130,6 @@ export default function ManageSyllabusLayout({
             >
               Create index
             </Button>
-          
           </Group>
           <Burger opened={opened} onClick={toggle} hiddenFrom="md" size="sm" />
         </Group>
