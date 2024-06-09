@@ -83,7 +83,8 @@ export default async function Index({
           </div>
         </div>
       </Center>
-      <NotesContainer user={user} selectedTopicId={selectedTopicId}/>
+    {/* without using key it will not rerender when topic is changed and give old user data */}
+      <NotesContainer key={selectedTopicId} user={user} selectedTopicId={selectedTopicId}/>
     </div>
     // </Box>
   );

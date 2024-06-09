@@ -100,13 +100,13 @@ export default function ManageSyllabusLayout({
 
               <Group gap={0}>
                 {" "}
-                <Tabs.Tab value="first">Notes</Tabs.Tab>
-                <Tabs.Tab value="second">Shared</Tabs.Tab>
-                <Tabs.Tab value="third">Trend</Tabs.Tab>
-                <Tabs.Tab value="forth">Notes</Tabs.Tab>
+                <Tabs.Tab value="first">Manage Index</Tabs.Tab>
+                {/* <Tabs.Tab value="second">Shared</Tabs.Tab> */}
+                {/* <Tabs.Tab value="third">Trend</Tabs.Tab>
+                <Tabs.Tab value="forth">Notes</Tabs.Tab> */}
               </Group>
               <Center>
-                <NotesMenu />{" "}
+                {/* <NotesMenu />{" "} */}
               </Center>
             </Tabs.List>
           </Tabs>
