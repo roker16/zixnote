@@ -61,7 +61,7 @@ function Notes({ topicId, userId }: { topicId: string; userId: string }) {
               </ActionIcon>
             </Menu.Target>
             <Menu.Dropdown>
-              <Menu.Label>Application</Menu.Label>
+              {/* <Menu.Label>Application</Menu.Label> */}
               <Menu.Item
                 leftSection={
                   <IconEditCircle style={{ width: rem(14), height: rem(14) }} />
@@ -79,13 +79,13 @@ function Notes({ topicId, userId }: { topicId: string; userId: string }) {
               >
                 Delete
               </Menu.Item>
-              <Menu.Item
+              {/* <Menu.Item
                 leftSection={
                   <IconPhoto style={{ width: rem(14), height: rem(14) }} />
                 }
               >
                 Gallery
-              </Menu.Item>
+              </Menu.Item> */}
             </Menu.Dropdown>
           </Menu>
 
