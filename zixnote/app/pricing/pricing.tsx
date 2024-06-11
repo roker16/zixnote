@@ -14,7 +14,7 @@ async function Pricing() {
   const planName =
     subscription && subscription.length !== 0 && subscription[0].plan_name;
   // Monthly plan price
-  const monthlyPrice = 7;
+  const monthlyPrice = 700;
 
   // Yearly plan price and discount percentage
   const yearlyActualPrice = 12 * monthlyPrice;
