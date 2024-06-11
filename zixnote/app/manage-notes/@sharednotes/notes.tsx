@@ -55,40 +55,7 @@ function Notes({ topicId, userId }: { topicId: string; userId: string }) {
         
       >
         <Center>
-          <Menu shadow="md" width={200} position="bottom-start">
-            <Menu.Target>
-              <ActionIcon size="lg" variant="subtle" color="gray">
-                <IconDotsVertical size="1rem" />
-              </ActionIcon>
-            </Menu.Target>
-            <Menu.Dropdown>
-              <Menu.Label>Application</Menu.Label>
-              <Menu.Item
-                leftSection={
-                  <IconEditCircle style={{ width: rem(14), height: rem(14) }} />
-                }
-              >
-                Edit
-              </Menu.Item>
-              <Menu.Item
-                onClick={() => {
-                  handleDelete(item.id);
-                }}
-                leftSection={
-                  <IconTrash style={{ width: rem(14), height: rem(14) }} />
-                }
-              >
-                Delete
-              </Menu.Item>
-              <Menu.Item
-                leftSection={
-                  <IconPhoto style={{ width: rem(14), height: rem(14) }} />
-                }
-              >
-                Gallery
-              </Menu.Item>
-            </Menu.Dropdown>
-          </Menu>
+       
 
           <Accordion.Control>{item.title}</Accordion.Control>
         </Center>

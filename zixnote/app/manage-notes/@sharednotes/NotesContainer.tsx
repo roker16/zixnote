@@ -9,7 +9,7 @@ function NotesContainer({user, selectedTopicId}:{user: User, selectedTopicId: st
   const [selectedUserId, setSelectedUserId] = useState<string>();
   return (
     <>
-    {selectedUserId}
+    {/* {selectedUserId} */}
       <SharedUsersCombobox userId={user.id} onUserSelected={setSelectedUserId} />
       {selectedUserId ? (
         <Notes topicId={selectedTopicId as string} userId={selectedUserId} />
