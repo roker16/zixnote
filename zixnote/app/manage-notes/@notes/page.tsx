@@ -28,23 +28,23 @@ export default async function Index({
     );
   }
   const subscription = await getSubscriptionServer(user.id);
-  // if (subscription && subscription.length === 0) {
-  //   return (
-  //     <Center>
-  //       <MyAlert
-  //         title={"Subscribe to access all the features"}
-  //         detail={
-  //           <div>
-  //             {/* Subscribe to access all the features{" "} */}
-  //             <span>
-  //               <Link href="/pricing">Subscribe</Link>
-  //             </span>
-  //           </div>
-  //         }
-  //       />
-  //     </Center>
-  //   );
-  // }
+  if (subscription && subscription.length === 0) {
+    return (
+      <Center>
+        <MyAlert
+          title={"Subscribe to access all the features"}
+          detail={
+            <div>
+              {/* Subscribe to access all the features{" "} */}
+              <span>
+                <Link href="/pricing">Subscribe</Link>
+              </span>
+            </div>
+          }
+        />
+      </Center>
+    );
+  }
   const selectedSyllabus = searchParams?.id;
   if (!selectedSyllabus) {
     return (
