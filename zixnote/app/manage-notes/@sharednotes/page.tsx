@@ -3,15 +3,8 @@ import { getUserAndRole } from "../../../utils/getUserAndRole";
 
 import { getSubscriptionServer } from "@/app/pricing/getSubscriptionServer";
 import GoogleSignin from "@/components/GoogleSignin";
-import { createClient } from "@/utils/supabase/server";
-import { cookies } from "next/headers";
 import Link from "next/link";
-import CreateNotesForm from "../component/CreateNotesForm";
 import { MyAlert } from "./MyAlert";
-import Notes from "./notes";
-import ShareButton from "./ShareButton";
-import SharedUsersCombobox from "./SharedUsersCombobox";
-import { User } from "@supabase/supabase-js";
 import NotesContainer from "./NotesContainer";
 
 export default async function Index({

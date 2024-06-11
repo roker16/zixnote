@@ -48,7 +48,7 @@ function SharedUsersCombobox({
   };
   return (
     <>
-      {value}
+      {/* {value} */}
 
       {names && names.length !== 0 && (
         // eslint-disable-next-line react/no-unescaped-entities
@@ -58,7 +58,7 @@ function SharedUsersCombobox({
             size="xs"
             w={320}
             label={
-              <Text fs={"oblique"} ff={"monospace"}>Pick user to view shared notes:</Text>
+              <Text fs={"oblique"} c="dimmed" >Pick user to view notes:</Text>
             }
             placeholder="Pick value or enter anything"
             data={names}
