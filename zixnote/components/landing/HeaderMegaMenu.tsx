@@ -129,9 +129,9 @@ export function HeaderMegaMenu({ user }: { user: User | null }) {
               <Link href="/manage-syll" className={classes.link}>
                 Manage Syllabus
               </Link>
-              <a href="#" className={classes.link}>
+              {/* <a href="#" className={classes.link}>
                 Guide
-              </a>
+              </a> */}
               <a href="/pricing" className={classes.link}>
                 Pricing
               </a>
@@ -211,39 +211,59 @@ export function HeaderMegaMenu({ user }: { user: User | null }) {
         onClose={closeDrawer}
         size="100%"
         padding="md"
-        title="Navigation"
+        title={
+          <Link href={"/"}>
+            <ActionIcon
+              // visibleFrom="md"
+              variant="gradient"
+              size="md"
+              radius={"xl"}
+              gradient={{
+                from: "var(--mantine-color-indigo-4)",
+                to: "var(--mantine-color-indigo-7)",
+                deg: 304,
+              }}
+            >
+              <IconWriting size={20} stroke={1} />
+            </ActionIcon>
+          </Link>
+        }
         hiddenFrom="sm"
         zIndex={1000000}
       >
         <ScrollArea h={`calc(100vh - ${rem(80)})`} mx="-md">
           <Divider my="sm" />
 
-          <a href="#" className={classes.link}>
-            Home
-          </a>
-          <UnstyledButton className={classes.link} onClick={toggleLinks}>
-            <Center inline>
-              <Box component="span">Features</Box>
-              <IconChevronDown
-                style={{ width: rem(16), height: rem(16) }}
-                color={theme.colors.blue[6]}
-              />
-            </Center>
-          </UnstyledButton>
-          <Collapse in={linksOpened}>{links}</Collapse>
-          <a href="#" className={classes.link}>
+          <Link href="/manage-notes" className={classes.link}>
+            Notes
+          </Link>
+          <Link href="/manage-syll" className={classes.link}>
+            Manage Syllabus
+          </Link>
+          {/* <a href="#" className={classes.link}>
             Guide
-          </a>
-          <a href="#" className={classes.link}>
+          </a> */}
+          <a href="/pricing" className={classes.link}>
             Pricing
           </a>
 
           <Divider my="sm" />
 
-          <Group justify="center" grow pb="xl" px="md">
-            <Button variant="default">Log in</Button>
-            <Button>Sign up</Button>
-          </Group>
+          {/* <Group justify="flex-end">
+            {" "}
+            {user ? (
+              <UserMenu user={user} />
+            ) : (
+              <Button
+                component="a"
+                href="/login"
+                style={{ textDecoration: "none" }}
+                variant="link"
+              >
+                Log In
+              </Button>
+            )}
+          </Group> */}
         </ScrollArea>
       </Drawer>
     </Box>
