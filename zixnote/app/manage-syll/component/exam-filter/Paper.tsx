@@ -89,7 +89,7 @@ export const Paper = ({
   const handleDelete = async () => {
     setIsLoading(true);
     const { error } = await supabase
-      .from("syll_class")
+      .from("syll_paper")
       .delete()
       .eq("id", value?.value!);
     if (error) {
