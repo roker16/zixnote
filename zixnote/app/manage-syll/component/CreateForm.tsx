@@ -30,7 +30,14 @@ export default function CreateForm({
 
   return (
     <>
-      <Modal opened={opened} onClose={close} title="Create Index">
+      <Modal
+        opened={opened}
+        onClose={close}
+        title="Create Index"
+        overlayProps={{
+          backgroundOpacity: 0.15,
+        }}
+      >
         {/* Modal content */}
         <form action={createIndex}>
           <Flex gap="sm" p={"xs"} direction="column">

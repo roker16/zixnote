@@ -2,8 +2,11 @@
 
 import { createClient } from "@/utils/supabase/client";
 import { Button, Divider, Space, Stack, Text } from "@mantine/core";
+import { usePathname } from "next/navigation";
 
 export default function GoogleSignin() {
+  const pathname = usePathname()
+
   const supabase = createClient();
   const signin = async () => {
     await supabase.auth.signInWithOAuth({
@@ -16,6 +19,7 @@ export default function GoogleSignin() {
 
   return (
     <div>
+      {/* {pathname} */}
       <Divider label="A digital notes making platform" labelPosition="center" my="xs" />
       <Stack
         h={300}
