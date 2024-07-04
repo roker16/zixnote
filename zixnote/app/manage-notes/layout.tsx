@@ -16,6 +16,7 @@ import {
   useMantineTheme,
 } from "@mantine/core";
 import { useDisclosure, useHeadroom } from "@mantine/hooks";
+import Image from 'next/image'
 import { User } from "@supabase/supabase-js";
 import { IconNotebook, IconPencil, IconWriting } from "@tabler/icons-react";
 import Link from "next/link";
@@ -80,21 +81,16 @@ export default function ManageSyllabusLayout({
                   hiddenFrom="md"
                   size="sm"
                 />
-                <Link href={"/"}>
-                  <ActionIcon
-                    // visibleFrom="md"
-                    variant="gradient"
-                    size="md"
-                    radius={"xl"}
-                    gradient={{
-                      from: "var(--mantine-color-indigo-4)",
-                      to: "var(--mantine-color-indigo-7)",
-                      deg: 304,
-                    }}
-                  >
-                    <IconWriting size={20} stroke={1} />
-                  </ActionIcon>
+                <Link href={"/"} className="my-auto">
+                <Image
+                  src="/logo.png"
+                  width={35}
+                  height={22}
+                  alt="Logo"
+                  
+                />
                 </Link>
+                
               </Group>
 
               <Group gap={0}>
@@ -104,9 +100,7 @@ export default function ManageSyllabusLayout({
                 {/* <Tabs.Tab value="third">Trend</Tabs.Tab>
                 <Tabs.Tab value="forth">Notes</Tabs.Tab> */}
               </Group>
-              <Center>
-                {/* <NotesMenu /> */}
-              </Center>
+              <Center>{/* <NotesMenu /> */}</Center>
             </Tabs.List>
           </Tabs>
         </Paper>

@@ -8,7 +8,7 @@ import {
   Group,
   Modal,
   NumberInput,
-  Textarea
+  Textarea,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useDisclosure } from "@mantine/hooks";
@@ -33,7 +33,6 @@ export default function CreateNotesForm({
   const router = useRouter();
   const headingId = searchParams.get("headingid");
 
-  
   const { trigger: insert } = useInsertMutation(
     supabase.from("notes"),
     ["id"],
@@ -83,7 +82,12 @@ export default function CreateNotesForm({
 
   return (
     <>
-      <Modal opened={opened} onClose={close} title="Create Note">
+      <Modal
+        overlayProps={{ opacity: 0.15 }}
+        opened={opened}
+        onClose={close}
+        title="Create Note"
+      >
         <Box mx="auto">
           <form onSubmit={form.onSubmit((values) => onSubmitHandler(values))}>
             <Textarea
