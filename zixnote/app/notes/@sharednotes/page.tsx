@@ -1,18 +1,11 @@
-import { Box, Button, Center, Flex, Text } from "@mantine/core";
+import { Center, Text } from "@mantine/core";
 import { getUserAndRole } from "../../../utils/getUserAndRole";
 
-import GoogleSignin from "@/components/GoogleSignin";
-import { createClient } from "@/utils/supabase/server";
-import { cookies } from "next/headers";
-import SunEditorTest from "@/components/Editor/Suneditor";
-import Notes from "./notes";
-import { Suspense } from "react";
-import { MyAlert } from "./MyAlert";
-import CreateNotesForm from "../component/CreateNotesForm";
 import { getSubscriptionServer } from "@/app/pricing/getSubscriptionServer";
+import GoogleSignin from "@/components/GoogleSignin";
 import Link from "next/link";
-import { IconShare } from "@tabler/icons-react";
-import ShareButton from "./ShareButton";
+import { MyAlert } from "./MyAlert";
+import NotesContainer from "./NotesContainer";
 
 export default async function Index({
   searchParams,
@@ -27,24 +20,24 @@ export default async function Index({
       </Center>
     );
   }
-  // const subscription = await getSubscriptionServer(user.id);
-  // if (subscription && subscription.length === 0) {
-  //   return (
-  //     <Center>
-  //       <MyAlert
-  //         title={"Subscribe to access all the features"}
-  //         detail={
-  //           <div>
-  //             {/* Subscribe to access all the features{" "} */}
-  //             <span>
-  //               <Link href="/pricing">Subscribe</Link>
-  //             </span>
-  //           </div>
-  //         }
-  //       />
-  //     </Center>
-  //   );
-  // }
+  const subscription = await getSubscriptionServer(user.id);
+  if (subscription && subscription.length === 0) {
+    return (
+      <Center>
+        <MyAlert
+          title={"Subscribe to access all the features"}
+          detail={
+            <div>
+              {/* Subscribe to access all the features{" "} */}
+              <span>
+                <Link href="/pricing">Subscribe</Link>
+              </span>
+            </div>
+          }
+        />
+      </Center>
+    );
+  }
   const selectedSyllabus = searchParams?.id;
   if (!selectedSyllabus) {
     return (
@@ -70,25 +63,25 @@ export default async function Index({
     );
   }
 
+ 
+
   return (
     // <Box>
     <div className="mx-0">
       <Center>
         <div className=" flex items-center gap-1">
-          <ShareButton userId={user.id}/>
           <div className="text-center">
             {" "}
             <Text fw={500}>{selectedName}</Text>
           </div>
         </div>
       </Center>
-
-      <Notes topicId={selectedTopicId as string} userId={user.id} />
-      <Center h={"100px"}>
-        <CreateNotesForm />
-      </Center>
+    {/* without using key it will not rerender when topic is changed and give old user data */}
+      <NotesContainer key={selectedTopicId} user={user} selectedTopicId={selectedTopicId}/>
     </div>
     // </Box>
   );
 }
+
+
 
