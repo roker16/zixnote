@@ -4,6 +4,9 @@ import { createClient } from "@/utils/supabase/client";
 import {
   ActionIcon,
   AppShell,
+  AppShellHeader,
+  AppShellMain,
+  AppShellNavbar,
   Burger,
   Button,
   Center,
@@ -12,11 +15,13 @@ import {
   ScrollArea,
   Space,
   Tabs,
+  TabsList,
+  TabsTab,
   rem,
   useMantineTheme,
 } from "@mantine/core";
 import { useDisclosure, useHeadroom } from "@mantine/hooks";
-import Image from 'next/image'
+import Image from "next/image";
 import { User } from "@supabase/supabase-js";
 import { IconNotebook, IconPencil, IconWriting } from "@tabler/icons-react";
 import Link from "next/link";
@@ -51,20 +56,22 @@ export default function ManageSyllabusLayout({
   return (
     <AppShell
       layout="alt"
+      // disabled
       header={{ height: 50, offset: false }}
       padding={{ base: 0, md: 4, xl: 90 }}
       navbar={{
         width: 300,
-        breakpoint: "md",
+        breakpoint: "lg",
         collapsed: { mobile: !opened },
       }}
       aside={{
-        width: 0,
+        
+        width: 200,
         breakpoint: "lg",
         collapsed: { desktop: false, mobile: true },
       }}
     >
-      <AppShell.Header withBorder={false}>
+      <AppShellHeader withBorder={false}>
         <Paper h={50} style={{ position: "sticky", top: "0px", zIndex: "100" }}>
           <Tabs
             value={activeTab}
@@ -73,7 +80,7 @@ export default function ManageSyllabusLayout({
             variant="default"
             bg={theme.colors.gray[0]}
           >
-            <Tabs.List justify={"space-between"} h={50}>
+            <TabsList justify={"space-between"} h={50}>
               <Group h="100%">
                 <Burger
                   opened={opened}
@@ -82,30 +89,26 @@ export default function ManageSyllabusLayout({
                   size="sm"
                 />
                 <Link href={"/"} className="my-auto">
-                <Image
-                  src="/logo.png"
-                  width={35}
-                  height={22}
-                  alt="Logo"
-                  
-                />
+                  <Image src="/logo.png" width={35} height={22} alt="Logo" />
                 </Link>
-                
               </Group>
 
               <Group gap={0}>
                 {" "}
-                <Tabs.Tab value="first">Notes</Tabs.Tab>
-                <Tabs.Tab value="second">Shared</Tabs.Tab>
+                <TabsTab value="first">Notes</TabsTab>
+                <TabsTab value="second">Shared</TabsTab>
                 {/* <Tabs.Tab value="third">Trend</Tabs.Tab>
                 <Tabs.Tab value="forth">Notes</Tabs.Tab> */}
               </Group>
-              <Center>{/* <NotesMenu /> */}</Center>
-            </Tabs.List>
+              <Center>
+                {" "}
+                <NotesMenu />{" "}
+              </Center>
+            </TabsList>
           </Tabs>
         </Paper>
-      </AppShell.Header>
-      <AppShell.Navbar
+      </AppShellHeader>
+      <AppShellNavbar
         withBorder={false}
         h={"full"}
         bg={"var(--mantine-color-gray-0)"}
@@ -132,15 +135,17 @@ export default function ManageSyllabusLayout({
           {filter}
           {index}
         </ScrollArea>
-      </AppShell.Navbar>
-      <AppShell.Main pt={`calc(${rem(50)} + var(--mantine-spacing-md))`}>
-        <Space h={10} />
+      </AppShellNavbar>
+      <AppShellMain  pt={`calc(${rem(50)} + var(--mantine-spacing-md))`}>
+        <Space h={100} bg={"red"} />
+
         {activeTab === "first" && (
           <Suspense fallback={<div>loading...</div>}>{notes}</Suspense>
         )}
         {activeTab === "second" && <div>{sharednotes}</div>}
         {activeTab === "third" && <div>Third Tab</div>}
-      </AppShell.Main>
+      </AppShellMain>
+      <AppShell.Aside p="md" bg={"red"}>Aside</AppShell.Aside>
     </AppShell>
   );
 }
