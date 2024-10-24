@@ -17,7 +17,6 @@ export default async function Index() {
     <div>
       <HeaderMegaMenu user={user} />
       <Container size={"xl"} >
-        hello11
         <HeroBullets />
       </Container>
       
