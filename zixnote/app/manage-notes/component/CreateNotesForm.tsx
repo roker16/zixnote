@@ -58,8 +58,8 @@ export default function CreateNotesForm({
 
     validate: {
       title: (value) =>
-        value.length > 100 ? "Must be less than 100 character" : null,
-      order: (value) => (value > 100 ? "Must be less than 100" : null),
+        value.length > 200 ? "Must be less than 200 character" : null,
+      order: (value) => (value > 200 ? "Must be less than 200" : null),
     },
   });
   const onSubmitHandler = async (formData: Formvalue) => {
