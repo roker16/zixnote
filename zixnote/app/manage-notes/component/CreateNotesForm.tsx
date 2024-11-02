@@ -58,7 +58,7 @@ export default function CreateNotesForm({
 
     validate: {
       title: (value) =>
-        value.length > 200 ? "Must be less than 200 character" : null,
+        value.length > 500 ? "Must be less than 500 character" : null,
       order: (value) => (value > 200 ? "Must be less than 200" : null),
     },
   });
