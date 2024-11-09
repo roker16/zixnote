@@ -4,9 +4,7 @@ import { getUserAndRole } from "../../../utils/getUserAndRole";
 import GoogleSignin from "@/components/GoogleSignin";
 import { createClient } from "@/utils/supabase/server";
 import { cookies } from "next/headers";
-import SunEditorTest from "@/components/Editor/Suneditor";
 import Notes from "./notes";
-import { Suspense } from "react";
 import { MyAlert } from "./MyAlert";
 import CreateNotesForm from "../component/CreateNotesForm";
 import { getSubscriptionServer } from "@/app/pricing/getSubscriptionServer";
@@ -27,24 +25,25 @@ export default async function Index({
       </Center>
     );
   }
-  const subscription = await getSubscriptionServer(user.id);
-  if (subscription && subscription.length === 0) {
-    return (
-      <Center>
-        <MyAlert
-          title={"Subscribe to access all the features"}
-          detail={
-            <div>
-              {/* Subscribe to access all the features{" "} */}
-              <span>
-                <Link href="/pricing">Subscribe</Link>
-              </span>
-            </div>
-          }
-        />
-      </Center>
-    );
-  }
+  //Deactivate subscription for now
+  // const subscription = await getSubscriptionServer(user.id);
+  // if (subscription && subscription.length === 0) {
+  //   return (
+  //     <Center>
+  //       <MyAlert
+  //         title={"Subscribe to access all the features"}
+  //         detail={
+  //           <div>
+  //             {/* Subscribe to access all the features{" "} */}
+  //             <span>
+  //               <Link href="/pricing">Subscribe</Link>
+  //             </span>
+  //           </div>
+  //         }
+  //       />
+  //     </Center>
+  //   );
+  // }
   const selectedSyllabus = searchParams?.id;
   if (!selectedSyllabus) {
     return (
