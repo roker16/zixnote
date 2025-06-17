@@ -9,7 +9,7 @@ import {
   IconDotsVertical,
   IconEditCircle,
   IconPhoto,
-  IconTrash
+  IconTrash,
 } from "@tabler/icons-react";
 import { useState } from "react";
 import NotesTab from "./NotesTab";
@@ -27,14 +27,14 @@ function Notes({ topicId, userId }: { topicId: string; userId: string }) {
     }
   );
   const handleDelete = async (id: number) => {
-    alert("Confirm to delete!")
+    alert("Confirm to delete!");
     await deleteNote({ id: id });
   };
   const { data, count } = useQuery(
     supabase
       .from("notes")
       .select("id,title,notes_english,order,type", { count: "exact" })
-      .eq("index_id_fk", topicId)
+      .eq("index_id_fk", Number(topicId))
       .eq("owner_fk", userId)
       .order("order", { ascending: true }),
     {
@@ -52,14 +52,11 @@ function Notes({ topicId, userId }: { topicId: string; userId: string }) {
         value={item.id.toString()}
         bg={"var(--mantine-color-gray-1)"}
         my={"xs"}
-        
       >
         <Center>
-       
-
           <Accordion.Control>{item.title}</Accordion.Control>
         </Center>
-        <Accordion.Panel >
+        <Accordion.Panel>
           {value?.includes(item.id.toString()) && (
             <NotesTab notesId={item.id!} />
           )}

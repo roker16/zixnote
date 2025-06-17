@@ -21,9 +21,9 @@ export function GetInTouchSimple() {
       message: "",
     },
     validate: {
-      name: (value) => value.trim().length < 2,
-      email: (value) => !/^\S+@\S+$/.test(value),
-      subject: (value) => value.trim().length === 0,
+      name: (value: string) => value.trim().length < 2,
+      email: (value: string) => !/^\S+@\S+$/.test(value),
+      subject: (value: string) => value.trim().length === 0,
     },
   });
 

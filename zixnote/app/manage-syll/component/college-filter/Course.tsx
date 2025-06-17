@@ -27,8 +27,7 @@ const createOption = (x: DataInput) => ({
 export const Course = ({
   classId,
   canModerate,
-}:
-{
+}: {
   classId: number | undefined;
   canModerate: boolean;
 }) => {
@@ -96,7 +95,7 @@ export const Course = ({
     const { error } = await supabase
       .from("syll_syllabus_entity")
       .delete()
-      .eq("id", value?.value!);
+      .eq("id", Number(value?.value!));
     if (error) {
       showErrorNotification(error);
       setIsLoading(false);

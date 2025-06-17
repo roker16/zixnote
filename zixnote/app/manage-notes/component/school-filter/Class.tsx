@@ -91,7 +91,7 @@ export const Class = ({
     const { error } = await supabase
       .from("syll_class")
       .delete()
-      .eq("id", value?.value!);
+      .eq("id", Number(value?.value!));
     if (error) {
       showErrorNotification(error);
       setIsLoading(false);
@@ -118,7 +118,6 @@ export const Class = ({
           className="text-sm"
         />
       </div>
-     
     </div>
   );
 };

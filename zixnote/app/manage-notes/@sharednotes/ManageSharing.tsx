@@ -46,7 +46,8 @@ function ManageSharing() {
     },
 
     validate: {
-      email: (value) => (/^\S+@\S+$/.test(value) ? null : "Invalid email"),
+      email: (value: string) =>
+        /^\S+@\S+$/.test(value) ? null : "Invalid email",
     },
   });
   const handleSubmit = async (values: typeof form.values) => {

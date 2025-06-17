@@ -10,7 +10,7 @@ import React, { useState } from "react";
 import SharedList from "./SharedList";
 import { useInsertMutation } from "@supabase-cache-helpers/postgrest-swr";
 
-function ManageSharing({userId}:{userId:string}) {
+function ManageSharing({ userId }: { userId: string }) {
   const searchParams = useSearchParams();
   const headingId = searchParams.get("headingid");
   const [loading, setLoading] = useState(false);
@@ -46,7 +46,8 @@ function ManageSharing({userId}:{userId:string}) {
     },
 
     validate: {
-      email: (value) => (/^\S+@\S+$/.test(value) ? null : "Invalid email"),
+      email: (value: string) =>
+        /^\S+@\S+$/.test(value) ? null : "Invalid email",
     },
   });
   const handleSubmit = async (values: typeof form.values) => {
@@ -58,7 +59,7 @@ function ManageSharing({userId}:{userId:string}) {
         icon: <IconInfoCircle />,
         color: "blue",
       });
-      return
+      return;
     }
     setLoading(true);
 

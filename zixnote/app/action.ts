@@ -7,24 +7,61 @@ import { redirect } from "next/navigation";
 import { z } from "zod";
 
 const schema = z.object({
-  index: z.string().max(100, { message: "100 char" }),
-  order: z.string().min(1, { message: "1 char" }),
+  index: z
+    .string()
+    .min(1, { message: "Index is required" })
+    .max(100, { message: "Index must be 100 characters or less" }),
+  order: z.string().regex(/^\d+$/, { message: "Order must be a valid number" }),
 });
 
-export async function editIndex(formData: FormData) {
-  console.log("form data is ", formData);
+export async function createIndex(formData: FormData): Promise<void> {
   const validatedFields = schema.safeParse({
     index: formData.get("index"),
     order: formData.get("order"),
   });
-  // await wait(5000);
-  // Return early if the form data is invalid
+
   if (!validatedFields.success) {
-    console.log("hi...", validatedFields.error.flatten().fieldErrors);
-    return {
-      errors: validatedFields.error.flatten().fieldErrors,
-    };
+    throw new Error(
+      JSON.stringify(validatedFields.error.flatten().fieldErrors)
+    );
   }
+
+  const supabase = createClient(cookies());
+  const { error } = await supabase.from("syll_index").insert([
+    {
+      index_name: formData.get("index")?.toString()!,
+      sequence: Number(formData.get("order")),
+      syllabus_id: Number(formData.get("syllabusId")),
+      parent_index_id: formData.get("parentId")?.toString()
+        ? Number(formData.get("parentId"))
+        : null,
+      category_id: formData.get("parentCategoryId")?.toString()
+        ? Number(formData.get("parentCategoryId"))
+        : 1,
+    },
+  ]);
+
+  if (error) {
+    throw new Error(`Supabase error: ${error.message}`);
+  }
+
+  revalidatePath("/manage-index");
+  redirect("/manage-index");
+}
+
+// Update editIndex similarly
+export async function editIndex(formData: FormData): Promise<void> {
+  const validatedFields = schema.safeParse({
+    index: formData.get("index"),
+    order: formData.get("order"),
+  });
+
+  if (!validatedFields.success) {
+    throw new Error(
+      JSON.stringify(validatedFields.error.flatten().fieldErrors)
+    );
+  }
+
   const supabase = createClient(cookies());
   const { error } = await supabase
     .from("syll_index")
@@ -33,46 +70,14 @@ export async function editIndex(formData: FormData) {
       sequence: Number(formData.get("order")),
     })
     .eq("index_id", Number(formData.get("id")));
-  if (error) {
-    console.log(error.message);
-  }
-  revalidatePath("/manage-index");
-}
-export async function createIndex(formData: FormData) {
-  const validatedFields = schema.safeParse({
-    index: formData.get("index"),
-    order: formData.get("order"),
-  });
-  // await wait(5000);
-  // Return early if the form data is invalid
-  if (!validatedFields.success) {
-    console.log("hi...", validatedFields.error.flatten().fieldErrors);
-    return {
-      errors: validatedFields.error.flatten().fieldErrors,
-    };
-  }
-  const supabase = createClient(cookies());
-  const { error } = await supabase.from("syll_index").insert([
-    {
-      index_name: formData.get("index")?.toString()!,
-      sequence: Number(formData.get("order")),
-      syllabus_id: Number(formData.get("syllabusId")),
-      parent_index_id:
-        formData.get("parentId") !== ""
-          ? Number(formData.get("parentId"))
-          : null,
-      category_id:
-        formData.get("parentCategoryId") !== ""
-          ? Number(formData.get("parentCategoryId"))
-          : 1,
-    },
-  ]);
-  if (error) {
-    console.log(error.message);
-  }
-  revalidatePath("/manage-index");
-}
 
+  if (error) {
+    throw new Error(`Supabase error: ${error.message}`);
+  }
+
+  revalidatePath("/manage-index");
+  redirect("/manage-index");
+}
 export async function deleteItem(formData: FormData) {
   const id = formData.get("id");
   const tableName = formData.get("tableName");

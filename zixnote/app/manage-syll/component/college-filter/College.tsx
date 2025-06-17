@@ -80,7 +80,7 @@ export const College = ({
     const { error } = await supabase
       .from("syll_college")
       .delete()
-      .eq("id", value?.value!);
+      .eq("id", Number(value?.value!));
     if (error) {
       showErrorNotification(error);
       setIsLoading(false);

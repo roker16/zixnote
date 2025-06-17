@@ -95,7 +95,7 @@ export const Subject = ({
     const { error } = await supabase
       .from("syll_syllabus_entity")
       .delete()
-      .eq("id", value?.value!);
+      .eq("id", Number(value?.value!));
     if (error) {
       showErrorNotification(error);
       setIsLoading(false);
@@ -109,7 +109,7 @@ export const Subject = ({
   const isDisabled = isLoading || value === null || value === undefined;
   return (
     <div className=" flex items-center gap-1 ">
-    <div className="md:w-60 flex-1">
+      <div className="md:w-60 flex-1">
         <CreatableSelect
           placeholder="Select Subject..."
           isClearable
@@ -122,7 +122,6 @@ export const Subject = ({
           className="text-sm"
         />
       </div>
-     
     </div>
   );
 };

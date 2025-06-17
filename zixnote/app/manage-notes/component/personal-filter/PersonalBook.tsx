@@ -92,7 +92,7 @@ export const PersonalBook = ({ canModerate }: { canModerate: boolean }) => {
     const { error } = await supabase
       .from("syll_syllabus_entity")
       .delete()
-      .eq("id", value?.value!);
+      .eq("id", Number(value?.value!));
     if (error) {
       showErrorNotification(error);
       setIsLoading(false);
@@ -129,7 +129,6 @@ export const PersonalBook = ({ canModerate }: { canModerate: boolean }) => {
           className="text-sm"
         />
       </div>
-    
     </div>
   );
 };

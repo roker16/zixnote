@@ -71,7 +71,7 @@ export const Paper = ({
     setIsLoading(true);
     const { data, error } = await supabase
       .from("syll_paper")
-      .insert({ "name": inputValue, exam_id: schoolId })
+      .insert({ name: inputValue, exam_id: schoolId })
       .select()
       .single();
     if (error) {
@@ -91,7 +91,7 @@ export const Paper = ({
     const { error } = await supabase
       .from("syll_paper")
       .delete()
-      .eq("id", value?.value!);
+      .eq("id", Number(value?.value!));
     if (error) {
       showErrorNotification(error);
       setIsLoading(false);

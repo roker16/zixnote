@@ -59,7 +59,7 @@ export const Exam = ({
 
     const { data, error } = await supabase
       .from("syll_exam")
-      .insert([{ exam_name: inputValue, }])
+      .insert([{ exam_name: inputValue }])
       .select()
       .single();
     if (error) {
@@ -80,7 +80,7 @@ export const Exam = ({
     const { error } = await supabase
       .from("syll_school")
       .delete()
-      .eq("id", value?.value!);
+      .eq("id", Number(value?.value!));
     if (error) {
       showErrorNotification(error);
       setIsLoading(false);
@@ -112,7 +112,6 @@ export const Exam = ({
           className="text-sm"
         />
       </div>
-     
     </div>
   );
 };
