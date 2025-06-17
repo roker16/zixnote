@@ -32,7 +32,6 @@ export default function CreateNotesForm({
   const searchParams = useSearchParams();
   const router = useRouter();
   const headingId = searchParams.get("headingid");
-
   const { trigger: insert } = useInsertMutation(
     supabase.from("notes"),
     ["id"],

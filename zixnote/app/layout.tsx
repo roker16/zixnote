@@ -41,9 +41,7 @@ export default async function RootLayout({
         <MantineProvider theme={theme} defaultColorScheme="light">
           <Notifications position="top-center" />
           <div>
-            
             <div>{children}</div>
-           
           </div>
         </MantineProvider>
       </body>
