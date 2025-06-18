@@ -76,7 +76,7 @@ export default async function Index({
     <div className="mx-0">
       <Center>
         <div className=" flex items-center gap-1">
-          <ShareButton userId={user.id}/>
+          <ShareButton userId={user.id} />
           <div className="text-center">
             {" "}
             <Text fw={500}>{selectedName}</Text>
@@ -93,7 +93,7 @@ export default async function Index({
   );
 }
 async function getNotes(indexId: number, userId: string) {
-  const supabase = createClient(cookies());
+  const supabase = await createClient();
   const { data, error } = await supabase
     .from("notes")
     .select(`*`)

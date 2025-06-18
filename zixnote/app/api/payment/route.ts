@@ -8,7 +8,7 @@ export const dynamic = "force-dynamic"; // defaults to auto
 export async function POST(request: Request) {
   const { amount } = await request.json();
   console.log("amount is ", amount);
-  const supabase = createClient(cookies());
+  const supabase = await createClient();
   const user = (await supabase.auth.getUser()).data.user;
   const userId = user?.id;
   const email = user?.email;

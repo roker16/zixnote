@@ -1,7 +1,7 @@
 import { createClient } from "@/utils/supabase/server";
 import { cookies } from "next/headers";
 export const checkIfModerator = async (syllabusId: number, userId: string) => {
-  const supabase = createClient(cookies());
+  const supabase = await createClient();
 
   const { data: owner, error: ownerError } = await supabase
     .from("syll_syllabus_entity")

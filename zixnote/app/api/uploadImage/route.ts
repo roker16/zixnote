@@ -21,7 +21,7 @@ export async function POST(
       }
     );
   }
-  const supabase = createClient(cookies());
+  const supabase = await createClient();
 
   const fileNameTobeUploaded = generateUniqueFileName(fileName);
   const { data, error } = await supabase.storage

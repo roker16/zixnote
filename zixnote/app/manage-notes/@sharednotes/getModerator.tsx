@@ -3,7 +3,7 @@ import { cookies } from "next/headers";
 import { ExtractArrayElementType } from "@/utils/helper";
 
 export const getModerator = async (syllabusId: number) => {
-  const supabase = createClient(cookies());
+  const supabase = await createClient();
 
   const { data: moderator, error } = await supabase
     .from("syll_moderator")

@@ -2,7 +2,7 @@ import { createClient } from "@/utils/supabase/server";
 import { cookies } from "next/headers";
 
 export async function getUserAndRole() {
-  const supabase = createClient(cookies());
+  const supabase = await createClient();
   const { user } = (await supabase.auth.getUser()).data;
 
   if (!user) {

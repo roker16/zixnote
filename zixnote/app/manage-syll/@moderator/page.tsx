@@ -28,7 +28,7 @@ export default async function Index({
     if (!user) {
       // Block 1: User is not logged in
       return (
-        <Center  w={"full"} >
+        <Center w={"full"}>
           <GoogleSignin />
         </Center>
       );
@@ -102,7 +102,7 @@ export default async function Index({
   };
 
   return (
-    <Box >
+    <Box>
       <div className="w-full flex flex-col items-center">
         <div className="col-span-5">{centerGrid()}</div>
         {/* <Link href={"/manage-syll/total"}>total</Link> */}
@@ -113,7 +113,7 @@ export default async function Index({
   );
 }
 async function checkIfPersonal(id: number) {
-  const supabase = createClient(cookies());
+  const supabase = await createClient();
   const userId = (await supabase.auth.getUser()).data.user?.id;
   const { data, error } = await supabase
     .from("syll_syllabus_entity")

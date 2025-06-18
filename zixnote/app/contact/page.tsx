@@ -1,4 +1,3 @@
-
 import { FooterCentered } from "@/components/landing/FooterCentered";
 import { HeaderMegaMenu } from "@/components/landing/HeaderMegaMenu";
 import { HeroBullets } from "@/components/landing/HeroBullets";
@@ -9,7 +8,7 @@ import { GetInTouchSimple } from "./GetInTouchSimple";
 // import Landing from "./Landing";
 
 export default async function Index() {
-  const supabase = createClient(cookies());
+  const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();

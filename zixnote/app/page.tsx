@@ -4,11 +4,11 @@ import { HeroBullets } from "@/components/landing/HeroBullets";
 import { createClient } from "@/utils/supabase/server";
 import { Container } from "@mantine/core";
 import { cookies } from "next/headers";
-import Paynow from "./pricing/paynow";
+
 // import Landing from "./Landing";
 
 export default async function Index() {
-  const supabase = createClient(cookies());
+  const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -16,10 +16,10 @@ export default async function Index() {
   return (
     <div>
       <HeaderMegaMenu user={user} />
-      <Container size={"xl"} >
+      <Container size={"xl"}>
         <HeroBullets />
       </Container>
-      
+
       <FooterCentered />
     </div>
   );

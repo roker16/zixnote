@@ -9,7 +9,7 @@ import Pricing from "./pricing";
 // import Landing from "./Landing";
 
 export default async function Index() {
-  const supabase = createClient(cookies());
+  const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();

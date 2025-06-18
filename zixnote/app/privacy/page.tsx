@@ -8,7 +8,7 @@ import PrivacyPolicy from "./PrivacyPolicy";
 // import Landing from "./Landing";
 
 export default async function Index() {
-  const supabase = createClient(cookies());
+  const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -22,8 +22,8 @@ export default async function Index() {
   return (
     <div>
       <HeaderMegaMenu user={user} />
-      <Container size={"xl"} >
-       <PrivacyPolicy/>
+      <Container size={"xl"}>
+        <PrivacyPolicy />
       </Container>
       <FooterCentered />
     </div>

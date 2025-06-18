@@ -26,7 +26,7 @@ export async function createIndex(formData: FormData): Promise<void> {
     );
   }
 
-  const supabase = createClient(cookies());
+  const supabase = await createClient();
   const { error } = await supabase.from("syll_index").insert([
     {
       index_name: formData.get("index")?.toString()!,
@@ -62,7 +62,7 @@ export async function editIndex(formData: FormData): Promise<void> {
     );
   }
 
-  const supabase = createClient(cookies());
+  const supabase = await createClient();
   const { error } = await supabase
     .from("syll_index")
     .update({
@@ -85,7 +85,7 @@ export async function deleteItem(formData: FormData) {
   const revalidatePathName = formData.get("revalidatePathName");
   // await wait(5000);
 
-  const supabase = createClient(cookies());
+  const supabase = await createClient();
   const { error } = await supabase
     .from(`${tableName as any}` as any)
     .delete()
@@ -101,13 +101,12 @@ export async function deleteItem(formData: FormData) {
   // return
 }
 export async function signOut() {
-  const cookieStore = cookies();
-  const supabase = createClient(cookieStore);
+  const supabase = await createClient();
   await supabase.auth.signOut();
   return redirect("/");
 }
 export async function navigateWithLogin(data: FormData) {
-  const supabase = createClient(cookies());
+  const supabase = await createClient();
   const { user } = (await supabase.auth.getUser()).data;
   if (user) {
     redirect(`/manage-notes`);

@@ -1,10 +1,8 @@
-import { createClient } from '@/utils/supabase/server';
-import { cookies } from 'next/headers';
-
-
+import { createClient } from "@/utils/supabase/server";
+import { cookies } from "next/headers";
 
 export const getSubscriptionServer = async (userId: string) => {
-  const supabase = createClient(cookies());
+  const supabase = await createClient();
   var currentTimestamp = new Date().toISOString();
   const { data, error } = await supabase
     .from("subscription")

@@ -3,7 +3,7 @@ import { cookies } from "next/headers";
 import { ExtractArrayElementType } from "@/utils/helper";
 
 export const getIndex = async (indexId: number) => {
-  const supabase = createClient(cookies());
+  const supabase = await createClient();
 
   const { data: syll_index } = await supabase
     .from("syll_index")
