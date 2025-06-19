@@ -1,3 +1,4 @@
+import DeepSeekChat from "@/components/ai/DeepSeekChat";
 import { FooterCentered } from "@/components/landing/FooterCentered";
 import { HeaderMegaMenu } from "@/components/landing/HeaderMegaMenu";
 import { HeroBullets } from "@/components/landing/HeroBullets";
@@ -18,8 +19,8 @@ export default async function Index() {
       <HeaderMegaMenu user={user} />
       <Container size={"xl"}>
         <HeroBullets />
+        <DeepSeekChat />
       </Container>
-
       <FooterCentered />
     </div>
   );
