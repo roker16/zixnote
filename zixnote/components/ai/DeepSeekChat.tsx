@@ -216,6 +216,14 @@ export default function DeepSeekChat() {
                           {...props}
                         />
                       ),
+                      img: ({ node, ...props }) => (
+                        <img
+                          className="my-2 max-w-[400px] w-full h-auto rounded-lg border border-gray-300"
+                          loading="lazy"
+                          alt=""
+                          {...props}
+                        />
+                      ),
                       h2: ({ node, ...props }) => (
                         <h2
                           className="text-lg font-semibold mt-2 mb-1"
