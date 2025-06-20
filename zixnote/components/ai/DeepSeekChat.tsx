@@ -9,11 +9,13 @@ import {
   Avatar,
   Paper,
 } from "@mantine/core";
-import { IconUser, IconRobot } from "@tabler/icons-react";
+import { IconUser, IconRobot, IconCopy } from "@tabler/icons-react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import remarkMath from "remark-math";
 import rehypeKatex from "rehype-katex";
+import rehypeRaw from "rehype-raw";
+
 import "katex/dist/katex.min.css";
 
 interface Message {
@@ -28,6 +30,7 @@ export default function DeepSeekChat() {
   const [isStreaming, setIsStreaming] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const assistantRefs = useRef<(HTMLDivElement | null)[]>([]);
 
   useEffect(() => {
     if (scrollRef.current) {
@@ -50,6 +53,20 @@ export default function DeepSeekChat() {
         (_, expr) => `\\[ $${expr.trim()}$ \\]`
       )
       .replace(/\$(?!\$)([^$]+?)\$/g, (_, expr) => ` $${expr.trim()}$ `);
+  };
+
+  const handleCopyToClipboard = (index: number) => {
+    const targetElement = assistantRefs.current[index];
+    if (!targetElement) return;
+
+    const html = targetElement.innerHTML;
+    const blob = new Blob([html], { type: "text/html" });
+    const data = [new ClipboardItem({ "text/html": blob })];
+
+    navigator.clipboard
+      .write(data)
+      .then(() => alert("Response copied with formatting!"))
+      .catch((err) => alert("Copy failed: " + err));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -166,52 +183,101 @@ export default function DeepSeekChat() {
                   <IconRobot size={16} />
                 )}
               </Avatar>
+
               <Paper
                 p="md"
-                className={`max-w-[90%] ${
+                className={`relative max-w-[90%] ${
                   message.role === "user"
                     ? "bg-gray-200 text-gray-900"
                     : "bg-gray-100 text-gray-800"
                 } rounded-lg shadow-sm opacity-100`}
               >
-                <ReactMarkdown
-                  remarkPlugins={[remarkGfm, remarkMath]}
-                  rehypePlugins={[rehypeKatex]}
-                  components={{
-                    h1: ({ node, ...props }) => (
-                      <h1 className="text-xl font-bold mt-2 mb-1" {...props} />
-                    ),
-                    h2: ({ node, ...props }) => (
-                      <h2
-                        className="text-lg font-semibold mt-2 mb-1"
-                        {...props}
-                      />
-                    ),
-                    p: ({ node, ...props }) => (
-                      <p className="my-1 leading-relaxed" {...props} />
-                    ),
-                    ul: ({ node, ...props }) => (
-                      <ul className="list-disc pl-4 my-1" {...props} />
-                    ),
-                    ol: ({ node, ...props }) => (
-                      <ol className="list-decimal pl-4 my-1" {...props} />
-                    ),
-                    li: ({ node, ...props }) => (
-                      <li className="my-0.5" {...props} />
-                    ),
-                    strong: ({ node, ...props }) => (
-                      <strong className="font-bold" {...props} />
-                    ),
-                    code: ({ node, ...props }) => (
-                      <code
-                        className="bg-gray-800 text-gray-200 rounded px-1"
-                        {...props}
-                      />
-                    ),
+                {message.role === "assistant" && (
+                  <button
+                    onClick={() => handleCopyToClipboard(index)}
+                    className="absolute top-2 right-2 text-gray-500 hover:text-gray-800"
+                    title="Copy Response"
+                  >
+                    <IconCopy size={16} />
+                  </button>
+                )}
+                <div
+                  ref={(el) => {
+                    assistantRefs.current[index] = el;
                   }}
                 >
-                  {normalizeLatex(message.content)}
-                </ReactMarkdown>
+                  <ReactMarkdown
+                    remarkPlugins={[remarkGfm, remarkMath]}
+                    rehypePlugins={[rehypeKatex, rehypeRaw]}
+                    components={{
+                      h1: ({ node, ...props }) => (
+                        <h1
+                          className="text-xl font-bold mt-2 mb-1"
+                          {...props}
+                        />
+                      ),
+                      h2: ({ node, ...props }) => (
+                        <h2
+                          className="text-lg font-semibold mt-2 mb-1"
+                          {...props}
+                        />
+                      ),
+                      table: ({ node, ...props }) => (
+                        <div className="overflow-x-auto my-2">
+                          <table
+                            className="table-auto w-full border-collapse border border-gray-800"
+                            {...props}
+                          />
+                        </div>
+                      ),
+                      thead: ({ node, ...props }) => (
+                        <thead
+                          className="bg-red-900 border border-red-400"
+                          {...props}
+                        />
+                      ),
+                      th: ({ node, ...props }) => (
+                        <th
+                          className="border border-gray-400 px-3 py-2 text-left font-medium bg-red-200"
+                          {...props}
+                        />
+                      ),
+                      tbody: ({ node, ...props }) => (
+                        <tbody className="border border-gray-300" {...props} />
+                      ),
+                      td: ({ node, ...props }) => (
+                        <td
+                          className="border border-blue-300 bg-slate-600 px-3 py-2"
+                          {...props}
+                        />
+                      ),
+
+                      p: ({ node, ...props }) => (
+                        <p className="my-1 leading-relaxed" {...props} />
+                      ),
+                      ul: ({ node, ...props }) => (
+                        <ul className="list-disc pl-4 my-1" {...props} />
+                      ),
+                      ol: ({ node, ...props }) => (
+                        <ol className="list-decimal pl-4 my-1" {...props} />
+                      ),
+                      li: ({ node, ...props }) => (
+                        <li className="my-0.5" {...props} />
+                      ),
+                      strong: ({ node, ...props }) => (
+                        <strong className="font-bold" {...props} />
+                      ),
+                      code: ({ node, ...props }) => (
+                        <code
+                          className="bg-gray-800 text-gray-200 rounded px-1"
+                          {...props}
+                        />
+                      ),
+                    }}
+                  >
+                    {normalizeLatex(message.content)}
+                  </ReactMarkdown>
+                </div>
               </Paper>
             </Group>
           ))}
@@ -230,7 +296,6 @@ export default function DeepSeekChat() {
             </Group>
           )}
 
-          {/* Invisible scroll target */}
           <div ref={scrollRef} />
         </div>
       </ScrollArea>
