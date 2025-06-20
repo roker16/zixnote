@@ -247,7 +247,7 @@ export default function DeepSeekChat() {
                       ),
                       td: ({ node, ...props }) => (
                         <td
-                          className="border border-blue-300 bg-slate-600 px-3 py-2"
+                          className="border border-blue-300 bg-slate-100 px-3 py-2"
                           {...props}
                         />
                       ),

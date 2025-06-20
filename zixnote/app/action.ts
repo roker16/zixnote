@@ -10,31 +10,43 @@ const schema = z.object({
   order: z.string().min(1, { message: "1 char" }),
 });
 
-export async function editIndex(formData: FormData) {
+export async function editIndex(formData: FormData): Promise<void> {
   console.log("form data is ", formData);
+
+  // Validate form data
   const validatedFields = schema.safeParse({
     index: formData.get("index"),
     order: formData.get("order"),
   });
-  // await wait(5000);
-  // Return early if the form data is invalid
+
+  // If validation fails, throw an error
   if (!validatedFields.success) {
-    console.log("hi...", validatedFields.error.flatten().fieldErrors);
-    return {
-      errors: validatedFields.error.flatten().fieldErrors,
-    };
+    const errors = validatedFields.error.flatten().fieldErrors;
+    console.log("Validation errors:", errors);
+    throw new Error(
+      JSON.stringify({
+        errors: errors,
+        message: "Form validation failed",
+      })
+    );
   }
+
+  // Proceed with database update
   const supabase = await createClient();
   const { error } = await supabase
     .from("syll_index")
     .update({
-      index_name: formData.get("index")?.toString()!,
-      sequence: Number(formData.get("order")),
+      index_name: validatedFields.data.index,
+      sequence: Number(validatedFields.data.order),
     })
     .eq("index_id", Number(formData.get("id")));
+
   if (error) {
-    console.log(error.message);
+    console.log("Supabase error:", error.message);
+    throw new Error("Failed to update index: " + error.message);
   }
+
+  // Revalidate the path after successful update
   revalidatePath("/manage-index");
 }
 export async function createIndex(formData: FormData) {
