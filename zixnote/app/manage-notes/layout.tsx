@@ -2,7 +2,6 @@
 import { UserMenu } from "@/components/UserMenu";
 import { createClient } from "@/utils/supabase/client";
 import {
-  ActionIcon,
   AppShell,
   Burger,
   Button,
@@ -15,13 +14,12 @@ import {
   rem,
   useMantineTheme,
 } from "@mantine/core";
-import { useDisclosure, useHeadroom } from "@mantine/hooks";
-import Image from 'next/image'
+import { useDisclosure } from "@mantine/hooks";
 import { User } from "@supabase/supabase-js";
-import { IconNotebook, IconPencil, IconWriting } from "@tabler/icons-react";
+import { IconPencil } from "@tabler/icons-react";
+import Image from "next/image";
 import Link from "next/link";
 import { Suspense, useEffect, useState } from "react";
-import NotesMenu from "./component/NoteMenu";
 export default function ManageSyllabusLayout({
   children,
   filter,
@@ -82,15 +80,8 @@ export default function ManageSyllabusLayout({
                   size="sm"
                 />
                 <Link href={"/"} className="my-auto">
-                <Image
-                  src="/logo.png"
-                  width={35}
-                  height={22}
-                  alt="Logo"
-                  
-                />
+                  <Image src="/logo.png" width={35} height={22} alt="Logo" />
                 </Link>
-                
               </Group>
 
               <Group gap={0}>
