@@ -15,7 +15,7 @@ export default function Login({
     const email = formData.get("email") as string;
     const password = formData.get("password") as string;
     const cookieStore = cookies();
-    const supabase = createClient(cookieStore);
+    const supabase = await createClient();
 
     const { error } = await supabase.auth.signInWithPassword({
       email,
@@ -36,7 +36,7 @@ export default function Login({
     const email = formData.get("email") as string;
     const password = formData.get("password") as string;
     const cookieStore = cookies();
-    const supabase = createClient(cookieStore);
+    const supabase = await createClient();
 
     const { error } = await supabase.auth.signUp({
       email,
@@ -56,7 +56,6 @@ export default function Login({
   return (
     <div className=" flex flex-col w-full min-h-96 px-8 mt-24 sm:max-w-md justify-center items-center gap-2 mx-auto">
       <div className="flex flex-1 flex-col w-full justify-center items-center shadow-md bg-slate-50 rounded-md">
-       
         <GoogleSignin />
       </div>
       {/* <form
