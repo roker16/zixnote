@@ -20,7 +20,6 @@ import { MdSave } from "react-icons/md";
 import "katex/dist/katex.min.css";
 import { createClient } from "@/utils/supabase/client";
 import { MessageInput } from "@/app/manage-notes/@ainotes/MessageInput ";
-import { showNotification } from "@mantine/notifications";
 import { showNotifications } from "../Notification";
 import { showErrorNotification } from "../showErrorNotification";
 
