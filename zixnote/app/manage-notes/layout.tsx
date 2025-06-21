@@ -24,12 +24,14 @@ export default function ManageSyllabusLayout({
   children,
   filter,
   notes,
+  ainotes,
   sharednotes,
   index,
 }: {
   children: React.ReactNode;
   filter: React.ReactNode;
   notes: React.ReactNode;
+  ainotes: React.ReactNode;
   sharednotes: React.ReactNode;
   index: React.ReactNode;
 }) {
@@ -127,7 +129,7 @@ export default function ManageSyllabusLayout({
       <AppShell.Main pt={`calc(${rem(50)} + var(--mantine-spacing-md))`}>
         <Space h={10} />
         {activeTab === "first" && (
-          <Suspense fallback={<div>loading...</div>}>{notes}</Suspense>
+          <Suspense fallback={<div>loading...</div>}>{ainotes}</Suspense>
         )}
         {activeTab === "second" && <div>{sharednotes}</div>}
         {activeTab === "third" && <div>Third Tab</div>}

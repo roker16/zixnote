@@ -8,8 +8,10 @@ import {
   Group,
   Avatar,
   Paper,
+  ActionIcon,
 } from "@mantine/core";
-import { IconUser, IconRobot, IconCopy } from "@tabler/icons-react";
+import { IconUser, IconRobot, IconBookmark } from "@tabler/icons-react";
+import { createClient } from "@/utils/supabase/client";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import remarkMath from "remark-math";
@@ -17,13 +19,14 @@ import rehypeKatex from "rehype-katex";
 import rehypeRaw from "rehype-raw";
 
 import "katex/dist/katex.min.css";
+import { MdSave } from "react-icons/md";
 
 interface Message {
   role: "user" | "assistant";
   content: string;
 }
 
-export default function DeepSeekChat() {
+export default function DeepSeekChat({ noteId }: { noteId: number }) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -31,6 +34,7 @@ export default function DeepSeekChat() {
   const [error, setError] = useState<string | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const assistantRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const supabase = createClient();
 
   useEffect(() => {
     if (scrollRef.current) {
@@ -55,18 +59,20 @@ export default function DeepSeekChat() {
       .replace(/\$(?!\$)([^$]+?)\$/g, (_, expr) => ` $${expr.trim()}$ `);
   };
 
-  const handleCopyToClipboard = (index: number) => {
-    const targetElement = assistantRefs.current[index];
-    if (!targetElement) return;
+  const handleSaveToNotes = async (content: string) => {
+    try {
+      const { error } = await supabase
+        .from("notes")
+        .update({ ainotes_english: content })
+        .eq("id", noteId);
+      // .eq("owner_fk", userId);
 
-    const html = targetElement.innerHTML;
-    const blob = new Blob([html], { type: "text/html" });
-    const data = [new ClipboardItem({ "text/html": blob })];
+      if (error) throw new Error("Failed to update note: " + error.message);
 
-    navigator.clipboard
-      .write(data)
-      .then(() => alert("Response copied with formatting!"))
-      .catch((err) => alert("Copy failed: " + err));
+      alert("Note updated successfully!");
+    } catch (err: any) {
+      alert("Error updating note: " + err.message);
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -193,18 +199,22 @@ export default function DeepSeekChat() {
                 } rounded-lg shadow-sm opacity-100`}
               >
                 {message.role === "assistant" && (
-                  <button
-                    onClick={() => handleCopyToClipboard(index)}
-                    className="absolute top-2 right-2 text-gray-500 hover:text-gray-800"
-                    title="Copy Response"
-                  >
-                    <IconCopy size={16} />
-                  </button>
+                  <div className="absolute top-2 right-2 flex gap-2">
+                    <ActionIcon
+                      onClick={() => handleSaveToNotes(message.content)}
+                      title="Save to Notes"
+                      variant="subtle"
+                      color="red"
+                    >
+                      <MdSave size={16} />
+                    </ActionIcon>
+                  </div>
                 )}
                 <div
                   ref={(el) => {
                     assistantRefs.current[index] = el;
                   }}
+                  className="mt-4"
                 >
                   <ReactMarkdown
                     remarkPlugins={[remarkGfm, remarkMath]}
@@ -212,7 +222,7 @@ export default function DeepSeekChat() {
                     components={{
                       h1: ({ node, ...props }) => (
                         <h1
-                          className="text-xl font-bold mt-2 mb-1"
+                          className="text-xl font-bold mt-2 mb-1 scroll-margin-top"
                           {...props}
                         />
                       ),
@@ -226,7 +236,7 @@ export default function DeepSeekChat() {
                       ),
                       h2: ({ node, ...props }) => (
                         <h2
-                          className="text-lg font-semibold mt-2 mb-1"
+                          className="text-lg font-semibold mt-2 mb-1 scroll-margin-top"
                           {...props}
                         />
                       ),
@@ -259,7 +269,6 @@ export default function DeepSeekChat() {
                           {...props}
                         />
                       ),
-
                       p: ({ node, ...props }) => (
                         <p className="my-1 leading-relaxed" {...props} />
                       ),

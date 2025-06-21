@@ -1,14 +1,14 @@
-import { Center, Text } from "@mantine/core";
-import { getUserAndRole } from "../../../utils/getUserAndRole";
-
 import GoogleSignin from "@/components/GoogleSignin";
-import { createClient } from "@/utils/supabase/server";
+import { getUserAndRole } from "@/utils/getUserAndRole";
+import { Center } from "@mantine/core";
 import CreateNotesForm from "../component/CreateNotesForm";
-import { MyAlert } from "./MyAlert";
-import Notes from "./notes";
-import ShareButton from "./ShareButton";
 
-export default async function Index({
+import { createClient } from "@/utils/supabase/server";
+import { MyAlert } from "../@notes/MyAlert";
+import ShareButton from "../@notes/ShareButton";
+import AiNotesAccordion from "./AiNotesAccordion";
+
+export default async function page({
   searchParams,
 }: {
   searchParams?: { [key: string]: string | string[] | undefined };
@@ -75,12 +75,12 @@ export default async function Index({
           <ShareButton userId={user.id} />
           <div className="text-center">
             {" "}
-            <Text fw={500}>{selectedName}</Text>
+            <div>{selectedName}</div>
           </div>
         </div>
       </Center>
 
-      <Notes topicId={selectedTopicId as string} userId={user.id} />
+      <AiNotesAccordion topicId={selectedTopicId as string} userId={user.id} />
       <Center h={"100px"}>
         <CreateNotesForm />
       </Center>
