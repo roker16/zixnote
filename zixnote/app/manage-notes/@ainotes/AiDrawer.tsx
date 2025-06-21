@@ -1,24 +1,16 @@
 "use client";
 
 import DeepSeekChat from "@/components/ai/DeepSeekChat";
-import { Drawer, Button } from "@mantine/core";
+import { Button, Drawer } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { IconChevronDown } from "@tabler/icons-react";
-import React from "react";
-import {
-  MdOpenInBrowser,
-  MdOpenInFull,
-  MdOpenInNew,
-  MdOpenWith,
-  MdUpdate,
-} from "react-icons/md";
+import { MdUpdate } from "react-icons/md";
 
 interface AiDrawerProps {
   topicId: string;
-  userId: string;
+  initialNoteContent: string;
 }
 
-function AiDrawer({ topicId, userId }: AiDrawerProps) {
+function AiDrawer({ topicId, initialNoteContent }: AiDrawerProps) {
   const [opened, { open, close }] = useDisclosure(false);
 
   return (
@@ -32,7 +24,10 @@ function AiDrawer({ topicId, userId }: AiDrawerProps) {
         position="right"
         size="xl"
       >
-        <DeepSeekChat noteId={Number(topicId)} />
+        <DeepSeekChat
+          noteId={Number(topicId)}
+          initialContent={initialNoteContent}
+        />
       </Drawer>
       <Button
         variant="gradient"

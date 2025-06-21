@@ -61,7 +61,10 @@ function NoteContent({ noteId }: NoteContentProps) {
       className="max-w-[100%]"
     >
       <div className="w-full flex justify-end">
-        <AiDrawer topicId={noteId.toString()} userId={""} />
+        <AiDrawer
+          topicId={noteId.toString()}
+          initialNoteContent={data?.ainotes_english || ""}
+        />
       </div>
       <ReactMarkdown
         remarkPlugins={[remarkGfm, remarkMath]}

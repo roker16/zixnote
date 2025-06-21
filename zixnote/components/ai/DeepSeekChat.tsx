@@ -10,23 +10,32 @@ import {
   Paper,
   ActionIcon,
 } from "@mantine/core";
-import { IconUser, IconRobot, IconBookmark } from "@tabler/icons-react";
-import { createClient } from "@/utils/supabase/client";
+import { IconUser, IconRobot } from "@tabler/icons-react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import remarkMath from "remark-math";
 import rehypeKatex from "rehype-katex";
 import rehypeRaw from "rehype-raw";
-
-import "katex/dist/katex.min.css";
 import { MdSave } from "react-icons/md";
+import "katex/dist/katex.min.css";
+import { createClient } from "@/utils/supabase/client";
+import { MessageInput } from "@/app/manage-notes/@ainotes/MessageInput ";
+import { showNotification } from "@mantine/notifications";
+import { showNotifications } from "../Notification";
+import { showErrorNotification } from "../showErrorNotification";
 
 interface Message {
-  role: "user" | "assistant";
+  role: "user" | "assistant" | "system";
   content: string;
 }
 
-export default function DeepSeekChat({ noteId }: { noteId: number }) {
+export default function DeepSeekChat({
+  noteId,
+  initialContent,
+}: {
+  noteId: number;
+  initialContent: string;
+}) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -36,12 +45,7 @@ export default function DeepSeekChat({ noteId }: { noteId: number }) {
   const assistantRefs = useRef<(HTMLDivElement | null)[]>([]);
   const supabase = createClient();
 
-  useEffect(() => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollIntoView({ behavior: "smooth", block: "end" });
-    }
-  }, [messages]);
-
+  // Normalize LaTeX syntax
   const normalizeLatex = (content: string): string => {
     return content
       .replace(
@@ -59,19 +63,35 @@ export default function DeepSeekChat({ noteId }: { noteId: number }) {
       .replace(/\$(?!\$)([^$]+?)\$/g, (_, expr) => ` $${expr.trim()}$ `);
   };
 
+  // Load initial system message from note content
+  useEffect(() => {
+    if (initialContent) {
+      const normalized = normalizeLatex(initialContent);
+      setMessages([
+        {
+          role: "system",
+          content: `Here is the current note content:\n\n${normalized}`,
+        },
+      ]);
+    }
+  }, [initialContent]);
+
+  // Scroll on new message
+  useEffect(() => {
+    scrollRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
+  }, [messages]);
+
   const handleSaveToNotes = async (content: string) => {
     try {
       const { error } = await supabase
         .from("notes")
         .update({ ainotes_english: content })
         .eq("id", noteId);
-      // .eq("owner_fk", userId);
 
       if (error) throw new Error("Failed to update note: " + error.message);
-
-      alert("Note updated successfully!");
+      showNotifications(null, "updated");
     } catch (err: any) {
-      alert("Error updating note: " + err.message);
+      showErrorNotification(err.message);
     }
   };
 
@@ -80,7 +100,8 @@ export default function DeepSeekChat({ noteId }: { noteId: number }) {
     if (!input.trim() || isLoading) return;
 
     const userMessage: Message = { role: "user", content: input };
-    setMessages((prev) => [...prev, userMessage]);
+    const updatedMessages = [...messages, userMessage];
+    setMessages(updatedMessages);
     setInput("");
     setIsLoading(true);
     setIsStreaming(false);
@@ -90,14 +111,12 @@ export default function DeepSeekChat({ noteId }: { noteId: number }) {
       const response = await fetch("/api/deepseek", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ messages: [...messages, userMessage] }),
+        body: JSON.stringify({ messages: updatedMessages }),
       });
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        const errorMessage =
-          errorData.error || `HTTP error! status: ${response.status}`;
-        throw new Error(errorMessage);
+        throw new Error(errorData.error || `HTTP error: ${response.status}`);
       }
 
       const reader = response.body?.getReader();
@@ -133,18 +152,18 @@ export default function DeepSeekChat({ noteId }: { noteId: number }) {
                 });
               }
             } catch (e) {
-              setError("Failed to parse response. Please try again.");
+              setError("Failed to parse response");
             }
           }
         }
       }
     } catch (error: any) {
-      setError(error.message || "An error occurred. Please try again.");
+      setError(error.message || "An error occurred");
       setMessages((prev) => [
         ...prev,
         {
           role: "assistant",
-          content: error.message || "An error occurred. Please try again.",
+          content: error.message || "An error occurred",
         },
       ]);
     } finally {
@@ -196,7 +215,7 @@ export default function DeepSeekChat({ noteId }: { noteId: number }) {
                   message.role === "user"
                     ? "bg-gray-200 text-gray-900"
                     : "bg-gray-100 text-gray-800"
-                } rounded-lg shadow-sm opacity-100`}
+                } rounded-lg shadow-sm`}
               >
                 {message.role === "assistant" && (
                   <div className="absolute top-2 right-2 flex gap-2">
@@ -222,7 +241,7 @@ export default function DeepSeekChat({ noteId }: { noteId: number }) {
                     components={{
                       h1: ({ node, ...props }) => (
                         <h1
-                          className="text-xl font-bold mt-2 mb-1 scroll-margin-top"
+                          className="text-xl font-bold mt-2 mb-1"
                           {...props}
                         />
                       ),
@@ -236,7 +255,7 @@ export default function DeepSeekChat({ noteId }: { noteId: number }) {
                       ),
                       h2: ({ node, ...props }) => (
                         <h2
-                          className="text-lg font-semibold mt-2 mb-1 scroll-margin-top"
+                          className="text-lg font-semibold mt-2 mb-1"
                           {...props}
                         />
                       ),
@@ -298,7 +317,6 @@ export default function DeepSeekChat({ noteId }: { noteId: number }) {
               </Paper>
             </Group>
           ))}
-
           {isLoading && !isStreaming && (
             <Group>
               <Avatar color="gray" radius="xl" size="sm" className="mt-1">
@@ -306,18 +324,17 @@ export default function DeepSeekChat({ noteId }: { noteId: number }) {
               </Avatar>
               <Paper
                 p="md"
-                className="bg-gray-200 text-gray-900 rounded-lg animate-pulse opacity-100"
+                className="bg-gray-200 text-gray-900 rounded-lg animate-pulse"
               >
                 <p>Thinking...</p>
               </Paper>
             </Group>
           )}
-
           <div ref={scrollRef} />
         </div>
       </ScrollArea>
 
-      <form onSubmit={handleSubmit} className="flex gap-2">
+      {/* <form onSubmit={handleSubmit} className="flex gap-2">
         <TextInput
           value={input}
           onChange={(e) => setInput(e.target.value)}
@@ -332,7 +349,13 @@ export default function DeepSeekChat({ noteId }: { noteId: number }) {
         >
           {isLoading ? "Sending..." : "Send"}
         </Button>
-      </form>
+      </form> */}
+      <MessageInput
+        input={input}
+        setInput={setInput}
+        handleSubmit={handleSubmit}
+        isLoading={isLoading}
+      />
     </div>
   );
 }
