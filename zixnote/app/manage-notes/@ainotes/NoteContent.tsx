@@ -70,6 +70,7 @@ function NoteContent({ noteId }: NoteContentProps) {
         },
         jsPDF: { format: "a4", orientation: "portrait" },
       })
+      .from(printRef.current)
       .save();
   };
 
@@ -92,7 +93,7 @@ function NoteContent({ noteId }: NoteContentProps) {
         <Tooltip label="Print PDF" withArrow>
           <ActionIcon
             onClick={handlePrint}
-            variant="light "
+            variant="filled"
             color="red"
             size="md"
           >
@@ -159,6 +160,7 @@ function NoteContent({ noteId }: NoteContentProps) {
             strong: ({ node, ...props }) => (
               <strong className="font-bold" {...props} />
             ),
+
             code: ({ node, ...props }) => (
               <code
                 className="bg-gray-800 text-gray-200 rounded px-1"

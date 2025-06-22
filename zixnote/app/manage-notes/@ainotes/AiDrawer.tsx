@@ -16,11 +16,15 @@ function AiDrawer({ topicId, initialNoteContent }: AiDrawerProps) {
   return (
     <>
       <Drawer
-        offset={8}
+        offset={2}
         radius="md"
         opened={opened}
         onClose={close}
-        title="Update Notes with AI"
+        title={
+          <div className="font-bold text-blue-900 underline">
+            Update Notes with AI
+          </div>
+        }
         position="right"
         size="xl"
       >

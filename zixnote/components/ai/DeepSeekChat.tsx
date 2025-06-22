@@ -179,7 +179,7 @@ export default function DeepSeekChat({
 
       {error && <p className="text-red-500 text-center mb-4">{error}</p>}
 
-      <ScrollArea className="flex-1 w-full border rounded-lg p-4 mb-4 bg-gray-50">
+      <ScrollArea className="flex-1 w-full border rounded-lg mb-16 bg-gray-50 overflow-y-auto">
         <div className="flex flex-col space-y-4">
           {messages.length === 0 && (
             <p className="text-gray-500 text-center">
@@ -349,12 +349,14 @@ export default function DeepSeekChat({
           {isLoading ? "Sending..." : "Send"}
         </Button>
       </form> */}
-      <MessageInput
-        input={input}
-        setInput={setInput}
-        handleSubmit={handleSubmit}
-        isLoading={isLoading}
-      />
+      <div className="sticky bottom-8 bg-white pt-2">
+        <MessageInput
+          input={input}
+          setInput={setInput}
+          handleSubmit={handleSubmit}
+          isLoading={isLoading}
+        />
+      </div>
     </div>
   );
 }

@@ -1,5 +1,5 @@
 import React from "react";
-import { TextInput, Button, Textarea } from "@mantine/core";
+import { Textarea, Button } from "@mantine/core";
 
 interface MessageInputProps {
   input: string;
@@ -14,12 +14,26 @@ const MessageInputComponent = ({
   handleSubmit,
   isLoading,
 }: MessageInputProps) => {
+  const formRef = React.useRef<HTMLFormElement>(null);
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault(); // prevent new line
+      formRef.current?.requestSubmit(); // manually submit the form
+    }
+  };
+
   return (
-    <form onSubmit={handleSubmit} className="flex gap-2">
+    <form
+      ref={formRef}
+      onSubmit={handleSubmit}
+      className="flex gap-2 items-end"
+    >
       <Textarea
         data-autofocus
         value={input}
         onChange={(e) => setInput(e.target.value)}
+        onKeyDown={handleKeyDown}
         placeholder="Ask something to do..."
         disabled={isLoading}
         className="flex-1"
