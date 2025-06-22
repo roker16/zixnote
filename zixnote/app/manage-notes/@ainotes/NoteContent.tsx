@@ -16,13 +16,14 @@ import { IconPdf, IconPrinter } from "@tabler/icons-react";
 
 interface NoteContentProps {
   noteId: number;
+  noteTitle: string;
 }
 
 interface Note {
   ainotes_english: string;
 }
 
-function NoteContent({ noteId }: NoteContentProps) {
+function NoteContent({ noteId, noteTitle }: NoteContentProps) {
   const supabase = createClient();
   const printRef = useRef<HTMLDivElement>(null);
 
@@ -89,6 +90,7 @@ function NoteContent({ noteId }: NoteContentProps) {
         <AiDrawer
           topicId={noteId.toString()}
           initialNoteContent={data?.ainotes_english || ""}
+          notesTitle={noteTitle}
         />
         <Tooltip label="Print PDF" withArrow>
           <ActionIcon

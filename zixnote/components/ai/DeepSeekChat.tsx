@@ -22,17 +22,21 @@ import { createClient } from "@/utils/supabase/client";
 import { MessageInput } from "@/app/manage-notes/@ainotes/MessageInput ";
 import { showNotifications } from "../Notification";
 import { showErrorNotification } from "../showErrorNotification";
+import { useSearchParams } from "next/navigation";
 
 interface Message {
   role: "user" | "assistant" | "system";
   content: string;
+  internal?: boolean; // 👈 mark hidden instructions
 }
 
 export default function DeepSeekChat({
   noteId,
   initialContent,
+  notesTitle,
 }: {
   noteId: number;
+  notesTitle: string;
   initialContent: string;
 }) {
   const [messages, setMessages] = useState<Message[]>([]);
@@ -43,7 +47,9 @@ export default function DeepSeekChat({
   const scrollRef = useRef<HTMLDivElement>(null);
   const assistantRefs = useRef<(HTMLDivElement | null)[]>([]);
   const supabase = createClient();
-
+  const searchParams = useSearchParams();
+  const headingname = searchParams.get("headingname");
+  const subjectName = searchParams.get("name");
   // Normalize LaTeX syntax
   const normalizeLatex = (content: string): string => {
     return content
@@ -61,6 +67,13 @@ export default function DeepSeekChat({
       )
       .replace(/\$(?!\$)([^$]+?)\$/g, (_, expr) => ` $${expr.trim()}$ `);
   };
+  //Initial prompt if content is not available
+  useEffect(() => {
+    if (!initialContent?.trim() && headingname && notesTitle) {
+      const defaultPrompt = `Prepare Detailed notes on "${notesTitle}" under the topic "${headingname}".  incorporate table if required, if possible provide some trick to remember things, don't mingle facts and figures, provide actual facts and figures `;
+      setInput(defaultPrompt);
+    }
+  }, [initialContent, headingname, notesTitle]);
 
   // Load initial system message from note content
   useEffect(() => {
@@ -98,8 +111,34 @@ export default function DeepSeekChat({
     e.preventDefault();
     if (!input.trim() || isLoading) return;
 
-    const userMessage: Message = { role: "user", content: input };
-    const updatedMessages = [...messages, userMessage];
+    const instructionMessage: Message[] = [
+      {
+        role: "system",
+        internal: true,
+        content: `You are an expert in preparing high-quality academic notes.`,
+      },
+      {
+        role: "system",
+        internal: true,
+        content: `When a user asks to modify the notes:
+- Do not add any additional or separate notes unless explicitly instructed.
+- Modify only the part specified by the user.
+- Keep the rest of the notes exactly as they were.
+- Return the full updated notes as a complete response.`,
+      },
+      {
+        role: "system",
+        internal: true,
+        content: `Avoid any disclaimers, explanations, or commentary. Present the updated notes directly, as if final and ready for use.`,
+      },
+    ];
+
+    const userMessage: Message = {
+      role: "user",
+      content: input,
+    };
+
+    const updatedMessages = [...messages, ...instructionMessage, userMessage];
     setMessages(updatedMessages);
     setInput("");
     setIsLoading(true);
@@ -187,135 +226,140 @@ export default function DeepSeekChat({
             </p>
           )}
 
-          {messages.map((message, index) => (
-            <Group
-              key={index}
-              className={`${
-                message.role === "user" ? "justify-end" : "justify-start"
-              }`}
-              align="flex-start"
-            >
-              <Avatar
-                color={message.role === "user" ? "blue" : "gray"}
-                radius="xl"
-                size="sm"
-                className="mt-1"
+          {messages
+            .filter((message) => !message.internal)
+            .map((message, index) => (
+              <Group
+                key={index}
+                className={`${
+                  message.role === "user" ? "justify-end" : "justify-start"
+                }`}
+                align="flex-start"
               >
-                {message.role === "user" ? (
-                  <IconUser size={16} />
-                ) : (
-                  <IconRobot size={16} />
-                )}
-              </Avatar>
-
-              <Paper
-                p="md"
-                className={`relative max-w-[90%] ${
-                  message.role === "user"
-                    ? "bg-gray-200 text-gray-900"
-                    : "bg-gray-100 text-gray-800"
-                } rounded-lg shadow-sm`}
-              >
-                {message.role === "assistant" && (
-                  <div className="absolute top-2 right-2 flex gap-2">
-                    <ActionIcon
-                      onClick={() => handleSaveToNotes(message.content)}
-                      title="Save to Notes"
-                      variant="subtle"
-                      color="red"
-                    >
-                      <MdSave size={16} />
-                    </ActionIcon>
-                  </div>
-                )}
-                <div
-                  ref={(el) => {
-                    assistantRefs.current[index] = el;
-                  }}
-                  className="mt-4"
+                <Avatar
+                  color={message.role === "user" ? "blue" : "gray"}
+                  radius="xl"
+                  size="sm"
+                  className="mt-1"
                 >
-                  <ReactMarkdown
-                    remarkPlugins={[remarkGfm, remarkMath]}
-                    rehypePlugins={[rehypeKatex, rehypeRaw]}
-                    components={{
-                      h1: ({ node, ...props }) => (
-                        <h1
-                          className="text-xl font-bold mt-2 mb-1"
-                          {...props}
-                        />
-                      ),
-                      img: ({ node, ...props }) => (
-                        <img
-                          className="my-2 max-w-[400px] w-full h-auto rounded-lg border border-gray-300"
-                          loading="lazy"
-                          alt=""
-                          {...props}
-                        />
-                      ),
-                      h2: ({ node, ...props }) => (
-                        <h2
-                          className="text-lg font-semibold mt-2 mb-1"
-                          {...props}
-                        />
-                      ),
-                      table: ({ node, ...props }) => (
-                        <div className="overflow-x-auto my-2">
-                          <table
-                            className="table-auto w-full border-collapse border border-gray-800"
+                  {message.role === "user" ? (
+                    <IconUser size={16} />
+                  ) : (
+                    <IconRobot size={16} />
+                  )}
+                </Avatar>
+
+                <Paper
+                  p="md"
+                  className={`relative max-w-[90%] ${
+                    message.role === "user"
+                      ? "bg-gray-200 text-gray-900"
+                      : "bg-gray-100 text-gray-800"
+                  } rounded-lg shadow-sm`}
+                >
+                  {message.role === "assistant" && (
+                    <div className="absolute top-2 right-2 flex gap-2">
+                      <ActionIcon
+                        onClick={() => handleSaveToNotes(message.content)}
+                        title="Save to Notes"
+                        variant="subtle"
+                        color="red"
+                      >
+                        <MdSave size={16} />
+                      </ActionIcon>
+                    </div>
+                  )}
+                  <div
+                    ref={(el) => {
+                      assistantRefs.current[index] = el;
+                    }}
+                    className="mt-4"
+                  >
+                    <ReactMarkdown
+                      remarkPlugins={[remarkGfm, remarkMath]}
+                      rehypePlugins={[rehypeKatex, rehypeRaw]}
+                      components={{
+                        h1: ({ node, ...props }) => (
+                          <h1
+                            className="text-xl font-bold mt-2 mb-1"
                             {...props}
                           />
-                        </div>
-                      ),
-                      thead: ({ node, ...props }) => (
-                        <thead
-                          className="bg-red-900 border border-red-400"
-                          {...props}
-                        />
-                      ),
-                      th: ({ node, ...props }) => (
-                        <th
-                          className="border border-gray-400 px-3 py-2 text-left font-medium bg-red-200"
-                          {...props}
-                        />
-                      ),
-                      tbody: ({ node, ...props }) => (
-                        <tbody className="border border-gray-300" {...props} />
-                      ),
-                      td: ({ node, ...props }) => (
-                        <td
-                          className="border border-blue-300 bg-slate-100 px-3 py-2"
-                          {...props}
-                        />
-                      ),
-                      p: ({ node, ...props }) => (
-                        <p className="my-1 leading-relaxed" {...props} />
-                      ),
-                      ul: ({ node, ...props }) => (
-                        <ul className="list-disc pl-4 my-1" {...props} />
-                      ),
-                      ol: ({ node, ...props }) => (
-                        <ol className="list-decimal pl-4 my-1" {...props} />
-                      ),
-                      li: ({ node, ...props }) => (
-                        <li className="my-0.5" {...props} />
-                      ),
-                      strong: ({ node, ...props }) => (
-                        <strong className="font-bold" {...props} />
-                      ),
-                      code: ({ node, ...props }) => (
-                        <code
-                          className="bg-gray-800 text-gray-200 rounded px-1"
-                          {...props}
-                        />
-                      ),
-                    }}
-                  >
-                    {normalizeLatex(message.content)}
-                  </ReactMarkdown>
-                </div>
-              </Paper>
-            </Group>
-          ))}
+                        ),
+                        img: ({ node, ...props }) => (
+                          <img
+                            className="my-2 max-w-[400px] w-full h-auto rounded-lg border border-gray-300"
+                            loading="lazy"
+                            alt=""
+                            {...props}
+                          />
+                        ),
+                        h2: ({ node, ...props }) => (
+                          <h2
+                            className="text-lg font-semibold mt-2 mb-1"
+                            {...props}
+                          />
+                        ),
+                        table: ({ node, ...props }) => (
+                          <div className="overflow-x-auto my-2">
+                            <table
+                              className="table-auto w-full border-collapse border border-gray-800"
+                              {...props}
+                            />
+                          </div>
+                        ),
+                        thead: ({ node, ...props }) => (
+                          <thead
+                            className="bg-red-900 border border-red-400"
+                            {...props}
+                          />
+                        ),
+                        th: ({ node, ...props }) => (
+                          <th
+                            className="border border-gray-400 px-3 py-2 text-left font-medium bg-red-200"
+                            {...props}
+                          />
+                        ),
+                        tbody: ({ node, ...props }) => (
+                          <tbody
+                            className="border border-gray-300"
+                            {...props}
+                          />
+                        ),
+                        td: ({ node, ...props }) => (
+                          <td
+                            className="border border-blue-300 bg-slate-100 px-3 py-2"
+                            {...props}
+                          />
+                        ),
+                        p: ({ node, ...props }) => (
+                          <p className="my-1 leading-relaxed" {...props} />
+                        ),
+                        ul: ({ node, ...props }) => (
+                          <ul className="list-disc pl-4 my-1" {...props} />
+                        ),
+                        ol: ({ node, ...props }) => (
+                          <ol className="list-decimal pl-4 my-1" {...props} />
+                        ),
+                        li: ({ node, ...props }) => (
+                          <li className="my-0.5" {...props} />
+                        ),
+                        strong: ({ node, ...props }) => (
+                          <strong className="font-bold" {...props} />
+                        ),
+                        code: ({ node, ...props }) => (
+                          <code
+                            className="bg-gray-800 text-gray-200 rounded px-1"
+                            {...props}
+                          />
+                        ),
+                      }}
+                    >
+                      {normalizeLatex(message.content)}
+                    </ReactMarkdown>
+                  </div>
+                </Paper>
+              </Group>
+            ))}
           {isLoading && !isStreaming && (
             <Group>
               <Avatar color="gray" radius="xl" size="sm" className="mt-1">

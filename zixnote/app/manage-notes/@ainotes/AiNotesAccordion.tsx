@@ -100,7 +100,7 @@ function AiNotesAccordion({
         </Group>
         <Accordion.Panel>
           {value?.includes(item.id.toString()) && (
-            <NoteContent noteId={item.id} />
+            <NoteContent noteId={item.id} noteTitle={item.title} />
           )}
         </Accordion.Panel>
       </Accordion.Item>

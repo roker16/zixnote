@@ -8,9 +8,10 @@ import { MdUpdate } from "react-icons/md";
 interface AiDrawerProps {
   topicId: string;
   initialNoteContent: string;
+  notesTitle: string;
 }
 
-function AiDrawer({ topicId, initialNoteContent }: AiDrawerProps) {
+function AiDrawer({ topicId, initialNoteContent, notesTitle }: AiDrawerProps) {
   const [opened, { open, close }] = useDisclosure(false);
 
   return (
@@ -31,6 +32,7 @@ function AiDrawer({ topicId, initialNoteContent }: AiDrawerProps) {
         <DeepSeekChat
           noteId={Number(topicId)}
           initialContent={initialNoteContent}
+          notesTitle={notesTitle}
         />
       </Drawer>
       <Button
