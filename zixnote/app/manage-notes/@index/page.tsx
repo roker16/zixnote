@@ -1,11 +1,9 @@
+import { getUserAndRole } from "@/utils/getUserAndRole";
 import NestedIndex from "../component";
 import IndexTitle from "../component/IndexTitle";
 import { getIndex } from "./getIndex";
-import { getUserAndRole } from "@/utils/getUserAndRole";
 
 import { transformFlatToNested } from "../transformFlatToNested";
-import { Suspense } from "react";
-import { wait } from "@/utils/helper";
 
 export default async function Index({
   searchParams,
@@ -22,7 +20,7 @@ export default async function Index({
         {indexId && searchParams?.name ? (
           <IndexTitle id={indexId} name={searchParams.name as string} />
         ) : null}
-          {index && <NestedIndex data={transformFlatToNested(index)} />}
+        {index && <NestedIndex data={transformFlatToNested(index)} />}
       </div>
     </div>
   );

@@ -52,7 +52,6 @@ export default async function page({
     );
   }
   const selectedTopicId = searchParams?.headingid as string;
-  const selectedName = searchParams?.headingname;
 
   if (!selectedTopicId) {
     return (
@@ -65,7 +64,7 @@ export default async function page({
     );
   }
 
-  const data = await getNotes(Number(selectedTopicId), user.id);
+  const selectedName = await getHeadingNameFromId(Number(selectedTopicId));
 
   return (
     // <Box>
@@ -75,7 +74,7 @@ export default async function page({
           <ShareButton userId={user.id} />
           <div className="text-center">
             {" "}
-            <div>{selectedName}</div>
+            <div>{selectedName} </div>
           </div>
         </div>
       </Center>
@@ -88,13 +87,13 @@ export default async function page({
     // </Box>
   );
 }
-async function getNotes(indexId: number, userId: string) {
+async function getHeadingNameFromId(indexId: number) {
   const supabase = await createClient();
   const { data, error } = await supabase
-    .from("notes")
+    .from("syll_index")
     .select(`*`)
-    .eq("index_id_fk", indexId)
-    .eq("owner_fk", userId);
+    .eq("index_id", indexId)
+    .single();
 
-  return data;
+  return data?.index_name;
 }

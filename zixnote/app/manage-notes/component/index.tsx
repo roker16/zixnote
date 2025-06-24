@@ -1,12 +1,12 @@
 "use client";
 
-
-import { ActionIcon, Box, Button, useMantineTheme } from "@mantine/core";
+import { ActionIcon, Box, useMantineTheme } from "@mantine/core";
 import { useRouter, useSearchParams } from "next/navigation";
-import React, { startTransition, useState, useTransition } from "react";
+import React, { useState, useTransition } from "react";
 import { MdExpandMore, MdSunny } from "react-icons/md";
-import { handleTransitionNotes } from "../handleTransition1";
+// import { handleTransitionNotes } from "../handleTransition1";
 import { NestedIndexItem } from "../transformFlatToNested";
+import { handleTransitionNotes } from "../handleTransition1";
 
 const NestedIndex = ({ data }: { data: NestedIndexItem[] }) => {
   // This component is only to show/hide chapter topics, because the
@@ -61,11 +61,16 @@ const TableOfContent: React.FC<TableOfContentProps> = ({
         <li key={item.index_id}>
           <div className="flex items-center group">
             <Box
-              onClick={
-                item.parent_index_id === null
-                  ? () => handleToggle(item.index_id)
-                  : () => handleUpdateParams(item.index_id, item.index_name)
-              }
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+
+                if (item.parent_index_id === null) {
+                  handleToggle(item.index_id);
+                } else {
+                  handleUpdateParams(item.index_id, item.index_name);
+                }
+              }}
               className={`cursor-pointer flex flex-nowrap opacity-80 py-0.5 px-2 ${
                 item.parent_index_id === null
                   ? "font-normal text-sm opacity-70 "

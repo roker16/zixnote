@@ -19,7 +19,6 @@ export default async function Index() {
       <HeaderMegaMenu user={user} />
       <Container size={"xl"}>
         <HeroBullets />
-        <DeepSeekChat />
       </Container>
       <FooterCentered />
     </div>

@@ -21,11 +21,13 @@ export function handleTransitionNotes(
   if (headingName === undefined) {
     url.searchParams.delete("headingname");
   } else {
-    url.searchParams.set("headingname", headingName);
+    // url.searchParams.set("headingname", headingName);
   }
 
   startTransition(() => {
-    router.push(url.toString(),{scroll:false});
+    router.push(`${url.pathname}?${url.searchParams.toString()}`, {
+      scroll: false,
+    });
   });
   // return null
 }

@@ -16,7 +16,7 @@ import remarkGfm from "remark-gfm";
 import remarkMath from "remark-math";
 import rehypeKatex from "rehype-katex";
 import rehypeRaw from "rehype-raw";
-import { MdSave } from "react-icons/md";
+import { MdAddComment, MdSave, MdUpdate } from "react-icons/md";
 import "katex/dist/katex.min.css";
 import { createClient } from "@/utils/supabase/client";
 import { MessageInput } from "@/app/manage-notes/@ainotes/MessageInput ";
@@ -48,7 +48,7 @@ export default function DeepSeekChat({
   const assistantRefs = useRef<(HTMLDivElement | null)[]>([]);
   const supabase = createClient();
   const searchParams = useSearchParams();
-  const headingname = searchParams.get("headingname");
+  // const headingname = searchParams.get("headingname");
   const subjectName = searchParams.get("name");
   // Normalize LaTeX syntax
   const normalizeLatex = (content: string): string => {
@@ -69,11 +69,11 @@ export default function DeepSeekChat({
   };
   //Initial prompt if content is not available
   useEffect(() => {
-    if (!initialContent?.trim() && headingname && notesTitle) {
-      const defaultPrompt = `Prepare Detailed notes on "${notesTitle}" under the topic "${headingname}".  incorporate table if required, if possible provide some trick to remember things, don't mingle facts and figures, provide actual facts and figures `;
+    if (!initialContent?.trim() && notesTitle) {
+      const defaultPrompt = `Prepare Detailed notes on "${notesTitle}" under the subject "${subjectName}".  incorporate table if required, if possible provide some trick to remember things, don't mingle facts and figures, provide actual facts and figures `;
       setInput(defaultPrompt);
     }
-  }, [initialContent, headingname, notesTitle]);
+  }, [initialContent, subjectName, notesTitle]);
 
   // Load initial system message from note content
   useEffect(() => {
@@ -92,6 +92,35 @@ export default function DeepSeekChat({
   useEffect(() => {
     scrollRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
   }, [messages]);
+
+  const handleAppendToNotes = async (content: string) => {
+    try {
+      const { data, error: fetchError } = await supabase
+        .from("notes")
+        .select("ainotes_english")
+        .eq("id", noteId)
+        .single();
+
+      if (fetchError)
+        throw new Error("Failed to fetch existing note: " + fetchError.message);
+
+      const existingContent = data?.ainotes_english || "";
+
+      const updatedContent = `${existingContent.trim()}\n\n${content.trim()}`;
+
+      const { error: updateError } = await supabase
+        .from("notes")
+        .update({ ainotes_english: updatedContent })
+        .eq("id", noteId);
+
+      if (updateError)
+        throw new Error("Failed to append note: " + updateError.message);
+
+      showNotifications(null, "updated");
+    } catch (err: any) {
+      showErrorNotification(err.message);
+    }
+  };
 
   const handleSaveToNotes = async (content: string) => {
     try {
@@ -258,7 +287,7 @@ export default function DeepSeekChat({
                   } rounded-lg shadow-sm`}
                 >
                   {message.role === "assistant" && (
-                    <div className="absolute top-2 right-2 flex gap-2">
+                    <div className="  flex justify-center  gap-2">
                       <ActionIcon
                         onClick={() => handleSaveToNotes(message.content)}
                         title="Save to Notes"
@@ -266,6 +295,14 @@ export default function DeepSeekChat({
                         color="red"
                       >
                         <MdSave size={16} />
+                      </ActionIcon>
+                      <ActionIcon
+                        onClick={() => handleAppendToNotes(message.content)}
+                        title="Append to Notes"
+                        variant="subtle"
+                        color="blue"
+                      >
+                        <MdAddComment size={16} className="rotate-90" />
                       </ActionIcon>
                     </div>
                   )}

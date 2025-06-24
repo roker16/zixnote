@@ -78,7 +78,7 @@ export const Exam = ({
     setIsLoading(true);
 
     const { error } = await supabase
-      .from("syll_school")
+      .from("syll_exam")
       .delete()
       .eq("id", Number(value?.value!));
     if (error) {
