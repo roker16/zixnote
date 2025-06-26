@@ -23,6 +23,7 @@ import { MessageInput } from "@/app/manage-notes/@ainotes/MessageInput ";
 import { showNotifications } from "../Notification";
 import { showErrorNotification } from "../showErrorNotification";
 import { useSearchParams } from "next/navigation";
+import { logKPIEvent } from "@/app/kpitracker/logKPIEvent";
 
 interface Message {
   role: "user" | "assistant" | "system";
@@ -130,6 +131,9 @@ export default function DeepSeekChat({
         .eq("id", noteId);
 
       if (error) throw new Error("Failed to update note: " + error.message);
+      // ✅ Log KPI event: note updated
+      console.log("hello");
+      await logKPIEvent("note_updated", { book_name: subjectName });
       showNotifications(null, "updated");
     } catch (err: any) {
       showErrorNotification(err.message);
@@ -240,7 +244,7 @@ export default function DeepSeekChat({
   };
 
   return (
-    <div className="max-w-6xl mx-auto p-4 h-screen flex flex-col">
+    <div className="max-w-6xl mx-auto p-0 h-screen flex flex-col">
       <h1 className="text-2xl font-bold text-center mb-6 text-gray-800">
         Your AI Assistant
       </h1>
@@ -294,7 +298,7 @@ export default function DeepSeekChat({
                         variant="subtle"
                         color="red"
                       >
-                        <MdSave size={16} />
+                        <MdSave size={24} />
                       </ActionIcon>
                       <ActionIcon
                         onClick={() => handleAppendToNotes(message.content)}

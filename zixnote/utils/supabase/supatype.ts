@@ -34,6 +34,38 @@ export type Database = {
   };
   public: {
     Tables: {
+      kpi_events: {
+        Row: {
+          created_at: string | null;
+          event_type: string;
+          id: number;
+          metadata: Json | null;
+          user_id: string | null;
+        };
+        Insert: {
+          created_at?: string | null;
+          event_type: string;
+          id?: number;
+          metadata?: Json | null;
+          user_id?: string | null;
+        };
+        Update: {
+          created_at?: string | null;
+          event_type?: string;
+          id?: number;
+          metadata?: Json | null;
+          user_id?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "kpi_events_user_id_fkey";
+            columns: ["user_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          }
+        ];
+      };
       notes: {
         Row: {
           ainotes_english: string | null;

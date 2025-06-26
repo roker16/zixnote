@@ -124,7 +124,7 @@ function NoteContent({ noteId, noteTitle }: NoteContentProps) {
               <h2 className="text-lg font-semibold mt-2 mb-1" {...props} />
             ),
             table: ({ node, ...props }) => (
-              <div className="overflow-x-auto my-2">
+              <div className="overflow-x-auto my-2 ">
                 <table
                   className="table-auto w-full border-collapse border border-gray-800"
                   {...props}

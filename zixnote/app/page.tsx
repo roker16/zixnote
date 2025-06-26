@@ -1,10 +1,9 @@
-import DeepSeekChat from "@/components/ai/DeepSeekChat";
+import LastSignedInUsers from "@/components/kpi/LastSignedInUsers";
 import { FooterCentered } from "@/components/landing/FooterCentered";
 import { HeaderMegaMenu } from "@/components/landing/HeaderMegaMenu";
 import { HeroBullets } from "@/components/landing/HeroBullets";
 import { createClient } from "@/utils/supabase/server";
 import { Container } from "@mantine/core";
-import { cookies } from "next/headers";
 
 // import Landing from "./Landing";
 
@@ -19,6 +18,7 @@ export default async function Index() {
       <HeaderMegaMenu user={user} />
       <Container size={"xl"}>
         <HeroBullets />
+        <LastSignedInUsers />
       </Container>
       <FooterCentered />
     </div>

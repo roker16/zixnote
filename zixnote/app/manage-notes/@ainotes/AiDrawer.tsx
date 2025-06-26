@@ -1,8 +1,10 @@
 "use client";
 
+import { logKPIEvent } from "@/app/kpitracker/logKPIEvent";
 import DeepSeekChat from "@/components/ai/DeepSeekChat";
 import { Button, Drawer } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
+import { useSearchParams } from "next/navigation";
 import { MdUpdate } from "react-icons/md";
 
 interface AiDrawerProps {
@@ -13,11 +15,16 @@ interface AiDrawerProps {
 
 function AiDrawer({ topicId, initialNoteContent, notesTitle }: AiDrawerProps) {
   const [opened, { open, close }] = useDisclosure(false);
-
+  const searchParams = useSearchParams();
+  const bookName = searchParams.get("name");
+  const handleOpen = () => {
+    open();
+    logKPIEvent("ai_drawer_opened", { book_name: bookName });
+  };
   return (
     <>
       <Drawer
-        offset={2}
+        offset={0}
         radius="md"
         opened={opened}
         onClose={close}
@@ -40,7 +47,7 @@ function AiDrawer({ topicId, initialNoteContent, notesTitle }: AiDrawerProps) {
         color="indigo"
         size="xs"
         radius="sm"
-        onClick={open}
+        onClick={handleOpen}
         leftSection={<MdUpdate size={12} />}
       >
         Update Notes

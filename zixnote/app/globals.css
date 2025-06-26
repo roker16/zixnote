@@ -51,3 +51,12 @@ body {
 ::-webkit-scrollbar-thumb:hover {
   background: #cdcccc; /* Color of the scrollbar handle on hover */
 }
+/*This is for avoidng bad pdf print (like cutting line) of notes of markdown AI */
+@media print {
+  .page-break {
+    page-break-before: always;
+  }
+  .no-break {
+    page-break-inside: avoid;
+  }
+}
