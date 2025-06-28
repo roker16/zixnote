@@ -18,7 +18,7 @@ export default async function Index() {
       <HeaderMegaMenu user={user} />
       <Container size={"xl"}>
         <HeroBullets />
-        <LastSignedInUsers />
+        {/* <LastSignedInUsers /> */}
       </Container>
       <FooterCentered />
     </div>
