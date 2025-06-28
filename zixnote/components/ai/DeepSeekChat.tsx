@@ -255,7 +255,7 @@ export default function DeepSeekChat({
         <div className="flex flex-col space-y-4">
           {messages.length === 0 && (
             <p className="text-gray-500 text-center">
-              Start chatting with DeepSeek!
+              Start Asking from your AI assistant!
             </p>
           )}
 
