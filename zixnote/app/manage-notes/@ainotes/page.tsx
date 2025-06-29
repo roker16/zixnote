@@ -2,11 +2,12 @@ import GoogleSignin from "@/components/GoogleSignin";
 import { getUserAndRole } from "@/utils/getUserAndRole";
 import { Center } from "@mantine/core";
 import CreateNotesForm from "../component/CreateNotesForm";
-
 import { createClient } from "@/utils/supabase/server";
 import { MyAlert } from "../@notes/MyAlert";
 import ShareButton from "../@notes/ShareButton";
 import AiNotesAccordion from "./AiNotesAccordion";
+import { getSubscriptionServer } from "@/app/pricing/getSubscriptionServer";
+import Link from "next/link";
 
 export default async function page({
   searchParams,
@@ -21,25 +22,39 @@ export default async function page({
       </Center>
     );
   }
-  //Deactivate subscription for now
-  // const subscription = await getSubscriptionServer(user.id);
-  // if (subscription && subscription.length === 0) {
-  //   return (
-  //     <Center>
-  //       <MyAlert
-  //         title={"Subscribe to access all the features"}
-  //         detail={
-  //           <div>
-  //             {/* Subscribe to access all the features{" "} */}
-  //             <span>
-  //               <Link href="/pricing">Subscribe</Link>
-  //             </span>
-  //           </div>
-  //         }
-  //       />
-  //     </Center>
-  //   );
-  // }
+
+  // Check test mode status
+  const supabase = await createClient();
+  const { data: testModeData, error: testModeError } = await supabase
+    .from("settings")
+    .select("setting_status")
+    .eq("setting_name", "test_mode")
+    .single();
+
+  const isTestMode =
+    testModeData && !testModeError && testModeData.setting_status === "enabled";
+
+  // Check subscription only if test mode is disabled
+  if (!isTestMode) {
+    const subscription = await getSubscriptionServer(user.id);
+    if (subscription && subscription.length === 0) {
+      return (
+        <Center>
+          <MyAlert
+            title={"Subscribe to access all the features"}
+            detail={
+              <div>
+                <span>
+                  <Link href="/pricing">Subscribe</Link>
+                </span>
+              </div>
+            }
+          />
+        </Center>
+      );
+    }
+  }
+
   const selectedSyllabus = searchParams?.id;
   if (!selectedSyllabus) {
     return (
@@ -51,8 +66,8 @@ export default async function page({
       </Center>
     );
   }
-  const selectedTopicId = searchParams?.headingid as string;
 
+  const selectedTopicId = searchParams?.headingid as string;
   if (!selectedTopicId) {
     return (
       <Center>
@@ -67,26 +82,23 @@ export default async function page({
   const selectedName = await getHeadingNameFromId(Number(selectedTopicId));
 
   return (
-    // <Box>
     <div className="mx-0">
       <Center>
-        <div className=" flex items-center gap-1">
+        <div className="flex items-center gap-1">
           <ShareButton userId={user.id} />
           <div className="text-center">
-            {" "}
-            <div>{selectedName} </div>
+            <div>{selectedName}</div>
           </div>
         </div>
       </Center>
-
       <AiNotesAccordion topicId={selectedTopicId as string} userId={user.id} />
       <Center h={"100px"}>
         <CreateNotesForm />
       </Center>
     </div>
-    // </Box>
   );
 }
+
 async function getHeadingNameFromId(indexId: number) {
   const supabase = await createClient();
   const { data, error } = await supabase

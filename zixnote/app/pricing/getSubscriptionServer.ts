@@ -1,5 +1,4 @@
 import { createClient } from "@/utils/supabase/server";
-import { cookies } from "next/headers";
 
 export const getSubscriptionServer = async (userId: string) => {
   const supabase = await createClient();

@@ -266,6 +266,27 @@ export type Database = {
         };
         Relationships: [];
       };
+      settings: {
+        Row: {
+          created_at: string;
+          id: number;
+          setting_name: string;
+          setting_status: string;
+        };
+        Insert: {
+          created_at?: string;
+          id?: number;
+          setting_name: string;
+          setting_status: string;
+        };
+        Update: {
+          created_at?: string;
+          id?: number;
+          setting_name?: string;
+          setting_status?: string;
+        };
+        Relationships: [];
+      };
       subscription: {
         Row: {
           amount: number | null;
