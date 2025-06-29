@@ -91,10 +91,14 @@ export default async function page({
           </div>
         </div>
       </Center>
-      <AiNotesAccordion topicId={selectedTopicId as string} userId={user.id} />
-      <Center h={"100px"}>
+      <AiNotesAccordion
+        topicId={selectedTopicId as string}
+        topicText={selectedName}
+        userId={user.id}
+      />
+      {/* <Center h={"100px"}>
         <CreateNotesForm />
-      </Center>
+      </Center> */}
     </div>
   );
 }

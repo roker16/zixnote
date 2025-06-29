@@ -71,7 +71,7 @@ export default function DeepSeekChat({
   //Initial prompt if content is not available
   useEffect(() => {
     if (!initialContent?.trim() && notesTitle) {
-      const defaultPrompt = `Prepare Detailed notes on "${notesTitle}" under the subject "${subjectName}".  incorporate table if required, if possible provide some trick to remember things, don't mingle facts and figures, provide actual facts and figures `;
+      const defaultPrompt = `Prepare Detailed notes on "${notesTitle}" under the subject "${subjectName}".  incorporate table if required, don't mingle facts and figures, provide actual facts and figures `;
       setInput(defaultPrompt);
     }
   }, [initialContent, subjectName, notesTitle]);

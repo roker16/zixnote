@@ -86,7 +86,7 @@ export default function CreateNotesForm({
         overlayProps={{ opacity: 0.15 }}
         opened={opened}
         onClose={close}
-        title="Create Note"
+        title="Create Note Title"
       >
         <Box mx="auto">
           <form onSubmit={form.onSubmit((values) => onSubmitHandler(values))}>
@@ -132,7 +132,7 @@ export default function CreateNotesForm({
       </Modal>
 
       <Button onClick={open} variant="light">
-        Create Note
+        Create Note Title
       </Button>
     </>
   );
