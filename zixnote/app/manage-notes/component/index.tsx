@@ -65,7 +65,9 @@ const TableOfContent: React.FC<TableOfContentProps> = ({
                 e.preventDefault();
                 e.stopPropagation();
 
-                if (item.parent_index_id === null) {
+                // If top-level but has children => toggle
+                // Else behave like inner child (navigate)
+                if (item.parent_index_id === null && item.children?.length) {
                   handleToggle(item.index_id);
                 } else {
                   handleUpdateParams(item.index_id, item.index_name);
@@ -78,12 +80,18 @@ const TableOfContent: React.FC<TableOfContentProps> = ({
               }`}
             >
               <span>
-                {item.parent_index_id == null && (
+                {item.parent_index_id === null && (
                   <ActionIcon variant="subtle" size="sm" radius="lg">
-                    {!toggledIds.includes(item.index_id) ? (
-                      <MdExpandMore size={16} />
+                    {item.children?.length ? (
+                      !toggledIds.includes(item.index_id) ? (
+                        <MdExpandMore size={16} />
+                      ) : (
+                        <MdSunny />
+                      )
                     ) : (
-                      <MdSunny />
+                      <span className="text-xs">
+                        <span>◾</span>
+                      </span> // You can replace this with any icon
                     )}
                   </ActionIcon>
                 )}
