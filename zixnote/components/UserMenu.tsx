@@ -9,17 +9,7 @@ import {
   useMantineTheme,
 } from "@mantine/core";
 import { User } from "@supabase/supabase-js";
-import {
-  IconChevronRight,
-  IconHeart,
-  IconLogout,
-  IconMessage,
-  IconPlayerPause,
-  IconSettings,
-  IconStar,
-  IconSwitchHorizontal,
-  IconTrash
-} from "@tabler/icons-react";
+import { IconChevronRight, IconLogout } from "@tabler/icons-react";
 
 export function UserMenu({ user }: { user: User | null }) {
   const theme = useMantineTheme();
@@ -35,7 +25,7 @@ export function UserMenu({ user }: { user: User | null }) {
         <Menu.Target>
           <ActionIcon variant="light" radius={"xl"} size={"lg"}>
             <Avatar
-              src={user?.user_metadata.avatar_url } // Replace with the path to your default avatar image
+              src={user?.user_metadata.avatar_url} // Replace with the path to your default avatar image
               alt="Avatar"
             />
           </ActionIcon>

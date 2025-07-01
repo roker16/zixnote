@@ -20,6 +20,7 @@ import { IconPencil } from "@tabler/icons-react";
 import Image from "next/image";
 import Link from "next/link";
 import { Suspense, useEffect, useState } from "react";
+import NotesMenu from "./component/NoteMenu";
 export default function ManageSyllabusLayout({
   children,
   filter,
@@ -81,9 +82,9 @@ export default function ManageSyllabusLayout({
                   hiddenFrom="md"
                   size="sm"
                 />
-                <Link href={"/"} className="my-auto">
+                {/* <Link href={"/"} className="my-auto">
                   <Image src="/logo.png" width={35} height={22} alt="Logo" />
-                </Link>
+                </Link> */}
               </Group>
 
               <Group gap={0}>
@@ -93,7 +94,10 @@ export default function ManageSyllabusLayout({
                 {/* <Tabs.Tab value="third">Trend</Tabs.Tab>
                 <Tabs.Tab value="forth">Notes</Tabs.Tab> */}
               </Group>
-              <Center>{/* <NotesMenu /> */}</Center>
+              <Center>
+                {/* <NotesMenu /> */}
+                <UserMenu user={user} />
+              </Center>
             </Tabs.List>
           </Tabs>
         </Paper>
@@ -103,10 +107,11 @@ export default function ManageSyllabusLayout({
         h={"full"}
         bg={"var(--mantine-color-gray-0)"}
       >
-        <Group justify="space-between" p={2} bg={"var(--mantine-color-gray-0)"}>
-          <Group p={6}>
-            <UserMenu user={user} />
-
+        <Group justify="space-between" align="center">
+          <Group p={6} justify="end" align="center">
+            <Link href={"/"} className="my-auto">
+              <Image src="/logo.png" width={32} height={32} alt="Logo" />
+            </Link>
             <Button
               variant="subtle"
               size="compact-sm"

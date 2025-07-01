@@ -81,7 +81,7 @@ export default function ManageSyllabusLayout({
                   size="sm"
                 />
                 <Link href={"/"}>
-                  <Image src="/logo.png" width={35} height={22} alt="Logo" />
+                  <Image src="/logo.png" width={32} height={32} alt="Logo" />
                 </Link>
               </Group>
 

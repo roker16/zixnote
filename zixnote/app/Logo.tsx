@@ -5,7 +5,7 @@ function Logo() {
   return (
     <>
       {" "}
-      <Image src={"/logo.png"} alt={""} width={34} height={24} />
+      <Image src={"/logo.png"} alt={""} width={32} height={32} />
     </>
   );
 }
