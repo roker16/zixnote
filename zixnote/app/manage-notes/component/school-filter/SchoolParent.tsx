@@ -1,43 +1,45 @@
 "use client";
-import { Box, Group } from "@mantine/core";
+
 import { useState } from "react";
-import { Books } from "./Books";
-import { Class } from "./Class";
 import { School } from "./School";
+import { Class } from "./Class";
+import { Books } from "./Books";
 
 export default function SchoolParent({
   canModerate,
 }: {
   canModerate: boolean;
 }) {
-  const [selectedSchool, setSelectedSchool] = useState<number | undefined>(
-    undefined
-  );
-  const [selectedClass, setSelectedClass] = useState<number | undefined>(
-    undefined
-  );
+  const [school, setSchool] = useState<{ id?: number; name?: string }>({});
+  const [selectedClass, setSelectedClass] = useState<{
+    id?: number;
+    name?: string;
+  }>({});
 
-  const handleSelectedSchool = (id: number) => {
-    setSelectedSchool(id);
+  const handleSchoolChange = (id: number, name: string) => {
+    setSchool({ id, name });
+    setSelectedClass({}); // clear class if school changes
   };
-  const handleSelectedClass = (id: number) => {
-    setSelectedClass(id);
+
+  const handleClassChange = (id: number, name: string) => {
+    setSelectedClass({ id, name });
   };
 
   return (
-   
-      <div className="flex flex-col p-1 gap-1"  >
-        <School action={handleSelectedSchool} canModerate={canModerate} />
-        <Class
-          action={handleSelectedClass}
-          schoolId={selectedSchool}
-          canModerate={canModerate}
-        />
-        <Books
-          classId={selectedClass}
-          canModerate={canModerate}
-        />
-      </div>
-   
+    <div className="flex flex-col gap-1 p-1">
+      <School action={handleSchoolChange} canModerate={canModerate} />
+      <Class
+        schoolId={school.id}
+        action={handleClassChange}
+        canModerate={canModerate}
+      />
+      <Books
+        schoolId={school.id}
+        schoolName={school.name}
+        classId={selectedClass.id}
+        className={selectedClass.name}
+        canModerate={canModerate}
+      />
+    </div>
   );
 }

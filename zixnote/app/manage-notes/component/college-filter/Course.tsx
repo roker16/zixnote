@@ -9,6 +9,7 @@ import { showErrorNotification } from "../../../../components/showErrorNotificat
 import { handleTransitionNotes } from "../../handleTransition1";
 import { useRouter } from "next/navigation";
 import { handleTransition } from "../../handleTransition";
+import { saveActiveContext } from "@/utils/ai/contextStorage";
 interface DataInput {
   id: number;
   department_id: number | null;
@@ -26,10 +27,16 @@ const createOption = (x: DataInput) => ({
 });
 
 export const Course = ({
-  classId,
+  collegeName,
+  departmentName,
+  departmentId,
+  collegeId,
   canModerate,
 }: {
-  classId: number | undefined;
+  collegeName: string | undefined;
+  departmentName: string | undefined;
+  departmentId: number | undefined;
+  collegeId: number | undefined;
   canModerate: boolean;
 }) => {
   const [isLoading, setIsLoading] = useState(false);
@@ -45,7 +52,7 @@ export const Course = ({
       const { data: books, error } = await supabase
         .from("syll_syllabus_entity")
         .select(`id,department_id,syllabus_name`)
-        .eq("department_id", classId!);
+        .eq("department_id", departmentId!);
       if (error) {
         showErrorNotification(error);
         setIsLoading(false);
@@ -54,28 +61,71 @@ export const Course = ({
       setOptions(books?.map((x) => createOption(x)));
       setIsLoading(false);
     };
-    if (classId) {
+    if (departmentId) {
       getSchool();
     }
-  }, [classId, supabase]);
+  }, [departmentId, supabase]);
 
   const handleChange = (newValue: Option | null) => {
     setValue(newValue);
-    handleTransition(newValue?.value, newValue?.label, startTransition, router);
+
+    const current = new URLSearchParams(window.location.search);
+
+    // ✅ Preserve existing `activetab`
+    const params = new URLSearchParams(current);
+
+    // ✅ Set group explicitly
+    params.set("group", "college");
+    if (collegeId) {
+      params.set("id2", collegeId.toString()); // college
+    }
+    // ✅ 1. Set parent hierarchy
+    if (departmentId) {
+      params.set("id1", departmentId.toString()); // department
+    }
+
+    // ✅ 2. Set main selected item (last)
+    if (newValue?.value) {
+      params.set("id", newValue.value); // course ID
+      params.set("name", newValue.label); // course name
+    }
+
+    // ❌ 3. Remove stale topic reference
+    params.delete("headingid");
+
+    // ✅ 4. Save readable context for AI
+    if (collegeName && departmentName && newValue?.label) {
+      saveActiveContext({
+        type: "college",
+        collegeName,
+        department: departmentName,
+        course: newValue.label,
+      });
+    }
+
+    // ✅ 5. Push URL with preserved + updated params
+    startTransition(() => {
+      router.replace(`?${params.toString()}`, { scroll: false });
+    });
   };
+
   const handleCreate = async (inputValue: string) => {
     if (!canModerate) {
       showNotifications("You don't have required Permission!");
       return;
     }
-    if (!classId) {
+    if (!departmentId) {
       showNotifications("No class selected");
       return;
     }
     setIsLoading(true);
     const { data, error } = await supabase
       .from("syll_syllabus_entity")
-      .insert({ syllabus_name: inputValue, department_id: classId, type_id: 2 })
+      .insert({
+        syllabus_name: inputValue,
+        department_id: departmentId,
+        type_id: 2,
+      })
       .select()
       .single();
     if (error) {

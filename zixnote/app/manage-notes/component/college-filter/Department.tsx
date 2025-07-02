@@ -22,11 +22,11 @@ const createOption = (x: InputData) => ({
 
 export const Department = ({
   action,
-  schoolId,
+  collegeId,
   canModerate,
 }: {
-  action: (id: number) => void;
-  schoolId: number | undefined;
+  action: (id: number, name: string) => void;
+  collegeId: number | undefined;
   canModerate: boolean;
 }) => {
   const [isLoading, setIsLoading] = useState(false);
@@ -40,7 +40,7 @@ export const Department = ({
       const { data: _class, error } = await supabase
         .from("syll_department")
         .select(`*`)
-        .eq("college_id", schoolId!);
+        .eq("college_id", collegeId!);
       if (error) {
         showErrorNotification(error);
         setIsLoading(false);
@@ -49,14 +49,14 @@ export const Department = ({
       setOptions(_class?.map((x) => createOption(x)));
       setIsLoading(false);
     };
-    if (schoolId) {
+    if (collegeId) {
       getSchool();
     }
-  }, [schoolId, supabase]);
+  }, [collegeId, supabase]);
 
   const handleChange = (newValue: Option | null) => {
     setValue(newValue);
-    action(Number(newValue?.value));
+    action(Number(newValue?.value), newValue?.label!);
   };
 
   const handleCreate = async (inputValue: string) => {
@@ -64,14 +64,14 @@ export const Department = ({
       showNotifications("You don't have required Permission");
       return;
     }
-    if (!schoolId) {
+    if (!collegeId) {
       showNotifications("No school selected");
       return;
     }
     setIsLoading(true);
     const { data, error } = await supabase
       .from("syll_department")
-      .insert([{ department_name: inputValue, college_id: schoolId }])
+      .insert([{ department_name: inputValue, college_id: collegeId }])
       .select()
       .single();
     if (error) {

@@ -1,47 +1,44 @@
 "use client";
-import { Group } from "@mantine/core";
+
 import { useState } from "react";
 import { College } from "./College";
-import { Course } from "./Course";
 import { Department } from "./Department";
+import { Course } from "./Course";
 
 export default function CollegeParent({
   canModerate,
 }: {
   canModerate: boolean;
 }) {
-
-  const [selectedCollege, setSelectedCollege] = useState<number | undefined>(
-    undefined
+  const [college, setCollege] = useState<{ id?: number; name?: string }>({});
+  const [department, setDepartment] = useState<{ id?: number; name?: string }>(
+    {}
   );
-  const [selectedDepartment, setSelectedDepartment] = useState<
-    number | undefined
-  >(undefined);
 
-  const handleSelectedCollege = (id: number) => {
-    setSelectedCollege(id);
+  const handleCollegeChange = (id: number, name: string) => {
+    setCollege({ id, name });
+    setDepartment({}); // clear department if college changes
   };
-  const handleSelectedDepartment = (id: number) => {
-    setSelectedDepartment(id);
+
+  const handleDepartmentChange = (id: number, name: string) => {
+    setDepartment({ id, name });
   };
 
   return (
-    <div className="flex flex-col p-1 gap-1"  >
-      {/* {isPending && "Loading......"} */}
-     
-        <College action={handleSelectedCollege} canModerate={canModerate} />
-        <Department
-          action={handleSelectedDepartment}
-          schoolId={selectedCollege}
-          canModerate={canModerate}
-        />
-        <Course
-          // action={handleSelectedCourse}
-          classId={selectedDepartment}
-          canModerate={canModerate}
-          // isPending={isPending}
-        />
-      
+    <div className="flex flex-col gap-1 p-1">
+      <College action={handleCollegeChange} canModerate={canModerate} />
+      <Department
+        collegeId={college.id}
+        action={handleDepartmentChange}
+        canModerate={canModerate}
+      />
+      <Course
+        collegeName={college.name}
+        departmentName={department.name}
+        departmentId={department.id}
+        canModerate={canModerate}
+        collegeId={college.id}
+      />
     </div>
   );
 }

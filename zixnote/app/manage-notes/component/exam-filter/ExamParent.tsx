@@ -1,40 +1,38 @@
 "use client";
-import { Group } from "@mantine/core";
+
 import { useState } from "react";
 import { Exam } from "./Exam";
 import { Paper } from "./Paper";
 import { Subject } from "./Subject";
 
 export default function ExamParent({ canModerate }: { canModerate: boolean }) {
-  const [selectedSchool, setSelectedSchool] = useState<number | undefined>(
-    undefined
-  );
-  const [selectedClass, setSelectedClass] = useState<number | undefined>(
-    undefined
-  );
+  const [exam, setExam] = useState<{ id?: number; name?: string }>({});
+  const [paper, setPaper] = useState<{ id?: number; name?: string }>({});
 
-  const handleSelectedSchool = (id: number) => {
-    setSelectedSchool(id);
+  const handleExamChange = (id: number, name: string) => {
+    setExam({ id, name });
+    setPaper({}); // clear paper if exam changes
   };
-  const handleSelectedClass = (id: number) => {
-    setSelectedClass(id);
+
+  const handlePaperChange = (id: number, name: string) => {
+    setPaper({ id, name });
   };
 
   return (
-    <div className="flex flex-col p-1 gap-1"  >
-      {/* {isPending && "Loading......"} */}
-    
-        <Exam action={handleSelectedSchool} canModerate={canModerate} />
-        <Paper
-          action={handleSelectedClass}
-          schoolId={selectedSchool}
-          canModerate={canModerate}
-        />
-        <Subject
-          paperId={selectedClass}
-          canModerate={canModerate}
-        />
-   
+    <div className="flex flex-col gap-1 p-1">
+      <Exam action={handleExamChange} canModerate={canModerate} />
+      <Paper
+        examId={exam.id}
+        action={handlePaperChange}
+        canModerate={canModerate}
+      />
+      <Subject
+        examName={exam.name}
+        examId={exam.id}
+        paperName={paper.name}
+        paperId={paper.id}
+        canModerate={canModerate}
+      />
     </div>
   );
 }

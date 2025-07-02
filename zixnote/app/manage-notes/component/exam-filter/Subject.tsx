@@ -7,6 +7,7 @@ import CreatableSelect from "react-select/creatable";
 import { showErrorNotification } from "../../../../components/showErrorNotification";
 import { useRouter } from "next/navigation";
 import { handleTransition } from "../../handleTransition";
+import { saveActiveContext } from "@/utils/ai/contextStorage";
 
 interface DataInput {
   id: number;
@@ -25,9 +26,15 @@ const createOption = (x: DataInput) => ({
 });
 
 export const Subject = ({
+  examId,
+  examName,
+  paperName,
   paperId,
   canModerate,
 }: {
+  examName: string | undefined;
+  paperName: string | undefined;
+  examId: number | undefined;
   paperId: number | undefined;
   canModerate: boolean;
 }) => {
@@ -60,8 +67,54 @@ export const Subject = ({
 
   const handleChange = (newValue: Option | null) => {
     setValue(newValue);
-    handleTransition(newValue?.value, newValue?.label, startTransition, router);
+
+    const current = new URLSearchParams(window.location.search);
+    const params = new URLSearchParams(current);
+
+    // Set group explicitly
+    params.set("group", "exam");
+
+    // 1. Set parent hierarchy: examId first
+    if (examId) {
+      params.set("id1", examId.toString());
+    } else {
+      params.delete("id1");
+    }
+
+    // 2. Then paperId
+    if (paperId) {
+      params.set("id2", paperId.toString());
+    } else {
+      params.delete("id2");
+    }
+
+    // 3. Set main selected item (subject)
+    if (newValue?.value) {
+      params.set("id", newValue.value);
+      params.set("name", newValue.label);
+    } else {
+      params.delete("id");
+      params.delete("name");
+    }
+
+    // 4. Remove stale topic reference
+    params.delete("headingid");
+
+    // 5. Save readable context for AI
+    if (examName && paperName && newValue?.label) {
+      saveActiveContext({
+        type: "exam",
+        examName,
+        paperName,
+        subjectName: newValue.label,
+      });
+    }
+
+    startTransition(() => {
+      router.replace(`?${params.toString()}`, { scroll: false });
+    });
   };
+
   const handleCreate = async (inputValue: string) => {
     if (!canModerate) {
       showNotifications("You don't have required Permission!");

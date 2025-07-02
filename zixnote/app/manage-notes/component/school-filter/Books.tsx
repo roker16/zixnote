@@ -7,6 +7,7 @@ import CreatableSelect from "react-select/creatable";
 import { showErrorNotification } from "../../../../components/showErrorNotification";
 import { handleTransition } from "../../handleTransition";
 import { useRouter } from "next/navigation";
+import { saveActiveContext } from "@/utils/ai/contextStorage";
 interface DataInput {
   id: number;
   class_id: number | null;
@@ -24,10 +25,16 @@ const createOption = (x: DataInput) => ({
 });
 
 export const Books = ({
+  schoolId,
+  schoolName,
   classId,
+  className,
   canModerate,
 }: {
+  schoolId: number | undefined;
+  schoolName: string | undefined;
   classId: number | undefined;
+  className: string | undefined;
   canModerate: boolean;
 }) => {
   const [isLoading, setIsLoading] = useState(false);
@@ -59,8 +66,47 @@ export const Books = ({
 
   const handleChange = (newValue: Option | null) => {
     setValue(newValue);
-    handleTransition(newValue?.value, newValue?.label, startTransition, router);
+
+    const current = new URLSearchParams(window.location.search);
+
+    // ✅ Preserve existing `activetab`
+    const params = new URLSearchParams(current);
+    // ✅ Set group explicitly (e.g. 'school', 'college', or 'exam')
+    params.set("group", "school");
+    // ✅ 1. Set parent hierarchy
+    if (classId) {
+      params.set("id1", classId.toString());
+    }
+
+    if (schoolId) {
+      params.set("id2", schoolId.toString());
+    }
+
+    // ✅ 2. Set main selected item (last)
+    if (newValue?.value) {
+      params.set("id", newValue.value);
+      params.set("name", newValue.label);
+    }
+
+    // ❌ 3. Remove stale topic reference
+    params.delete("headingid");
+
+    // ✅ 4. Save readable context for AI
+    if (schoolName && className && newValue?.label) {
+      saveActiveContext({
+        type: "school",
+        schoolName,
+        className,
+        bookName: newValue.label,
+      });
+    }
+
+    // ✅ 5. Push URL with preserved + updated params
+    startTransition(() => {
+      router.replace(`?${params.toString()}`, { scroll: false });
+    });
   };
+
   const handleCreate = async (inputValue: string) => {
     if (!canModerate) {
       showNotifications("You don't have required Permission!");

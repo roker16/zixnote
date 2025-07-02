@@ -20,7 +20,6 @@ import { IconPencil } from "@tabler/icons-react";
 import Image from "next/image";
 import Link from "next/link";
 import { Suspense, useEffect, useState } from "react";
-import NotesMenu from "./component/NoteMenu";
 export default function ManageSyllabusLayout({
   children,
   filter,

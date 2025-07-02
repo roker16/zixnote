@@ -60,7 +60,6 @@ function Paynow({
       const data = await res.json();
       if (res && data) {
         // update database
-        console.log("payment detail is ", JSON.stringify(data));
         const endDate = calculateEndDate(planName);
         const supabase = createClient();
         const userId = (await supabase.auth.getUser()).data.user?.id;
@@ -135,8 +134,11 @@ function Paynow({
   return (
     <>
       <div>
-        <Button rightSection={subscribed && <IconCheck />} onClick={handleClick}>
-          {subscribed ? "Subscribed":"Subscribe"}
+        <Button
+          rightSection={subscribed && <IconCheck />}
+          onClick={handleClick}
+        >
+          {subscribed ? "Subscribed" : "Subscribe"}
         </Button>
         {/* Order id is {orderId} */}
       </div>

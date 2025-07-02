@@ -63,6 +63,10 @@ function AiNotesAccordion({
       setIsGenerating(true);
 
       try {
+        // ✅ Load saved AI context (e.g. schoolName/className/bookName)
+        const contextRaw = localStorage.getItem("activeContext");
+        const context = contextRaw ? JSON.parse(contextRaw) : null;
+
         const res = await fetch("/api/deepseek/generatesubtopic", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -71,6 +75,7 @@ function AiNotesAccordion({
             userId,
             count: 6,
             style: "academic",
+            context, // ✅ Include context in the request body
           }),
         });
 

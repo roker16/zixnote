@@ -8,9 +8,13 @@ const openai = new OpenAI({
 
 export async function POST(req: Request) {
   try {
-    const { topic, userId, count = 8, style = "academic" } = await req.json();
+    const { topic, userId, style = "academic", context } = await req.json();
+    console.log(
+      "Stringified context for AI prompt:\n",
+      JSON.stringify(context ?? {}, null, 2)
+    );
 
-    // Validation
+    // Validate topic
     if (!topic || typeof topic !== "string") {
       return NextResponse.json(
         { error: "Topic must be a non-empty string" },
@@ -18,47 +22,60 @@ export async function POST(req: Request) {
       );
     }
 
-    if (count < 3 || count > 15) {
-      return NextResponse.json(
-        { error: "Count must be between 3 and 15" },
-        { status: 400 }
-      );
-    }
-
-    // Style configuration
     const stylePrompts = {
-      academic: "Use formal academic language suitable for university study",
+      academic:
+        "Use formal academic language suitable for the educational level specified in the context",
       concise: "Prioritize brevity and clarity over completeness",
-      exam: "Focus on concepts commonly tested in examinations",
-      practical: "Emphasize real-world applications and case studies",
+      exam: "Focus only on core concepts that would be tested",
+      practical: "Emphasize real-world applications when relevant to context",
     };
 
     const systemPrompt = `
-    You are an expert knowledge organizer. Generate ${count} subtopic titles for "${topic}" with these requirements:
-    1. Each title should be 3-8 words
-    2. Cover both foundational and advanced aspects
-    3. Maintain logical progression (basic → intermediate → advanced)
-    4. ${
+You are an expert academic notes maker that STRICTLY ADHERES TO CONTEXT.
+
+Given the topic "${topic}" and the following context:
+
+${JSON.stringify(context ?? {}, null, 2)}
+
+Generate ONLY the most essential subtopic titles that cover this topic:
+1. FIRST analyze the context carefully - especially noting:
+   - Educational level (e.g., elementary, high school, college)
+   - Scope/depth expected
+   - Any specific requirements
+2. Generate subtopics STRICTLY within the context's boundaries
+3. For lower levels or limited contexts:
+   - Generate fewer subtopics (typically 3-8)
+   - Keep explanations simple and age-appropriate
+4. For advanced contexts only:
+   - You may include more subtopics (up to 15 max)
+   - Include foundational → advanced progression
+5. Each title should be 3-10 words
+6. Writing style: ${
       stylePrompts[style as keyof typeof stylePrompts] || stylePrompts.academic
     }
-    
-    Return ONLY a JSON object with this structure:
-    { "subtopics": string[] }
-    `;
+7. NEVER exceed what the context requires
 
-    // API call
+Return ONLY a JSON object with this structure:
+{ "subtopics": string[] }
+`;
+
     const response = await openai.chat.completions.create({
       model: "deepseek-chat",
       messages: [
-        { role: "system", content: systemPrompt },
-        { role: "user", content: `Topic: ${topic}` },
+        {
+          role: "system",
+          content: systemPrompt,
+        },
+        {
+          role: "user",
+          content: `Topic: ${topic}\n\nIMPORTANT: Be strictly guided by the context provided. Do not over-expand.`,
+        },
       ],
       response_format: { type: "json_object" },
-      temperature: 0.4,
-      max_tokens: 500,
+      temperature: 0.3, // Lower temperature for more focused responses
+      max_tokens: 500, // Reduced to prevent over-explanation
     });
 
-    // Response parsing with error handling
     const content = response.choices[0]?.message?.content;
     if (!content) throw new Error("Empty AI response");
 
@@ -79,7 +96,7 @@ export async function POST(req: Request) {
     }
 
     return NextResponse.json({
-      subtopics: cleanedSubtopics.slice(0, count),
+      subtopics: cleanedSubtopics.slice(0, 15), // Hard cap at 15
       generatedAt: new Date().toISOString(),
     });
   } catch (error) {
@@ -88,7 +105,8 @@ export async function POST(req: Request) {
     return NextResponse.json(
       {
         error: "Failed to generate subtopics",
-        suggestion: "Try simplifying your topic or adjusting the count",
+        suggestion:
+          "Try simplifying your topic or provide more specific context",
         details: error instanceof Error ? error.message : "Unknown error",
       },
       { status: 500 }
@@ -96,10 +114,14 @@ export async function POST(req: Request) {
   }
 }
 
-// TypeScript interface for expected request body
 interface GenerateSubtopicsRequest {
   topic: string;
   userId?: string;
-  count?: number;
   style?: "academic" | "concise" | "exam" | "practical";
+  context?: {
+    educationalLevel?: string;
+    scope?: string;
+    specificRequirements?: string;
+    [key: string]: any;
+  };
 }

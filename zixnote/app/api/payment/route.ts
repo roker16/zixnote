@@ -1,13 +1,9 @@
 import { createClient } from "@/utils/supabase/server";
 import { Cashfree } from "cashfree-pg";
-import { cookies } from "next/headers";
-import { metadata } from "../../layout";
-import { redirect } from "next/navigation";
 
 export const dynamic = "force-dynamic"; // defaults to auto
 export async function POST(request: Request) {
   const { amount } = await request.json();
-  console.log("amount is ", amount);
   const supabase = await createClient();
   const user = (await supabase.auth.getUser()).data.user;
   const userId = user?.id;
@@ -25,7 +21,7 @@ export async function POST(request: Request) {
   const orderId = crypto.randomUUID();
   try {
     var request1 = {
-      order_amount: 1,
+      order_amount: amount,
       order_currency: "INR",
       order_id: orderId,
       customer_details: {

@@ -1,6 +1,5 @@
 "use client";
 import {
-  ActionIcon,
   Box,
   Burger,
   Button,
@@ -12,13 +11,11 @@ import {
 } from "@mantine/core";
 import classes from "./HeaderMegaMenu.module.css";
 //   import { MantineLogo } from '@mantinex/mantine-logo';
+import Logo from "@/app/Logo";
 import { useDisclosure } from "@mantine/hooks";
 import { User } from "@supabase/supabase-js";
 import Link from "next/link";
 import { UserMenu } from "../UserMenu";
-import Image from "next/image";
-import Logo from "@/app/Logo";
-
 
 export function HeaderMegaMenu({ user }: { user: User | null }) {
   const [drawerOpened, { toggle: toggleDrawer, close: closeDrawer }] =
@@ -39,7 +36,10 @@ export function HeaderMegaMenu({ user }: { user: User | null }) {
 
           <Group h="100%">
             <Group h="100%" justify="flex-end" gap={0} visibleFrom="md">
-              <Link href="/manage-notes" className={classes.link}>
+              <Link
+                href="/manage-notes?activetab=school"
+                className={classes.link}
+              >
                 Notes
               </Link>
               <Link href="/manage-syll" className={classes.link}>
@@ -76,7 +76,7 @@ export function HeaderMegaMenu({ user }: { user: User | null }) {
         padding="md"
         title={
           <Link href={"/"}>
-           <Logo />
+            <Logo />
             {/* <ActionIcon
               // visibleFrom="md"
               variant="gradient"

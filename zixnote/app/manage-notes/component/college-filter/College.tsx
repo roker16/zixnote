@@ -3,7 +3,6 @@ import { createClient } from "@/utils/supabase/client";
 import { useEffect, useState } from "react";
 import CreatableSelect from "react-select/creatable";
 
-import { DeleteAction } from "@/components/DeleteAction";
 import { showNotifications } from "@/components/Notification";
 import { showErrorNotification } from "../../../../components/showErrorNotification";
 
@@ -26,7 +25,7 @@ export const College = ({
   action,
   canModerate,
 }: {
-  action: (id: number) => void;
+  action: (id: number, name: string) => void;
   canModerate: boolean;
 }) => {
   const [isLoading, setIsLoading] = useState(false);
@@ -93,7 +92,7 @@ export const College = ({
   };
   const handleChange = (newValue: Option | null) => {
     setValue(newValue);
-    action(Number(newValue?.value));
+    action(Number(newValue?.value), newValue?.label!);
   };
   const isDisabled = isLoading || value === null || value === undefined;
 

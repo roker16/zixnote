@@ -1,8 +1,7 @@
-import Link from "next/link";
-import { headers, cookies } from "next/headers";
-import { createClient } from "@/utils/supabase/server";
-import { redirect } from "next/navigation";
 import GoogleSignin from "@/components/GoogleSignin";
+import { createClient } from "@/utils/supabase/server";
+import { cookies, headers } from "next/headers";
+import { redirect } from "next/navigation";
 
 export default function Login({
   searchParams,

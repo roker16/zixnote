@@ -1,16 +1,13 @@
 import GoogleSignin from "@/components/GoogleSignin";
 import { Box, Center, Space } from "@mantine/core";
-import Link from "next/link";
 import { getUserAndRole } from "../../../utils/getUserAndRole";
 import AskToBeModerator from "../component/AskToBeModerator";
 import ModeratorForm from "../component/ModeratorForm";
 import Moderators from "../component/Moderators";
 import { getModerator } from "./getModerator";
 
-import { createClient } from "@/utils/supabase/server";
-import { cookies } from "next/headers";
 import NoticeText from "@/components/NoticeText";
-import { Demo } from "../Test";
+import { createClient } from "@/utils/supabase/server";
 
 export default async function Index({
   searchParams,

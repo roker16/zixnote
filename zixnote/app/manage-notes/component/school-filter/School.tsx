@@ -3,7 +3,6 @@ import { createClient } from "@/utils/supabase/client";
 import { useEffect, useState } from "react";
 import CreatableSelect from "react-select/creatable";
 
-
 import { showNotifications } from "@/components/Notification";
 import { showErrorNotification } from "../../../../components/showErrorNotification";
 
@@ -26,7 +25,7 @@ export const School = ({
   action,
   canModerate,
 }: {
-  action: (id: number) => void;
+  action: (id: number, name: string) => void;
   canModerate: boolean;
 }) => {
   const [isLoading, setIsLoading] = useState(false);
@@ -77,9 +76,8 @@ export const School = ({
 
   const handleChange = (newValue: Option | null) => {
     setValue(newValue);
-    action(Number(newValue?.value));
+    action(Number(newValue?.value), newValue?.label!);
   };
-
 
   return (
     <div className=" flex items-center gap-1 ">
@@ -96,7 +94,6 @@ export const School = ({
           className="text-sm"
         />
       </div>
-      
     </div>
   );
 };

@@ -26,7 +26,7 @@ export const Exam = ({
   action,
   canModerate,
 }: {
-  action: (id: number) => void;
+  action: (id: number, name: string) => void;
   canModerate: boolean;
 }) => {
   const [isLoading, setIsLoading] = useState(false);
@@ -93,7 +93,7 @@ export const Exam = ({
   };
   const handleChange = (newValue: Option | null) => {
     setValue(newValue);
-    action(Number(newValue?.value));
+    action(Number(newValue?.value), newValue?.label!);
   };
   const isDisabled = isLoading || value === null || value === undefined;
 

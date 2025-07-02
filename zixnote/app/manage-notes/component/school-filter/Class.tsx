@@ -25,7 +25,7 @@ export const Class = ({
   schoolId,
   canModerate,
 }: {
-  action: (id: number) => void;
+  action: (id: number, name: string) => void;
   schoolId: number | undefined;
   canModerate: boolean;
 }) => {
@@ -56,7 +56,7 @@ export const Class = ({
 
   const handleChange = (newValue: Option | null) => {
     setValue(newValue);
-    action(Number(newValue?.value));
+    action(Number(newValue?.value), newValue?.label!);
   };
 
   const handleCreate = async (inputValue: string) => {

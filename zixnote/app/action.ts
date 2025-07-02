@@ -117,7 +117,7 @@ export async function navigateWithLogin(data: FormData) {
   const supabase = await createClient();
   const { user } = (await supabase.auth.getUser()).data;
   if (user) {
-    redirect(`/manage-notes`);
+    redirect(`/manage-notes?activetab=school`);
   }
   redirect(`/login`);
 }
