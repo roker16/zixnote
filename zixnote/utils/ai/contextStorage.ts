@@ -2,21 +2,21 @@
 
 // type ContextType = "school" | "college" | "exam";
 
-type SchoolContext = {
+export type SchoolContext = {
   type: "school";
   schoolName: string;
   className: string;
   bookName: string;
 };
 
-type CollegeContext = {
+export type CollegeContext = {
   type: "college";
   collegeName: string;
   department: string;
   course: string;
 };
 
-type ExamContext = {
+export type ExamContext = {
   type: "exam";
   examName: string;
   paperName: string;

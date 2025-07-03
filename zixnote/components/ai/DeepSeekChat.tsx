@@ -16,7 +16,15 @@ import remarkGfm from "remark-gfm";
 import remarkMath from "remark-math";
 import rehypeKatex from "rehype-katex";
 import rehypeRaw from "rehype-raw";
-import { MdAddComment, MdSave, MdUpdate } from "react-icons/md";
+import {
+  MdAdd,
+  MdAddBusiness,
+  MdAddComment,
+  MdAddTask,
+  MdAddToQueue,
+  MdSave,
+  MdUpdate,
+} from "react-icons/md";
 import "katex/dist/katex.min.css";
 import { createClient } from "@/utils/supabase/client";
 import { MessageInput } from "@/app/manage-notes/@ainotes/MessageInput ";
@@ -24,6 +32,7 @@ import { showNotifications } from "../Notification";
 import { showErrorNotification } from "../showErrorNotification";
 import { useSearchParams } from "next/navigation";
 import { logKPIEvent } from "@/app/kpitracker/logKPIEvent";
+import { getActiveContext } from "@/utils/ai/contextStorage";
 
 interface Message {
   role: "user" | "assistant" | "system";
@@ -71,7 +80,7 @@ export default function DeepSeekChat({
   //Initial prompt if content is not available
   useEffect(() => {
     if (!initialContent?.trim() && notesTitle) {
-      const defaultPrompt = `Prepare Detailed notes on "${notesTitle}" under the subject "${subjectName}".  incorporate table if required, don't mingle facts and figures, provide actual facts and figures `;
+      const defaultPrompt = `Prepare Detailed notes on "${notesTitle}" under the subject "${subjectName}". `;
       setInput(defaultPrompt);
     }
   }, [initialContent, subjectName, notesTitle]);
@@ -153,6 +162,11 @@ export default function DeepSeekChat({
       {
         role: "system",
         internal: true,
+        content: `incorporate table if required, don't assume facts and figures, provide only actual facts and figures`,
+      },
+      {
+        role: "system",
+        internal: true,
         content: `When a user asks to modify the notes:
 - Do not add any additional or separate notes unless explicitly instructed.
 - Modify only the part specified by the user.
@@ -182,7 +196,11 @@ export default function DeepSeekChat({
       const response = await fetch("/api/deepseek", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ messages: updatedMessages }),
+        body: JSON.stringify({
+          topic: notesTitle,
+          context: getActiveContext(),
+          style: "academic",
+        }),
       });
 
       if (!response.ok) {
@@ -295,7 +313,7 @@ export default function DeepSeekChat({
                       <ActionIcon
                         onClick={() => handleSaveToNotes(message.content)}
                         title="Save to Notes"
-                        variant="subtle"
+                        variant="filled"
                         color="red"
                       >
                         <MdSave size={24} />
@@ -303,10 +321,10 @@ export default function DeepSeekChat({
                       <ActionIcon
                         onClick={() => handleAppendToNotes(message.content)}
                         title="Append to Notes"
-                        variant="subtle"
+                        variant="filled"
                         color="blue"
                       >
-                        <MdAddComment size={16} className="rotate-90" />
+                        <MdAddToQueue size={16} className="rotate-90" />
                       </ActionIcon>
                     </div>
                   )}
