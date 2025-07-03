@@ -1,43 +1,22 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
-import {
-  TextInput,
-  Button,
-  ScrollArea,
-  Group,
-  Avatar,
-  Paper,
-  ActionIcon,
-} from "@mantine/core";
-import { IconUser, IconRobot } from "@tabler/icons-react";
+import { logKPIEvent } from "@/app/kpitracker/logKPIEvent";
+import { MessageInput } from "@/app/manage-notes/@ainotes/MessageInput ";
+import { getActiveContext } from "@/utils/ai/contextStorage";
+import { createClient } from "@/utils/supabase/client";
+import { ActionIcon, Avatar, Group, Paper, ScrollArea } from "@mantine/core";
+import { IconRobot, IconUser } from "@tabler/icons-react";
+import "katex/dist/katex.min.css";
+import { useSearchParams } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
+import { MdAddToQueue, MdAssistant, MdSave } from "react-icons/md";
 import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
-import remarkMath from "remark-math";
 import rehypeKatex from "rehype-katex";
 import rehypeRaw from "rehype-raw";
-import {
-  MdAdd,
-  MdAddBusiness,
-  MdAddComment,
-  MdAddTask,
-  MdAddToQueue,
-  MdAssistant,
-  MdAssistantDirection,
-  MdAssistantNavigation,
-  MdAssistantPhoto,
-  MdSave,
-  MdUpdate,
-} from "react-icons/md";
-import "katex/dist/katex.min.css";
-import { createClient } from "@/utils/supabase/client";
-import { MessageInput } from "@/app/manage-notes/@ainotes/MessageInput ";
+import remarkGfm from "remark-gfm";
+import remarkMath from "remark-math";
 import { showNotifications } from "../Notification";
 import { showErrorNotification } from "../showErrorNotification";
-import { useSearchParams } from "next/navigation";
-import { logKPIEvent } from "@/app/kpitracker/logKPIEvent";
-import { getActiveContext } from "@/utils/ai/contextStorage";
-import { useFormStatus } from "react-dom";
 
 interface Message {
   role: "user" | "assistant" | "system";
@@ -158,39 +137,12 @@ export default function DeepSeekChat({
     e.preventDefault();
     if (!input.trim() || isLoading) return;
 
-    const instructionMessage: Message[] = [
-      {
-        role: "system",
-        internal: true,
-        content: `You are an expert in preparing high-quality academic notes.`,
-      },
-      {
-        role: "system",
-        internal: true,
-        content: `incorporate table if required, don't assume facts and figures, provide only actual facts and figures`,
-      },
-      {
-        role: "system",
-        internal: true,
-        content: `When a user asks to modify the notes:
-- Do not add any additional or separate notes unless explicitly instructed.
-- Modify only the part specified by the user.
-- Keep the rest of the notes exactly as they were.
-- Return the full updated notes as a complete response.`,
-      },
-      {
-        role: "system",
-        internal: true,
-        content: `Avoid any disclaimers, explanations, or commentary. Present the updated notes directly, as if final and ready for use.`,
-      },
-    ];
-
     const userMessage: Message = {
       role: "user",
       content: input,
     };
 
-    const updatedMessages = [...messages, ...instructionMessage, userMessage];
+    const updatedMessages = [...messages, userMessage];
     setMessages(updatedMessages);
     setInput("");
     setIsLoading(true);
@@ -202,7 +154,7 @@ export default function DeepSeekChat({
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          topic: notesTitle,
+          topic: updatedMessages,
           context: getActiveContext(),
           style: "academic",
         }),

@@ -1,10 +1,17 @@
-import { ActiveContext } from "@/utils/ai/contextStorage";
 import { NextResponse } from "next/server";
 import OpenAI from "openai";
+import { ActiveContext } from "@/utils/ai/contextStorage";
+import {
+  baseSystemPrompts,
+  getContextPrompts,
+  getStylePrompt,
+} from "@/utils/ai/aiInstructionManager";
 
-// -------------------------
-// Helper: Dynamic Target Audience
-// -------------------------
+const openai = new OpenAI({
+  apiKey: process.env.DEEPSEEK_API_KEY!,
+  baseURL: "https://api.deepseek.com/",
+});
+
 function getTargetAudience(context: ActiveContext): string {
   if (!context) return "students";
 
@@ -20,14 +27,6 @@ function getTargetAudience(context: ActiveContext): string {
   }
 }
 
-// -------------------------
-// API Handler
-// -------------------------
-const openai = new OpenAI({
-  apiKey: process.env.DEEPSEEK_API_KEY!,
-  baseURL: "https://api.deepseek.com/",
-});
-
 export async function POST(req: Request) {
   try {
     const {
@@ -35,62 +34,29 @@ export async function POST(req: Request) {
       context,
       style = "academic",
     }: {
-      topic: string;
+      topic: { role: "user" | "system" | "assistant"; content: string }[];
       context: ActiveContext;
       style?: string;
     } = await req.json();
-    console.log(
-      "Stringified context for AI notes:\n",
-      JSON.stringify(context ?? {}, null, 2)
-    );
-    if (!topic || typeof topic !== "string") {
+
+    if (!topic || !Array.isArray(topic) || topic.length === 0) {
       return NextResponse.json(
-        { error: "Topic must be a non-empty string." },
+        { error: "Invalid or empty topic message list." },
         { status: 400 }
       );
     }
 
-    const targetAudience = getTargetAudience(context);
-
-    const styleInstructions: Record<string, string> = {
-      academic:
-        "Use formal academic tone, appropriate for UPSC or university-level studies.",
-      concise: "Be clear and to the point, avoid unnecessary fluff.",
-      exam: "Structure notes to align with commonly asked exam questions.",
-      practical:
-        "Include real-world applications and examples relevant to India.",
-    };
-
-    const systemPrompt = `
-You are a highly qualified academic note-making assistant.
-
-Your task is to generate **structured, high-quality academic notes** on the topic:
-"${topic}"
-
-Use the context below to tailor your response:
-${JSON.stringify(context ?? {}, null, 2)}
-
-Instructions:
-- Begin with a short introduction to the topic.
-- Break down the content into logical sections and subheadings.
-- Use bullet points and formatting where helpful.
-- Include definitions, explanations, and (where possible) examples, diagrams, or case studies.
-- Maintain a logical academic flow: Introduction → Core Concepts → Examples → Analysis → Conclusion.
-- Keep in mind the target audience: ${targetAudience}.
-- ${styleInstructions[style] || styleInstructions["academic"]}
-
-Only return the notes. Do not include any preamble or system message.
-`;
+    // Get dynamic context string
+    const contextString = getTargetAudience(context); // Already returns smart context summary
 
     const messages: OpenAI.Chat.ChatCompletionMessageParam[] = [
-      {
-        role: "system",
-        content: systemPrompt,
-      },
-      {
-        role: "user",
-        content: `Generate academic notes for topic: "${topic}"`,
-      },
+      ...baseSystemPrompts,
+      ...getContextPrompts(contextString),
+      getStylePrompt(style),
+      ...topic.map((msg) => ({
+        role: msg.role,
+        content: msg.content,
+      })),
     ];
 
     const stream = await openai.chat.completions.create({
@@ -100,6 +66,7 @@ Only return the notes. Do not include any preamble or system message.
     });
 
     const encoder = new TextEncoder();
+
     const readableStream = new ReadableStream({
       async start(controller) {
         try {
