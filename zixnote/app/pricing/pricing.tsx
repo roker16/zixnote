@@ -4,9 +4,7 @@ import { FeatureList } from "./FeatureList";
 import { getSubscriptionServer } from "./getSubscriptionServer";
 import Paynow from "./paynow";
 
-const CheckIcon = (
-  <IconDiscountCheckFilled  size={36} stroke={1}  />
-);
+const CheckIcon = <IconDiscountCheckFilled size={36} stroke={1} />;
 
 async function Pricing() {
   const user = await getUserAndRole();
@@ -24,7 +22,7 @@ async function Pricing() {
 
   // 5-year plan price and discount percentage
   const fiveYearActualPrice = 60 * monthlyPrice;
-  const fiveYearPrice = 16000;
+  const fiveYearPrice = 14999;
   const fiveYearDiscountPercentage =
     ((60 * monthlyPrice - fiveYearPrice) / (60 * monthlyPrice)) * 100;
 

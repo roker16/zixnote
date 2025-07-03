@@ -22,6 +22,10 @@ import {
   MdAddComment,
   MdAddTask,
   MdAddToQueue,
+  MdAssistant,
+  MdAssistantDirection,
+  MdAssistantNavigation,
+  MdAssistantPhoto,
   MdSave,
   MdUpdate,
 } from "react-icons/md";
@@ -33,6 +37,7 @@ import { showErrorNotification } from "../showErrorNotification";
 import { useSearchParams } from "next/navigation";
 import { logKPIEvent } from "@/app/kpitracker/logKPIEvent";
 import { getActiveContext } from "@/utils/ai/contextStorage";
+import { useFormStatus } from "react-dom";
 
 interface Message {
   role: "user" | "assistant" | "system";
@@ -264,7 +269,7 @@ export default function DeepSeekChat({
   return (
     <div className="max-w-6xl mx-auto p-0 h-screen flex flex-col">
       <h1 className="text-2xl font-bold text-center mb-6 text-gray-800">
-        Your AI Assistant
+        Your Dizinote Assistant <MdAssistant />
       </h1>
 
       {error && <p className="text-red-500 text-center mb-4">{error}</p>}
@@ -272,9 +277,17 @@ export default function DeepSeekChat({
       <ScrollArea className="flex-1 w-full border rounded-lg mb-16 bg-gray-50 overflow-y-auto">
         <div className="flex flex-col space-y-4">
           {messages.length === 0 && (
-            <p className="text-gray-500 text-center">
-              Start Asking from your AI assistant!
-            </p>
+            <>
+              <p className="text-gray-500 text-center">
+                Start Asking anything from your Dizinote assistant!
+              </p>
+              <p className="text-gray-500 text-center">
+                Ask for formatting (delete, add, highlight, color)
+              </p>
+              <p className="text-gray-500 text-center">
+                Ask to insert image if you provide link to image
+              </p>
+            </>
           )}
 
           {messages
