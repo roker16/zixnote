@@ -125,3 +125,48 @@ export function getMBBSPrompt(
     },
   ];
 }
+export function getUPSCGeneralStudiesPrompt(
+  paperName: string
+): ChatCompletionMessageParam[] {
+  return [
+    {
+      role: "system",
+      content: `Context: You are generating academic notes for the UPSC Civil Services Examination (CSE), specifically for General Studies - ${paperName}.`,
+    },
+    {
+      role: "system",
+      content: `Follow the UPSC CSE Mains syllabus closely. Notes must be structured, factual, and aligned with past trends.`,
+    },
+    {
+      role: "system",
+      content: `Incorporate relevant examples, Supreme Court cases, government schemes, data from NITI Aayog, and constitutional references when appropriate.`,
+    },
+    {
+      role: "system",
+      content: `Use a formal, academic tone. Avoid conversational language. Emphasize clarity, headings, bullet points, and concise explanations for answer-oriented preparation.`,
+    },
+  ];
+}
+
+export function getUPSCOptionalPrompt(
+  subjectName: string
+): ChatCompletionMessageParam[] {
+  return [
+    {
+      role: "system",
+      content: `Context: You are generating notes for the UPSC Civil Services Examination (CSE), Optional Subject: ${subjectName}.`,
+    },
+    {
+      role: "system",
+      content: `Ensure the content is relevant to the official UPSC optional syllabus. Use standard academic sources such as IGNOU, standard textbooks, and scholarly works in the subject.`,
+    },
+    {
+      role: "system",
+      content: `Maintain a formal tone suitable for Mains answer writing. Include thinkers, scholars, case studies, and diagrams where relevant.`,
+    },
+    {
+      role: "system",
+      content: `Avoid speculation or generic language. Content must help in conceptual clarity, and include real-world illustrations and critical perspectives if applicable.`,
+    },
+  ];
+}

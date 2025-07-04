@@ -1,7 +1,12 @@
 import { NextResponse } from "next/server";
 import OpenAI from "openai";
-import { getSubtopicPrompt } from "@/utils/ai/aiSubtopicPrompt";
-
+import {
+  getMBBSSubtopicPrompt,
+  getNCERTSubtopicPrompt,
+  getSubtopicPrompt,
+} from "@/utils/ai/aiSubtopicPrompt";
+import { ActiveContext } from "@/utils/ai/contextStorage"; // for type safety
+import { ChatCompletionMessageParam } from "openai/resources/chat";
 const openai = new OpenAI({
   apiKey: process.env.DEEPSEEK_API_KEY!,
   baseURL: "https://api.deepseek.com/",
@@ -9,7 +14,15 @@ const openai = new OpenAI({
 
 export async function POST(req: Request) {
   try {
-    const { topic, context, style = "academic" } = await req.json();
+    const {
+      topic,
+      context,
+      style = "academic",
+    }: {
+      topic: string;
+      context: ActiveContext;
+      style?: string;
+    } = await req.json();
 
     if (!topic || typeof topic !== "string" || !topic.trim()) {
       return NextResponse.json(
@@ -18,12 +31,33 @@ export async function POST(req: Request) {
       );
     }
 
-    const systemPrompt = getSubtopicPrompt({ topic, context, style });
+    // Determine system prompt
+    let systemPrompts: ChatCompletionMessageParam[];
 
+    if (
+      context?.type === "school" &&
+      context.schoolName?.toLowerCase() === "ncert" &&
+      context.className &&
+      context.bookName
+    ) {
+      systemPrompts = getNCERTSubtopicPrompt(
+        context.className,
+        context.bookName
+      );
+    } else if (
+      context?.type === "college" &&
+      context.collegeName?.toLowerCase() === "medical" &&
+      context.course
+    ) {
+      systemPrompts = getMBBSSubtopicPrompt(context.course);
+    } else {
+      systemPrompts = getSubtopicPrompt(topic, context);
+    }
+    console.log(systemPrompts);
     const response = await openai.chat.completions.create({
       model: "deepseek-chat",
       messages: [
-        { role: "system", content: systemPrompt },
+        ...systemPrompts,
         {
           role: "user",
           content: `Topic: ${topic}\n\nStrictly follow the above instructions.`,

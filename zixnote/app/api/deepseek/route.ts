@@ -7,6 +7,8 @@ import {
   getStylePrompt,
   getNCERTPrompt,
   getMBBSPrompt,
+  getUPSCGeneralStudiesPrompt,
+  getUPSCOptionalPrompt,
 } from "@/utils/ai/aiInstructionManager";
 import { ChatCompletionMessageParam } from "openai/resources/chat";
 const openai = new OpenAI({
@@ -50,7 +52,6 @@ export async function POST(req: Request) {
 
     const contextString = getTargetAudience(context);
 
-    // --- SPECIAL PROMPT HANDLING ---
     let specialContextPrompts: ChatCompletionMessageParam[] = [];
 
     if (
@@ -69,6 +70,15 @@ export async function POST(req: Request) {
       context.course
     ) {
       specialContextPrompts = getMBBSPrompt(context.course);
+    } else if (
+      context.type === "exam" &&
+      context.examName?.toLowerCase() === "upsc civil services"
+    ) {
+      if (context.paperName?.toLowerCase().startsWith("general studies")) {
+        specialContextPrompts = getUPSCGeneralStudiesPrompt(context.paperName);
+      } else if (context.subjectName) {
+        specialContextPrompts = getUPSCOptionalPrompt(context.subjectName);
+      }
     }
 
     // --- COMPOSE FINAL PROMPT MESSAGES ---
