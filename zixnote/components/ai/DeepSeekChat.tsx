@@ -17,6 +17,7 @@ import remarkGfm from "remark-gfm";
 import remarkMath from "remark-math";
 import { showNotifications } from "../Notification";
 import { showErrorNotification } from "../showErrorNotification";
+import { cleanMarkdown, normalizeLatex } from "@/utils/ai/cleanAiResponse";
 
 interface Message {
   role: "user" | "assistant" | "system";
@@ -44,23 +45,7 @@ export default function DeepSeekChat({
   const searchParams = useSearchParams();
   // const headingname = searchParams.get("headingname");
   const subjectName = searchParams.get("name");
-  // Normalize LaTeX syntax
-  const normalizeLatex = (content: string): string => {
-    return content
-      .replace(
-        /\\\[\s*(?!\$)([^]*?)(?!\$)\s*\\\]/g,
-        (_, expr) => `\\[ $${expr.trim()}$ \\]`
-      )
-      .replace(
-        /\\\(\s*(?!\$)([^]*?)(?!\$)\s*\\\)/g,
-        (_, expr) => `\\( $${expr.trim()}$ \\)`
-      )
-      .replace(
-        /\$\$\s*([^]*?)\s*\$\$/g,
-        (_, expr) => `\\[ $${expr.trim()}$ \\]`
-      )
-      .replace(/\$(?!\$)([^$]+?)\$/g, (_, expr) => ` $${expr.trim()}$ `);
-  };
+
   //Initial prompt if content is not available
   useEffect(() => {
     if (!initialContent?.trim() && notesTitle) {
@@ -72,11 +57,11 @@ export default function DeepSeekChat({
   // Load initial system message from note content
   useEffect(() => {
     if (initialContent) {
-      const normalized = normalizeLatex(initialContent);
+      //do not again clean and normalized because it was already done while saving
       setMessages([
         {
           role: "system",
-          content: `Here is the current note content:\n\n${normalized}`,
+          content: `Here is the current note content:\n\n${initialContent}`,
         },
       ]);
     }
@@ -117,6 +102,9 @@ export default function DeepSeekChat({
   };
 
   const handleSaveToNotes = async (content: string) => {
+    const cleaned = cleanMarkdown(content);
+    console.log(content);
+    console.log(normalizeLatex(content));
     try {
       const { error } = await supabase
         .from("notes")
@@ -125,7 +113,6 @@ export default function DeepSeekChat({
 
       if (error) throw new Error("Failed to update note: " + error.message);
       // ✅ Log KPI event: note updated
-      console.log("hello");
       await logKPIEvent("note_updated", { book_name: subjectName });
       showNotifications(null, "updated");
     } catch (err: any) {
@@ -185,7 +172,10 @@ export default function DeepSeekChat({
             if (data === "[DONE]") continue;
             try {
               const parsed = JSON.parse(data);
-              const content = normalizeLatex(parsed.content || "");
+              const content = parsed.content || "";
+
+              // const content = normalizeLatex(parsed.content || "");
+
               if (content) {
                 assistantMessage += content;
                 setMessages((prev) => {
@@ -378,7 +368,7 @@ export default function DeepSeekChat({
                         ),
                       }}
                     >
-                      {normalizeLatex(message.content)}
+                      {message.content}
                     </ReactMarkdown>
                   </div>
                 </Paper>

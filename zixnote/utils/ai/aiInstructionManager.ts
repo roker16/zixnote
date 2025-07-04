@@ -9,11 +9,18 @@ export const baseSystemPrompts: ChatCompletionMessageParam[] = [
   },
   {
     role: "system",
-    content: `Your job is to generate or modify high-quality structured notes based on user instructions. Present all content in proper Markdown format.`,
+    content: `Your job is to generate or modify high-quality structured notes based on user instructions.`,
   },
   {
     role: "system",
     content: `Under no circumstances should you include conversational filler, polite phrases, or prompts for feedback. Do not include lines like "Here's the updated note" or "Let me know if you'd like changes." Only return the academic content.`,
+  },
+  {
+    role: "system",
+    content: `- Do NOT wrap the output in triple backticks or markdown code fences (no \`\`\`).
+    - Wrap **inline math** with single dollar signs: $...$
+- Wrap **block math** with double dollar signs: $$...$$ 
+- Just return clean markdown directly.`,
   },
   {
     role: "system",
@@ -64,4 +71,57 @@ export function getStylePrompt(style: string): ChatCompletionMessageParam {
       styleInstructions[style] || styleInstructions["academic"]
     }`,
   };
+}
+export function getNCERTPrompt(
+  className: string,
+  bookName: string
+): ChatCompletionMessageParam[] {
+  return [
+    {
+      role: "system",
+      content: `Context: You are generating academic notes strictly based on the NCERT textbook for Class ${className}, Book: "${bookName}".`,
+    },
+    {
+      role: "system",
+      content: `Use only the information contained in that specific NCERT book. Do not add external facts, assumptions, or supplementary material.`,
+    },
+    {
+      role: "system",
+      content: `Ensure all content reflects the NCERT book's tone, structure, and explanation style. Do not oversimplify or add advanced commentary unless clearly stated in the book.`,
+    },
+  ];
+}
+
+export function getMBBSPrompt(
+  courseName: string
+): ChatCompletionMessageParam[] {
+  return [
+    {
+      role: "system",
+      content: `Context: You are generating academic notes for the MBBS medical course in India, specifically for the subject "${courseName}".`,
+    },
+    {
+      role: "system",
+      content: `Follow the curriculum prescribed by the National Medical Commission (NMC) of India. Content should align with what is typically covered in Indian MBBS courses.`,
+    },
+    {
+      role: "system",
+      content: `You may refer to standard Indian and international undergraduate-level medical textbooks such as:
+- BD Chaurasia, Gray’s Anatomy (for Anatomy)
+- Guyton and Hall (for Physiology)
+- Robbins Basic Pathology (for Pathology)
+- Lippincott, Harper’s, etc., where appropriate.`,
+    },
+    {
+      role: "system",
+      content: `Ensure the content is:
+- Clear, concept-focused, and structured
+- Suitable for undergraduate medical students
+- Not overly advanced or journal-style unless specifically requested`,
+    },
+    {
+      role: "system",
+      content: `Where appropriate, include labeled diagrams (as markdown mentions), clinical correlations, and applied examples relevant to Indian MBBS education.`,
+    },
+  ];
 }

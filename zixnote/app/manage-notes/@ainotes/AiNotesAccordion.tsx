@@ -115,51 +115,47 @@ function AiNotesAccordion({
   const items = data
     ?.sort((a, b) => a.id - b.id)
     .map((item) => (
-      <>
-        <Accordion.Item
-          key={item.id}
-          value={item.id.toString()}
-          bg={"var(--mantine-color-gray-1)"}
-          my={"xs"}
-        >
-          <Group gap="sm" align="center" wrap="nowrap" px="sm">
-            <Menu shadow="md" width={200} position="bottom-start">
-              <Menu.Target>
-                <ActionIcon size="lg" variant="subtle" color="gray">
-                  <IconDotsVertical size="1rem" />
-                </ActionIcon>
-              </Menu.Target>
-              <Menu.Dropdown>
-                <Menu.Item
-                  leftSection={
-                    <IconEditCircle
-                      style={{ width: rem(14), height: rem(14) }}
-                    />
-                  }
-                >
-                  Edit
-                </Menu.Item>
-                <Menu.Item
-                  onClick={() => handleDelete(item.id)}
-                  leftSection={
-                    <IconTrash style={{ width: rem(14), height: rem(14) }} />
-                  }
-                >
-                  Delete
-                </Menu.Item>
-              </Menu.Dropdown>
-            </Menu>
-            <Accordion.Control style={{ flex: 1 }}>
-              {item.title}
-            </Accordion.Control>
-          </Group>
-          <Accordion.Panel>
-            {value?.includes(item.id.toString()) && (
-              <NoteContent noteId={item.id} noteTitle={item.title} />
-            )}
-          </Accordion.Panel>
-        </Accordion.Item>
-      </>
+      <Accordion.Item
+        key={item.id}
+        value={item.id.toString()}
+        bg={"var(--mantine-color-gray-1)"}
+        my={"xs"}
+      >
+        <Group gap="sm" align="center" wrap="nowrap" px="sm">
+          <Menu shadow="md" width={200} position="bottom-start">
+            <Menu.Target>
+              <ActionIcon size="lg" variant="subtle" color="gray">
+                <IconDotsVertical size="1rem" />
+              </ActionIcon>
+            </Menu.Target>
+            <Menu.Dropdown>
+              <Menu.Item
+                leftSection={
+                  <IconEditCircle style={{ width: rem(14), height: rem(14) }} />
+                }
+              >
+                Edit
+              </Menu.Item>
+              <Menu.Item
+                onClick={() => handleDelete(item.id)}
+                leftSection={
+                  <IconTrash style={{ width: rem(14), height: rem(14) }} />
+                }
+              >
+                Delete
+              </Menu.Item>
+            </Menu.Dropdown>
+          </Menu>
+          <Accordion.Control style={{ flex: 1 }}>
+            {item.title}
+          </Accordion.Control>
+        </Group>
+        <Accordion.Panel>
+          {value?.includes(item.id.toString()) && (
+            <NoteContent noteId={item.id} noteTitle={item.title} />
+          )}
+        </Accordion.Panel>
+      </Accordion.Item>
     ));
 
   return (

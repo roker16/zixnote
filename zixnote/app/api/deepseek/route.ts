@@ -5,8 +5,10 @@ import {
   baseSystemPrompts,
   getContextPrompts,
   getStylePrompt,
+  getNCERTPrompt,
+  getMBBSPrompt,
 } from "@/utils/ai/aiInstructionManager";
-
+import { ChatCompletionMessageParam } from "openai/resources/chat";
 const openai = new OpenAI({
   apiKey: process.env.DEEPSEEK_API_KEY!,
   baseURL: "https://api.deepseek.com/",
@@ -46,19 +48,41 @@ export async function POST(req: Request) {
       );
     }
 
-    // Get dynamic context string
-    const contextString = getTargetAudience(context); // Already returns smart context summary
+    const contextString = getTargetAudience(context);
 
+    // --- SPECIAL PROMPT HANDLING ---
+    let specialContextPrompts: ChatCompletionMessageParam[] = [];
+
+    if (
+      context.type === "school" &&
+      context.schoolName?.toLowerCase() === "ncert" &&
+      context.className &&
+      context.bookName
+    ) {
+      specialContextPrompts = getNCERTPrompt(
+        context.className,
+        context.bookName
+      );
+    } else if (
+      context.type === "college" &&
+      context.collegeName?.toLowerCase() === "medical" &&
+      context.course
+    ) {
+      specialContextPrompts = getMBBSPrompt(context.course);
+    }
+
+    // --- COMPOSE FINAL PROMPT MESSAGES ---
     const messages: OpenAI.Chat.ChatCompletionMessageParam[] = [
       ...baseSystemPrompts,
       ...getContextPrompts(contextString),
-      getStylePrompt(style),
+      ...specialContextPrompts,
+      // getStylePrompt(style),
       ...topic.map((msg) => ({
         role: msg.role,
         content: msg.content,
       })),
     ];
-
+    console.log(messages);
     const stream = await openai.chat.completions.create({
       model: "deepseek-chat",
       messages,

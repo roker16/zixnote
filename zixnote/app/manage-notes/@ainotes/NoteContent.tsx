@@ -12,6 +12,7 @@ import rehypeRaw from "rehype-raw";
 import "katex/dist/katex.min.css";
 import AiDrawer from "./AiDrawer";
 import { IconPdf, IconPrinter } from "@tabler/icons-react";
+import { cleanMarkdown, normalizeLatex } from "@/utils/ai/cleanAiResponse";
 // import html2pdf from "html2pdf.js";
 
 interface NoteContentProps {
@@ -36,22 +37,11 @@ function NoteContent({ noteId, noteTitle }: NoteContentProps) {
     }
   );
 
-  const normalizeLatex = (content: string): string => {
-    return content
-      .replace(
-        /\\\[\s*(?!\$)([^]*?)(?!\$)\s*\\\]/g,
-        (_, expr) => `\\[ $${expr.trim()}$ \\]`
-      )
-      .replace(
-        /\\\(\s*(?!\$)([^]*?)(?!\$)\s*\\\)/g,
-        (_, expr) => `\\( $${expr.trim()}$ \\)`
-      )
-      .replace(/\$$\s*([^]*?)\s*\$$/g, (_, expr) => `\\[ $${expr.trim()}$ \\]`)
-      .replace(/\$(?!\$)([^$]+?)\$/g, (_, expr) => ` $${expr.trim()}$ `);
-  };
-
+  // const normalizedContent = data?.ainotes_english
+  //   ? cleanMarkdown(normalizeLatex(data.ainotes_english))
+  //   : "No notes content available";
   const normalizedContent = data?.ainotes_english
-    ? normalizeLatex(data.ainotes_english)
+    ? data.ainotes_english
     : "No notes content available";
 
   const handlePrint = async () => {
