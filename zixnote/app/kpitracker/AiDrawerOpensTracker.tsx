@@ -2,102 +2,90 @@
 
 import { useEffect, useState } from "react";
 import { createClient } from "@/utils/supabase/client";
-import { Card, Title, Text, Group, Loader } from "@mantine/core";
+import { Card, Title, Text, Loader, Stack } from "@mantine/core";
 
-// Raw Supabase row
-interface KpiEventRaw {
-  id: number;
+// Nullable-safe view result type
+interface LatestKpiEvent {
+  id: number | null;
   created_at: string | null;
-  event_type: string;
+  event_type: string | null;
   metadata: any;
-  profiles: {
-    full_name: string | null;
-  } | null;
-}
-
-// Transformed for display
-interface KpiEvent {
-  id: number;
-  full_name: string;
-  book_name?: string;
-  created_at: string;
+  full_name: string | null;
 }
 
 export default function AiDrawerOpensTracker() {
   const supabase = createClient();
-  const [events, setEvents] = useState<KpiEvent[]>([]);
+  const [events, setEvents] = useState<LatestKpiEvent[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchKPI = async () => {
+    const fetchLatestEvents = async () => {
       setLoading(true);
+
       const { data, error } = await supabase
-        .from("kpi_events")
-        .select("id, event_type, created_at, metadata, profiles(full_name)")
-        .eq("event_type", "ai_drawer_opened")
-        .order("created_at", { ascending: false })
-        .limit(50);
+        .from("latest_ai_drawer_events_per_user")
+        .select("*")
+        .order("created_at", { ascending: false });
 
       if (error) {
-        console.error("Error loading AI drawer events:", error);
+        console.error("Error fetching latest AI drawer events:", error);
         setLoading(false);
         return;
       }
 
-      const parsed = (data as KpiEventRaw[]).map((event) => ({
-        id: event.id,
-        full_name: event.profiles?.full_name ?? "Anonymous",
-        book_name:
-          typeof event.metadata === "object" && event.metadata?.book_name
-            ? event.metadata.book_name
-            : undefined,
-        created_at: event.created_at ?? "",
-      }));
-
-      setEvents(parsed);
+      setEvents(data || []);
       setLoading(false);
     };
 
-    fetchKPI();
+    fetchLatestEvents();
   }, [supabase]);
 
   return (
     <Card shadow="sm" padding="lg" radius="md" withBorder className="mt-4">
       <Title order={4} className="mb-4">
-        💬 AI Drawer Opens
+        🧑‍💻 Latest AI Drawer Activity (Unique Users)
       </Title>
 
       {loading ? (
         <Loader size="sm" />
       ) : events.length === 0 ? (
         <Text size="sm" c="dimmed">
-          No AI drawer opens logged yet.
+          No AI drawer usage logged yet.
         </Text>
       ) : (
-        <div className="space-y-2 max-h-[400px] overflow-y-auto pr-2">
-          {events.map((event) => (
-            <Group key={event.id} className="border-b pb-1">
-              <div>
-                <Text size="sm">
-                  Book Name: <strong>{event.book_name ?? "Unknown"}</strong>
-                </Text>
-                <Text size="xs" c="dimmed">
-                  By: {event.full_name}
-                </Text>
-              </div>
-              <Text size="xs" c="dimmed">
-                {new Intl.DateTimeFormat("en-GB", {
+        <Stack gap="sm" className="max-h-[400px] overflow-y-auto pr-2">
+          {events.map((event) => {
+            const formattedDate = event.created_at
+              ? new Intl.DateTimeFormat("en-GB", {
                   day: "2-digit",
                   month: "2-digit",
                   year: "2-digit",
                   hour: "2-digit",
                   minute: "2-digit",
                   hour12: true,
-                }).format(new Date(event.created_at))}
-              </Text>
-            </Group>
-          ))}
-        </div>
+                })
+                  .format(new Date(event.created_at))
+                  .replace(/\//g, "-")
+              : "Unknown time";
+
+            return (
+              <div
+                key={event.id ?? `${event.full_name}-${event.created_at}`}
+                className="border-b pb-2"
+              >
+                <Text fw={700} size="sm">
+                  {event.full_name ?? "Anonymous"} — {formattedDate}
+                </Text>
+
+                {event.metadata?.book_name && (
+                  <Text size="xs" c="gray.6" mt={2}>
+                    Book: {event.metadata.book_name}
+                  </Text>
+                )}
+              </div>
+            );
+          })}
+        </Stack>
       )}
     </Card>
   );

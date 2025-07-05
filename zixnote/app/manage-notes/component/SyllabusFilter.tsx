@@ -12,6 +12,8 @@ import ExamParent from "./exam-filter/ExamParent";
 import PersonalParent from "./personal-filter/PersonalParent";
 import { useCallback, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { getActiveContext } from "@/utils/ai/contextStorage";
+import { Books } from "./school-filter/Books";
 
 export default function SyllabusFilter({
   canModerate,
@@ -66,6 +68,7 @@ export default function SyllabusFilter({
       pathname + "?" + createQueryString("activetab", selectedTab)
     );
   };
+  const activeContext = getActiveContext();
   return (
     <Tabs
       defaultValue={searchParams.get("activetab") || "school"}

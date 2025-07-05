@@ -651,7 +651,26 @@ export type Database = {
       };
     };
     Views: {
-      [_ in never]: never;
+      latest_ai_drawer_events_per_user: {
+        Row: {
+          created_at: string | null;
+          event_type: string | null;
+          full_name: string | null;
+          id: number | null;
+          metadata: Json | null;
+        };
+        Relationships: [];
+      };
+      latest_note_updates_per_user: {
+        Row: {
+          created_at: string | null;
+          event_type: string | null;
+          full_name: string | null;
+          id: number | null;
+          metadata: Json | null;
+        };
+        Relationships: [];
+      };
     };
     Functions: {
       [_ in never]: never;
