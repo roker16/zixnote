@@ -1,7 +1,15 @@
 "use client";
 
 import { createClient } from "@/utils/supabase/client";
-import { Accordion, ActionIcon, Center, Group, Menu, rem } from "@mantine/core";
+import {
+  Accordion,
+  ActionIcon,
+  Button,
+  Center,
+  Group,
+  Menu,
+  rem,
+} from "@mantine/core";
 import {
   useDeleteMutation,
   useQuery,
@@ -14,6 +22,7 @@ import {
 import { useEffect, useState } from "react";
 import NoteContent from "./NoteContent";
 import CreateNotesForm from "../component/CreateNotesForm";
+import { MdRefresh } from "react-icons/md";
 
 function AiNotesAccordion({
   topicId,
@@ -55,62 +64,62 @@ function AiNotesAccordion({
     }
   );
 
-  useEffect(() => {
-    const generateAndSaveSubtopics = async () => {
-      if (!topicText || !topicId || !userId || data === undefined) return;
-      if (data!.length > 0 || isGenerating) return;
+  // useEffect(() => {
+  const generateAndSaveSubtopics = async () => {
+    if (!topicText || !topicId || !userId || data === undefined) return;
+    if (data!.length > 0 || isGenerating) return;
 
-      setIsGenerating(true);
+    setIsGenerating(true);
 
-      try {
-        // ✅ Load saved AI context (e.g. schoolName/className/bookName)
-        const contextRaw = localStorage.getItem("activeContext");
-        const context = contextRaw ? JSON.parse(contextRaw) : null;
+    try {
+      // ✅ Load saved AI context (e.g. schoolName/className/bookName)
+      const contextRaw = localStorage.getItem("activeContext");
+      const context = contextRaw ? JSON.parse(contextRaw) : null;
 
-        const res = await fetch("/api/deepseek/generatesubtopic", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            topic: topicText,
-            userId,
-            count: 6,
-            style: "academic",
-            context, // ✅ Include context in the request body
-          }),
-        });
+      const res = await fetch("/api/deepseek/generatesubtopic", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          topic: topicText,
+          userId,
+          count: 6,
+          style: "academic",
+          context, // ✅ Include context in the request body
+        }),
+      });
 
-        if (!res.ok) {
-          const errorText = await res.text();
-          throw new Error(`API Error ${res.status}: ${errorText}`);
-        }
-
-        const json = await res.json();
-        const { subtopics } = json;
-
-        if (!Array.isArray(subtopics)) throw new Error("Invalid subtopics");
-
-        const { error } = await supabase.from("notes").insert(
-          subtopics.map((title: string, index: number) => ({
-            index_id_fk: Number(topicId),
-            owner_fk: userId,
-            title,
-            order: index + 1,
-            type: "notes",
-          }))
-        );
-
-        if (error) throw error;
-
-        await mutate();
-      } catch (err) {
-        console.error("Failed to auto-generate subtopics", err);
-      } finally {
-        setIsGenerating(false);
+      if (!res.ok) {
+        const errorText = await res.text();
+        throw new Error(`API Error ${res.status}: ${errorText}`);
       }
-    };
 
-    generateAndSaveSubtopics();
-  }, [data, topicId, userId, topicText, supabase, mutate, isGenerating]);
+      const json = await res.json();
+      const { subtopics } = json;
+
+      if (!Array.isArray(subtopics)) throw new Error("Invalid subtopics");
+
+      const { error } = await supabase.from("notes").insert(
+        subtopics.map((title: string, index: number) => ({
+          index_id_fk: Number(topicId),
+          owner_fk: userId,
+          title,
+          order: index + 1,
+          type: "notes",
+        }))
+      );
+
+      if (error) throw error;
+
+      await mutate();
+    } catch (err) {
+      console.error("Failed to auto-generate subtopics", err);
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
+  // generateAndSaveSubtopics();
+  // }, [data, topicId, userId, topicText, supabase, mutate, isGenerating]);
 
   const items = data
     ?.sort((a, b) => a.id - b.id)
@@ -182,9 +191,20 @@ function AiNotesAccordion({
         {items}
       </Accordion>
       {!isGenerating && (
-        <Center h={"100px"}>
-          <CreateNotesForm />
-        </Center>
+        <div className="flex flex-col items-center gap-y-6 mt-8 p-6 bg-gray-50 rounded-xl shadow-md">
+          {data?.length === 0 ? (
+            <Button
+              leftSection={<MdRefresh />}
+              onClick={() => generateAndSaveSubtopics()}
+              className="bg-blue-600 hover:bg-blue-700 text-white"
+              color="cyan"
+            >
+              Generate Subtopics
+            </Button>
+          ) : (
+            <CreateNotesForm />
+          )}
+        </div>
       )}
     </div>
   );

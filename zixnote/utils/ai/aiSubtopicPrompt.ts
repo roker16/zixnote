@@ -87,7 +87,7 @@ export function getNCERTSubtopicPrompt(
       role: "system",
       content: `Subtopics should:
 - Reflect typical chapter sections from NCERT (e.g., Introduction, Key Concepts, Applications)
-- Stay within 4–10 words each
+- Stay within 4–20 words each, maximum subtopic generated 4, but designed such that it covers full scope of topic. First subtopic generated should be same as the main topic.
 - Avoid vague terms like "Overview", "Notes", or "Explanation"
 - Be relevant to the chapter's context and audience level`,
     },

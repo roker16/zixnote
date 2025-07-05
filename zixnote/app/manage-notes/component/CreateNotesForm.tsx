@@ -14,6 +14,7 @@ import { useForm } from "@mantine/form";
 import { useDisclosure } from "@mantine/hooks";
 import { useInsertMutation } from "@supabase-cache-helpers/postgrest-swr";
 import { useRouter, useSearchParams } from "next/navigation";
+import { MdAdd } from "react-icons/md";
 
 export default function CreateNotesForm({
   parentId,
@@ -131,8 +132,8 @@ export default function CreateNotesForm({
         </Box>
       </Modal>
 
-      <Button onClick={open} variant="light">
-        Create Note Title
+      <Button leftSection={<MdAdd />} onClick={open} variant="light">
+        Create More Subtopic
       </Button>
     </>
   );
