@@ -3,7 +3,6 @@ import { ColorSchemeScript, MantineProvider } from "@mantine/core";
 import "@mantine/core/styles.css";
 import { Notifications } from "@mantine/notifications";
 import "@mantine/notifications/styles.css";
-import { cookies } from "next/headers";
 import "./globals.css"; //this should be always below mantine styles.css
 import { theme } from "./theme";
 

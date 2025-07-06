@@ -19,6 +19,7 @@ import { User } from "@supabase/supabase-js";
 import { IconPencil } from "@tabler/icons-react";
 import Image from "next/image";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
 export default function ManageSyllabusLayout({
   children,
@@ -40,6 +41,8 @@ export default function ManageSyllabusLayout({
   const theme = useMantineTheme();
   const supabase = createClient();
   const [user, setUser] = useState<User | null>(null);
+  const searchParams = useSearchParams();
+  const isFilterOff = searchParams.get("f") === "11";
   useEffect(() => {
     const getUser = async () => {
       setUser((await supabase.auth.getUser()).data.user);
@@ -126,15 +129,13 @@ export default function ManageSyllabusLayout({
         </Group>
 
         <ScrollArea scrollbarSize={4} scrollHideDelay={0} h={"100vh"}>
-          {filter}
+          {!isFilterOff && <div>{filter}</div>}
           {index}
         </ScrollArea>
       </AppShell.Navbar>
       <AppShell.Main pt={`calc(${rem(50)} + var(--mantine-spacing-md))`}>
         <Space h={10} />
-        {activeTab === "first" && (
-          <Suspense fallback={<div>loading...</div>}>{ainotes}</Suspense>
-        )}
+        {activeTab === "first" && <div>{ainotes}</div>}
         {activeTab === "second" && <div>{sharednotes}</div>}
         {activeTab === "third" && <div>Third Tab</div>}
       </AppShell.Main>

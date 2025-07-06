@@ -4,6 +4,7 @@ import { HeaderMegaMenu } from "@/components/landing/HeaderMegaMenu";
 import { HeroBullets } from "@/components/landing/HeroBullets";
 import { createClient } from "@/utils/supabase/server";
 import { Container } from "@mantine/core";
+import PublicDashboard from "./PublicDashboard";
 
 // import Landing from "./Landing";
 
@@ -17,7 +18,8 @@ export default async function Index() {
     <div>
       <HeaderMegaMenu user={user} />
       <Container size={"xl"}>
-        <HeroBullets />
+        <PublicDashboard />
+        {/* <HeroBullets />h */}
         {/* <LastSignedInUsers /> */}
       </Container>
       <FooterCentered />
