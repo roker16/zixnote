@@ -2,7 +2,6 @@
 import { saveActiveContext } from "@/utils/ai/contextStorage";
 import { Box } from "@mantine/core";
 import Image from "next/image";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 const sections = [
@@ -12,24 +11,51 @@ const sections = [
       {
         label: "Class 9",
         children: [
-          { label: "Science", href: "#" },
-          { label: "Geography - Contemporary India I", href: "#" },
-          { label: "Political Science - Democratic Politics I", href: "#" },
-          { label: "Economics", href: "#" },
-          { label: "History - India and the Contemporary World I", href: "#" },
+          {
+            label: "Science",
+            href: "/manage-notes?f=11&group=school&id1=5&id2=1&id=1&name=Science",
+          },
+          {
+            label: "Geography - Contemporary India I",
+            href: "/manage-notes?f=11&group=school&id1=5&id2=1&id=171&name=Geography+–+Contemporary+India+I",
+          },
+          {
+            label: "Political Science - Democratic Politics I",
+            href: "/manage-notes?f=11&group=school&id1=5&id2=1&id=172&name=Political+Science+–+Democratic+Politics+I",
+          },
+          {
+            label: "Economics",
+            href: "/manage-notes?f=11&group=school&id1=5&id2=1&id=173&name=Economics",
+          },
+          {
+            label: "History - India and the Contemporary World I",
+            href: "/manage-notes?f=11&group=school&id1=5&id2=1&id=170&name=History+–+India+and+the+Contemporary+World+–+I",
+          },
         ],
       },
       {
         label: "Class 10",
         children: [
-          { label: "Science", href: "#" },
-          { label: "Geography - Contemporary India II", href: "#" },
-          { label: "Political Science - Democratic Politics II", href: "#" },
+          {
+            label: "Science",
+            href: "/manage-notes?f=11&group=school&id1=6&id2=1&id=164&name=Science",
+          },
+          {
+            label: "Geography - Contemporary India II",
+            href: "/manage-notes?f=11&group=school&id1=6&id2=1&id=166&name=Geography+%28India+and+Contemporary+II%29",
+          },
+          {
+            label: "Political Science - Democratic Politics II",
+            href: "/manage-notes?f=11&group=school&id1=6&id2=1&id=169&name=Political+Science+%28Democratic+Politcs+II%29",
+          },
           {
             label: "Economics - Understanding Economic Development",
-            href: "#",
+            href: "/manage-notes?f=11&group=school&id1=6&id2=1&id=167&name=Economics+%28Understanding+Economic+Development%29",
           },
-          { label: "History - India and the Contemporary World II", href: "#" },
+          {
+            label: "History - India and the Contemporary World II",
+            href: "/manage-notes?f=11&group=school&id1=6&id2=1&id=168&name=History+%28India+and+the+Contemporary+World+–+II%29",
+          },
         ],
       },
       {
