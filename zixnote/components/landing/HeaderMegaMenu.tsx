@@ -92,7 +92,7 @@ export function HeaderMegaMenu({ user }: { user: User | null }) {
             </ActionIcon> */}
           </Link>
         }
-        hiddenFrom="sm"
+        hiddenFrom="md"
         zIndex={1000000}
       >
         <ScrollArea h={`calc(100vh - ${rem(80)})`} mx="-md">
