@@ -53,7 +53,7 @@ export async function POST(req: Request) {
     } else {
       systemPrompts = getSubtopicPrompt(topic, context);
     }
-    console.log(systemPrompts);
+    // console.log(systemPrompts);
     const response = await openai.chat.completions.create({
       model: "deepseek-chat",
       messages: [

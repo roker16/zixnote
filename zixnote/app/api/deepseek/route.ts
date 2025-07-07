@@ -92,7 +92,7 @@ export async function POST(req: Request) {
         content: msg.content,
       })),
     ];
-    console.log(messages);
+    // console.log(messages);
     const stream = await openai.chat.completions.create({
       model: "deepseek-chat",
       messages,

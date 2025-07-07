@@ -1,4 +1,5 @@
 "use client";
+import { saveActiveContext } from "@/utils/ai/contextStorage";
 import { Box } from "@mantine/core";
 import Image from "next/image";
 import Link from "next/link";
@@ -135,8 +136,14 @@ const sections = [
       {
         label: "Optional I",
         children: [
-          { label: "Sociology", href: "#" },
-          { label: "Geography", href: "#" },
+          {
+            label: "Sociology",
+            href: "/manage-notes?f=11&group=exam&id1=4&id2=7&id=110&name=Sociology+Paper+-+I+%28Fundamentals+of+sociology%29",
+          },
+          {
+            label: "Geography",
+            href: "/manage-notes?f=11&group=exam&id1=4&id2=7&id=111&name=Geography+Paper+-+I+%28Principles+of+Geography%29",
+          },
           { label: "Anthropology", href: "#" },
           { label: "Public Administration", href: "#" },
         ],
@@ -144,8 +151,14 @@ const sections = [
       {
         label: "Optional II",
         children: [
-          { label: "Sociology", href: "#" },
-          { label: "Geography", href: "#" },
+          {
+            label: "Sociology",
+            href: "/manage-notes?f=11&group=exam&id1=4&id2=8&id=109&name=Sociology+Paper+-+II+%28Indian+society%3A+structure+and+change%29",
+          },
+          {
+            label: "Geography",
+            href: "/manage-notes?f=11&group=exam&id1=4&id2=8&id=112&name=Geography+Paper+-+II+%28Geography+of+India%29",
+          },
           { label: "Anthropology", href: "#" },
           { label: "Public Administration", href: "#" },
         ],
@@ -213,7 +226,13 @@ const sections = [
   },
 ];
 
-function renderLinks(items: any[], depth = 0, router: any) {
+function renderLinks(
+  items: any[],
+  depth = 0,
+  router: any,
+  sectionTitle: string,
+  parentLabel: string = ""
+) {
   return (
     <ol className={`space-y-1 ${depth > 0 ? "pl-1" : ""}`}>
       {items.map((item, index) => {
@@ -221,11 +240,30 @@ function renderLinks(items: any[], depth = 0, router: any) {
 
         const handleClick = () => {
           if (item.href && item.href !== "#") {
-            // Save custom data in localStorage
-            localStorage.setItem("lastVisitedNote", item.label);
-            localStorage.setItem("noteHref", item.href);
+            // Determine context by section
+            if (sectionTitle === "NCERT") {
+              saveActiveContext({
+                type: "school",
+                schoolName: "NCERT",
+                className: parentLabel,
+                bookName: item.label,
+              });
+            } else if (sectionTitle === "UPSC-CS") {
+              saveActiveContext({
+                type: "exam",
+                examName: "UPSC civil services",
+                paperName: parentLabel,
+                subjectName: item.label,
+              });
+            } else if (sectionTitle === "MBBS (AS PER NMC)") {
+              saveActiveContext({
+                type: "college",
+                collegeName: "Medical",
+                department: "MBBS (as per NMC)",
+                course: item.label,
+              });
+            }
 
-            // Navigate
             router.push(item.href);
           }
         };
@@ -257,7 +295,13 @@ function renderLinks(items: any[], depth = 0, router: any) {
                 >
                   {item.label}
                 </h3>
-                {renderLinks(item.children, depth + 1, router)}
+                {renderLinks(
+                  item.children,
+                  depth + 1,
+                  router,
+                  sectionTitle,
+                  item.label
+                )}
               </div>
             )}
           </li>
@@ -271,7 +315,7 @@ export default function PublicDashboard() {
   const router = useRouter();
   return (
     <main className="max-w-6xl mx-auto px-6 py-12">
-      {/* Logo + Header */}
+      {/* Header */}
       <div className="mb-12 text-center">
         <div className="flex justify-center items-center gap-3">
           <div className="h-11 w-11 rounded-full border-2 bg-slate-200 p-2 flex items-center justify-center">
@@ -292,19 +336,16 @@ export default function PublicDashboard() {
         </div>
       </div>
 
-      {/* Grid of Sections */}
+      {/* Sections Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {sections.map((section, index) => (
-          <Box
-            key={section.title}
-            // className="p-4 rounded-xl border border-transparent transition-all duration-200 hover:border-neutral-400"
-          >
+        {sections.map((section) => (
+          <Box key={section.title}>
             <div className="flex full justify-left">
               <h2 className="text-sm font-medium text-red-900 bg-neutral-200 px-2 py-1 rounded mb-3 inline-block">
                 {section.title}
               </h2>
             </div>
-            {renderLinks(section.children, 0, router)}
+            {renderLinks(section.children, 0, router, section.title)}
           </Box>
         ))}
       </div>
