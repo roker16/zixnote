@@ -13,13 +13,16 @@ export default function ControlSettings() {
   const [settings, setSettings] = useState<{
     test_mode: boolean;
     payment_test: boolean;
+    medical_testimonial: boolean;
   }>({
     test_mode: false,
     payment_test: false,
+    medical_testimonial: false,
   });
 
   useEffect(() => {
-    const settingNames = ["test_mode", "payment_test"];
+    const settingNames = ["test_mode", "payment_test", "medical_testimonial"];
+
     async function fetchSettings() {
       setLoading(true);
       try {
@@ -30,12 +33,10 @@ export default function ControlSettings() {
 
         if (error) throw error;
 
-        // Create map of settings or fallback if missing
         const map: Record<string, boolean> = {};
         for (const name of settingNames) {
           const entry = data?.find((d) => d.setting_name === name);
           if (!entry) {
-            // Insert default if missing
             await supabase
               .from("settings")
               .insert({ setting_name: name, setting_status: "disabled" });
@@ -110,6 +111,13 @@ export default function ControlSettings() {
           onChange={() => handleToggle("payment_test")}
           disabled={loading}
           label="Payment Test"
+          size="md"
+        />
+        <Switch
+          checked={settings.medical_testimonial}
+          onChange={() => handleToggle("medical_testimonial")}
+          disabled={loading}
+          label="Medical Testimonial"
           size="md"
         />
       </Stack>

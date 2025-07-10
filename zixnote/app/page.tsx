@@ -8,23 +8,32 @@ import PublicDashboard from "./PublicDashboard";
 import Flow from "./manage-notes/@ainotes/Flow";
 import Testimonial from "@/components/landing/Testimonial";
 
-// import Landing from "./Landing";
-
 export default async function Index() {
   const supabase = await createClient();
+
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
+  const { data: setting } = await supabase
+    .from("settings")
+    .select("setting_status")
+    .eq("setting_name", "medical_testimonial")
+    .single();
+
+  const isTestimonialEnabled = setting?.setting_status === "enabled";
+
   return (
     <div>
       <HeaderMegaMenu user={user} />
-      <Container size={"xl"}>
+      <Container size="xl">
         <PublicDashboard />
-        {/* <HeroBullets />h */}
+        {/* <HeroBullets /> */}
         {/* <LastSignedInUsers /> */}
       </Container>
-      <Testimonial />
+
+      {isTestimonialEnabled && <Testimonial />}
+
       <FooterCentered />
     </div>
   );

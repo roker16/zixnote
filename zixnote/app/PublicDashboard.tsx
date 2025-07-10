@@ -155,7 +155,10 @@ const sections = [
             label: "General Studies Paper - II",
             href: "/manage-notes?f=11&group=exam&id1=4&id2=10&id=96&name=General+Studies+-+II+%28Complete%29",
           },
-          { label: "General Studies Paper - III", href: "#" },
+          {
+            label: "General Studies Paper - III",
+            href: "/manage-notes?f=11&group=exam&id1=4&id2=11&id=97&name=General+Studies+-+III+%28complete%29",
+          },
           { label: "General Studies Paper - IV", href: "#" },
         ],
       },
