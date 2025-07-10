@@ -25,6 +25,7 @@
     "@tabler/icons-react": "^2.47.0",
     "@types/react": "^18.2.48",
     "@types/react-dom": "^18.2.18",
+    "@xyflow/react": "^12.8.1",
     "cashfree-pg": "^4.1.2",
     "dayjs": "^1.11.11",
     "geist": "^1.0.0",

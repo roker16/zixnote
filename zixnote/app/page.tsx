@@ -5,6 +5,8 @@ import { HeroBullets } from "@/components/landing/HeroBullets";
 import { createClient } from "@/utils/supabase/server";
 import { Container } from "@mantine/core";
 import PublicDashboard from "./PublicDashboard";
+import Flow from "./manage-notes/@ainotes/Flow";
+import Testimonial from "@/components/landing/Testimonial";
 
 // import Landing from "./Landing";
 
@@ -22,6 +24,7 @@ export default async function Index() {
         {/* <HeroBullets />h */}
         {/* <LastSignedInUsers /> */}
       </Container>
+      <Testimonial />
       <FooterCentered />
     </div>
   );
