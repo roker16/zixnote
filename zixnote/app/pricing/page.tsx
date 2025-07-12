@@ -1,12 +1,8 @@
 import { FooterCentered } from "@/components/landing/FooterCentered";
 import { HeaderMegaMenu } from "@/components/landing/HeaderMegaMenu";
-import { HeroBullets } from "@/components/landing/HeroBullets";
 import { createClient } from "@/utils/supabase/server";
-import { Container } from "@mantine/core";
-import { cookies } from "next/headers";
+import { Card, Container, Text } from "@mantine/core";
 import Pricing from "./pricing";
-
-// import Landing from "./Landing";
 
 export default async function Index() {
   const supabase = await createClient();
@@ -14,17 +10,38 @@ export default async function Index() {
     data: { user },
   } = await supabase.auth.getUser();
 
-  let { data: syll_index, error } = await supabase
-    .from("syll_index")
-    .select("*");
+  // Fetch show_pricing setting
+  const { data: settingsData } = await supabase
+    .from("settings")
+    .select("setting_status")
+    .eq("setting_name", "show_pricing")
+    .single();
 
-  // const isSupabaseConnected = canInitSupabaseClient();
+  const showPricing = settingsData?.setting_status === "enabled";
 
   return (
     <div>
       <HeaderMegaMenu user={user} />
-      <Container size={"xl"}>
-        <Pricing />
+      <Container size="xl" mt="xl">
+        {showPricing ? (
+          <Pricing />
+        ) : (
+          <div className="flex justify-center items-center h-72">
+            <Card
+              withBorder
+              radius="md"
+              p="lg"
+              className="w-full max-w-md text-center"
+            >
+              <Text size="lg" fw={500}>
+                Pricing information is currently unavailable.
+              </Text>
+              <Text c="dimmed" mt="sm">
+                Please check back later.
+              </Text>
+            </Card>
+          </div>
+        )}
       </Container>
       <FooterCentered />
     </div>

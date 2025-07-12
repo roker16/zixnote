@@ -14,14 +14,21 @@ export default function ControlSettings() {
     test_mode: boolean;
     payment_test: boolean;
     medical_testimonial: boolean;
+    show_pricing: boolean;
   }>({
     test_mode: false,
     payment_test: false,
     medical_testimonial: false,
+    show_pricing: false,
   });
 
   useEffect(() => {
-    const settingNames = ["test_mode", "payment_test", "medical_testimonial"];
+    const settingNames = [
+      "test_mode",
+      "payment_test",
+      "medical_testimonial",
+      "show_pricing",
+    ];
 
     async function fetchSettings() {
       setLoading(true);
@@ -118,6 +125,13 @@ export default function ControlSettings() {
           onChange={() => handleToggle("medical_testimonial")}
           disabled={loading}
           label="Medical Testimonial"
+          size="md"
+        />
+        <Switch
+          checked={settings.show_pricing}
+          onChange={() => handleToggle("show_pricing")}
+          disabled={loading}
+          label="Show Pricing"
           size="md"
         />
       </Stack>
