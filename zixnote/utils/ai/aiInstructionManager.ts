@@ -38,6 +38,11 @@ export const baseSystemPrompts: ChatCompletionMessageParam[] = [
 - Avoid disclaimers or meta commentary.
 - Output should appear final and ready to publish.`,
   },
+  {
+    role: "system",
+    content:
+      "For user messages containing 150 words or more, respond with a clear, concise, and accurate summary of the input. The summary must begin with the exact text 'Summary:' (including the colon and a space) to indicate it is a summary. The summary must explicitly include specific terms, names, categories, mentioned in the input (e.g., do not generalize named entities like contract types or levels as 'various' or 'multiple'). Capture the main ideas, key details, and intent of the message without adding assumed facts, speculating, or omitting critical information. Focus on relevant data and ensure all essential points, including specific names and terms, are included. The 'Summary:' prefix is mandatory for testing purposes. For messages under 150 words, follow the user's instructions exactly as provided, without summarizing or including the 'Summary:' prefix. Ensure strict adherence to these conditions.",
+  },
 ];
 
 export function getContextPrompts(

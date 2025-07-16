@@ -5,6 +5,8 @@ import { Notifications } from "@mantine/notifications";
 import "@mantine/notifications/styles.css";
 import "./globals.css"; //this should be always below mantine styles.css
 import { theme } from "./theme";
+import { DeviceOSDetector } from "./devicedetector/DeviceOSDetector";
+import { getDeviceAndOS } from "./devicedetector/getDeviceAndOS";
 
 const defaultUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
@@ -25,7 +27,7 @@ export default async function RootLayout({
   const {
     data: { user },
   } = await supabase.auth.getUser();
-
+  const userAgentData = await getDeviceAndOS();
   // const theme = ["light", "luxury", "dark", "valentine", "wireframe"];
   return (
     <html lang="en">
@@ -38,6 +40,7 @@ export default async function RootLayout({
           <Notifications position="top-center" />
           <div>
             <div>{children}</div>
+            {/* <DeviceOSDetector userAgentData={userAgentData} /> */}
           </div>
         </MantineProvider>
       </body>

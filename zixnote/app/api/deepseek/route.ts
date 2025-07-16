@@ -32,6 +32,7 @@ function getTargetAudience(context: ActiveContext): string {
 }
 
 export async function POST(req: Request) {
+  console.log("inside notes making");
   try {
     const {
       topic,

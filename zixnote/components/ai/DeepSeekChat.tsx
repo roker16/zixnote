@@ -124,6 +124,8 @@ export default function DeepSeekChat({
     e.preventDefault();
     if (!input.trim() || isLoading) return;
 
+    const wordCount = input.trim().split(/\s+/).length;
+
     const userMessage: Message = {
       role: "user",
       content: input,
@@ -137,14 +139,24 @@ export default function DeepSeekChat({
     setError(null);
 
     try {
-      const response = await fetch("/api/deepseek", {
+      // 👇 Choose endpoint based on word count
+      const endpoint =
+        wordCount >= 150 ? "/api/deepseek/summarise" : "/api/deepseek";
+
+      // 👇 Choose payload shape based on endpoint
+      const payload =
+        wordCount >= 150
+          ? { text: input } // summariser expects raw text
+          : {
+              topic: updatedMessages,
+              context: getActiveContext(),
+              style: "academic",
+            };
+
+      const response = await fetch(endpoint, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          topic: updatedMessages,
-          context: getActiveContext(),
-          style: "academic",
-        }),
+        body: JSON.stringify(payload),
       });
 
       if (!response.ok) {
@@ -166,6 +178,7 @@ export default function DeepSeekChat({
 
         const chunk = decoder.decode(value);
         const lines = chunk.split("\n");
+
         for (const line of lines) {
           if (line.startsWith("data: ")) {
             const data = line.slice(6);
@@ -174,7 +187,7 @@ export default function DeepSeekChat({
               const parsed = JSON.parse(data);
               const content = parsed.content || "";
 
-              // const content = normalizeLatex(parsed.content || "");
+              // Optional: normalizeLatex(content) here
 
               if (content) {
                 assistantMessage += content;
