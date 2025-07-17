@@ -138,8 +138,8 @@ function NoteContent({ noteId, noteTitle }: NoteContentProps) {
             ),
             h3: ({ node, ...props }) => (
               <h3
-                className="underline underline-offset-2 text-base font-semibold mt-4 mb-1  text-red-700"
                 {...props}
+                className="underline underline-offset-2 text-base font-semibold mt-4 mb-1  text-red-700"
               />
             ),
             table: ({ node, ...props }) => (
