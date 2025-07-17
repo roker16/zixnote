@@ -17,6 +17,10 @@ export const baseSystemPrompts: ChatCompletionMessageParam[] = [
   },
   {
     role: "system",
+    content: `If Asked to make notes in Any other language like Hindi, keep key terms in English also`,
+  },
+  {
+    role: "system",
     content: `- Do NOT wrap the output in triple backticks or markdown code fences (no \`\`\`).
     - Wrap **inline math** with single dollar signs: $...$
 - Wrap **block math** with double dollar signs: $$...$$ 

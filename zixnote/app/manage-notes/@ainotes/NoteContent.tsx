@@ -113,6 +113,7 @@ function NoteContent({ noteId, noteTitle }: NoteContentProps) {
             table { width: 100%; max-width: 100%; table-layout: fixed; }
             img { max-width: 100%; height: auto; }
             code { white-space: pre-wrap; word-break: break-word; }
+            
           }
         `}</style>
         <ReactMarkdown
@@ -138,8 +139,8 @@ function NoteContent({ noteId, noteTitle }: NoteContentProps) {
             ),
             h3: ({ node, ...props }) => (
               <h3
+                className=" text-base font-semibold mt-4 mb-1  text-red-700 underline underline-offset-2"
                 {...props}
-                className="underline underline-offset-2 text-base font-semibold mt-4 mb-1  text-red-700"
               />
             ),
             table: ({ node, ...props }) => (
