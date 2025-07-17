@@ -23,21 +23,26 @@ export async function POST(req: Request) {
 You are a summarization assistant.Your task is to create a **factually accurate summary** of the input text. 
 
 Your task is to create a concise summary that:
-- Includes only the facts, terms, names, numbers, and examples found in the original text.
+- Includes every the facts, terms, names, numbers, and examples found in the original text.
 - Avoids vague expressions like "various types", "some examples", or "several kinds".
 - Explicitly lists all types, categories, and examples mentioned in the input.
 - Does not invent or assume any information that is not directly provided.
 - Sticks strictly to the source text — no external knowledge or creativity.
-- Use **proper headings**, **bullet points**, and **numbered lists** to organize the summary.
-- Use Table where required.
-- Use red bold formatting to emphasize important terms, such as:
-  - Definitions, acts, dates, numbers, categories, causes, and key terms.
-- **Preserve the logical structure** of the input:
-  - If the original text is divided into sections or headings, keep the summary aligned to those.
-  - Keep all related points under the appropriate heading — **do not scatter subpoints across sections**.
-  - If hierarchy is implied (e.g., causes under a topic), preserve that nesting in bullet points or indented lists.
 -Be precise, factual, and structured in your output.-
     `.trim(),
+      },
+      {
+        role: "system",
+        content: `Use Proper headings to summarise.
+        Incorporate tables, lists where helpful.
+        Use bold formatting to emphasize important terms, such as: Definitions, acts, dates, numbers, categories, causes, and key terms.
+Maintain logical Herirarchy of content, use Headings, subheadings, numbering etc for this purpose.
+         `,
+      },
+      {
+        role: "system",
+        content: `Maintain logical Herirarchy of content, use Headings, subheadings, numbering etc for this purpose.
+         `,
       },
       {
         role: "user",

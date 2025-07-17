@@ -60,3 +60,30 @@ body {
     page-break-inside: avoid;
   }
 }
+/* .avoid-page-break {
+  break-inside: avoid;
+  page-break-inside: avoid;
+  break-before: auto;
+  break-after: auto;
+}
+
+thead {
+  display: table-header-group;
+}
+
+tfoot {
+  display: table-footer-group;
+}
+
+tr,
+td,
+th {
+  break-inside: avoid;
+  page-break-inside: avoid;
+}
+
+img {
+  break-inside: avoid;
+  page-break-inside: avoid;
+  max-width: 100%;
+} */
