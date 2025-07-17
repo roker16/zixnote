@@ -308,7 +308,7 @@ export default function DeepSeekChat({
                       components={{
                         h1: ({ node, ...props }) => (
                           <h1
-                            className="text-xl font-bold mt-2 mb-1"
+                            className="text-2xl font-bold mt-2 mb-1 "
                             {...props}
                           />
                         ),
@@ -322,33 +322,39 @@ export default function DeepSeekChat({
                         ),
                         h2: ({ node, ...props }) => (
                           <h2
-                            className="text-lg font-semibold mt-2 mb-1"
+                            className="text-lg font-semibold mt-4 mb-1 text-blue-600"
+                            {...props}
+                          />
+                        ),
+                        h3: ({ node, ...props }) => (
+                          <h3
+                            className=" text-base font-semibold mt-4 mb-1  text-red-700 underline underline-offset-2"
                             {...props}
                           />
                         ),
                         table: ({ node, ...props }) => (
-                          <div className="overflow-x-auto my-2">
+                          <div className="overflow-x-auto my-2 ">
                             <table
-                              className="table-auto w-full border-collapse border border-gray-800"
+                              className="table-auto w-full border-collapse border border-gray-800 "
                               {...props}
                             />
                           </div>
                         ),
                         thead: ({ node, ...props }) => (
                           <thead
-                            className="bg-red-900 border border-red-400"
+                            className="bg-red-900 border border-red-400 "
                             {...props}
                           />
                         ),
                         th: ({ node, ...props }) => (
                           <th
-                            className="border border-gray-400 px-3 py-2 text-left font-medium bg-red-200"
+                            className="border border-gray-400 px-3 py-2 text-left font-medium bg-red-200 "
                             {...props}
                           />
                         ),
                         tbody: ({ node, ...props }) => (
                           <tbody
-                            className="border border-gray-300"
+                            className="border border-gray-300 "
                             {...props}
                           />
                         ),
@@ -359,23 +365,23 @@ export default function DeepSeekChat({
                           />
                         ),
                         p: ({ node, ...props }) => (
-                          <p className="my-1 leading-relaxed" {...props} />
+                          <p className="my-1 leading-relaxed " {...props} />
                         ),
                         ul: ({ node, ...props }) => (
-                          <ul className="list-disc pl-4 my-1" {...props} />
+                          <ul className="list-disc pl-4 my-1 " {...props} />
                         ),
                         ol: ({ node, ...props }) => (
-                          <ol className="list-decimal pl-4 my-1" {...props} />
+                          <ol className="list-decimal pl-4 my-1 " {...props} />
                         ),
                         li: ({ node, ...props }) => (
-                          <li className="my-0.5" {...props} />
+                          <li className="my-0.5 " {...props} />
                         ),
                         strong: ({ node, ...props }) => (
-                          <strong className="font-bold" {...props} />
+                          <strong className="font-bold " {...props} />
                         ),
                         code: ({ node, ...props }) => (
                           <code
-                            className="bg-gray-800 text-gray-200 rounded px-1"
+                            className="bg-gray-800 text-gray-200 rounded px-1 avoid-page-break"
                             {...props}
                           />
                         ),
