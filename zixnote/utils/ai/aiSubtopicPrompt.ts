@@ -66,6 +66,7 @@ export function getNCERTSubtopicPrompt(
   className: string,
   bookName: string
 ): ChatCompletionMessageParam[] {
+  console.log(`Inside NCERT with book name ${bookName} and class ${className}`);
   return [
     {
       role: "system",
@@ -101,6 +102,8 @@ export function getNCERTSubtopicPrompt(
 export function getMBBSSubtopicPrompt(
   course: string
 ): ChatCompletionMessageParam[] {
+  console.log(`Inside MBBS with course name ${course}`);
+
   return [
     {
       role: "system",
