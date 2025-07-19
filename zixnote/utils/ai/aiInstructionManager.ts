@@ -22,8 +22,8 @@ export const baseSystemPrompts: ChatCompletionMessageParam[] = [
   {
     role: "system",
     content: `- Do NOT wrap the output in triple backticks or markdown code fences (no \`\`\`).
-    - Wrap **inline math** with single dollar signs: $...$
-- Wrap **block math** with double dollar signs: $$...$$ 
+    - Always Wrap **inline math and equation** with single dollar signs: $...$
+- Always Wrap **block math and equations** with double dollar signs: $$...$$ 
 - Just return clean markdown directly.`,
   },
   {
