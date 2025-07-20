@@ -37,11 +37,64 @@ const MessageInputComponent = ({
     }
   };
 
+  // const handleFileUpload = async (
+  //   event: React.ChangeEvent<HTMLInputElement>
+  // ) => {
+  //   const file = event.target.files?.[0];
+  //   event.target.value = "";
+  //   setErrorMsg("");
+  //   setPdfUploading(true);
+
+  //   if (!file || file.type !== "application/pdf") {
+  //     setPdfUploading(false);
+  //     return;
+  //   }
+
+  //   if (file.size > MAX_FILE_SIZE_MB * 1024 * 1024) {
+  //     setErrorMsg(
+  //       `❌ File too large: ${(file.size / (1024 * 1024)).toFixed(2)} MB.`
+  //     );
+  //     setPdfUploading(false);
+  //     return;
+  //   }
+
+  //   try {
+  //     const formData = new FormData();
+  //     formData.append("file", file);
+
+  //     const res = await fetch("/api/extractpdftotext", {
+  //       method: "POST",
+  //       body: formData,
+  //     });
+
+  //     const { text, error } = await res.json();
+
+  //     if (error) {
+  //       setErrorMsg("❌ Failed to extract PDF.");
+  //       return;
+  //     }
+
+  //     const wordCount = text.trim().split(/\s+/).length;
+  //     if (wordCount > WORD_LIMIT) {
+  //       setErrorMsg(`❌ PDF too long: ${wordCount} words.`);
+  //       return;
+  //     }
+
+  //     setExtractedText(text);
+  //     setFileName(file.name);
+  //   } catch (err) {
+  //     setErrorMsg("❌ Unexpected error extracting PDF.");
+  //     console.error(err);
+  //   } finally {
+  //     setPdfUploading(false);
+  //   }
+  // };
+
   const handleFileUpload = async (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
     const file = event.target.files?.[0];
-    event.target.value = "";
+    event.target.value = ""; // Clear input to allow re-selecting same file
     setErrorMsg("");
     setPdfUploading(true);
 
@@ -59,8 +112,16 @@ const MessageInputComponent = ({
     }
 
     try {
+      // ✅ FIX: Read into memory to avoid file being revoked mid-upload
+      const arrayBuffer = await file.arrayBuffer();
+      const blob = new Blob([arrayBuffer], { type: file.type });
+      const safeFile = new File([blob], file.name, {
+        type: file.type,
+        lastModified: file.lastModified,
+      });
+
       const formData = new FormData();
-      formData.append("file", file);
+      formData.append("file", safeFile); // ✅ Use cloned file here
 
       const res = await fetch("/api/extractpdftotext", {
         method: "POST",
