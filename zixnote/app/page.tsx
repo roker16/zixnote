@@ -34,7 +34,7 @@ export default async function Index() {
         {/* <HeroBullets /> */}
         {/* <LastSignedInUsers /> */}
       </Container>
-      <PDFUploader />
+      {/* <PDFUploader /> */}
       {isTestimonialEnabled && <Testimonial />}
       <div>
         {/* <h1>My Next.js App</h1> */}
