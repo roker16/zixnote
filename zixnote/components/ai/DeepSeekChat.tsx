@@ -39,6 +39,7 @@ export default function DeepSeekChat({
   const [isLoading, setIsLoading] = useState(false);
   const [isStreaming, setIsStreaming] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [hasSentExtractedText, setHasSentExtractedText] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const assistantRefs = useRef<(HTMLDivElement | null)[]>([]);
   const supabase = createClient();
@@ -120,18 +121,33 @@ export default function DeepSeekChat({
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (
+    e: React.FormEvent<HTMLFormElement>,
+    payload: { input: string; extractedText: string }
+  ) => {
     e.preventDefault();
-    if (!input.trim() || isLoading) return;
+    const { input: userInput, extractedText } = payload;
 
-    const wordCount = input.trim().split(/\s+/).length;
+    if (!userInput.trim() || isLoading) return;
 
-    const userMessage: Message = {
-      role: "user",
-      content: input,
-    };
+    const wordCount = userInput.trim().split(/\s+/).length;
 
-    const updatedMessages = [...messages, userMessage];
+    const newMessages: Message[] = [];
+
+    newMessages.push({ role: "user", content: userInput });
+    // Inject extractedText only once
+    if (!hasSentExtractedText && extractedText.trim()) {
+      newMessages.push({
+        role: "user",
+        content: "Extracted: " + extractedText,
+        internal: true,
+      });
+      setHasSentExtractedText(true);
+    }
+
+    // Add actual user message
+
+    const updatedMessages = [...messages, ...newMessages];
     setMessages(updatedMessages);
     setInput("");
     setIsLoading(true);
@@ -139,14 +155,18 @@ export default function DeepSeekChat({
     setError(null);
 
     try {
-      // 👇 Choose endpoint based on word count
+      const shouldUseExtractedAPI =
+        extractedText.trim() !== "" || hasSentExtractedText;
       const endpoint =
-        wordCount >= 150 ? "/api/deepseek/summarise" : "/api/deepseek";
-
-      // 👇 Choose payload shape based on endpoint
-      const payload =
         wordCount >= 150
-          ? { text: input } // summariser expects raw text
+          ? "/api/deepseek/summarise"
+          : shouldUseExtractedAPI
+          ? "/api/deepseek/respondextractedtext"
+          : "/api/deepseek";
+
+      const requestPayload =
+        wordCount >= 150
+          ? { text: userInput }
           : {
               topic: updatedMessages,
               context: getActiveContext(),
@@ -156,7 +176,7 @@ export default function DeepSeekChat({
       const response = await fetch(endpoint, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
+        body: JSON.stringify(requestPayload),
       });
 
       if (!response.ok) {
@@ -186,8 +206,6 @@ export default function DeepSeekChat({
             try {
               const parsed = JSON.parse(data);
               const content = parsed.content || "";
-
-              // Optional: normalizeLatex(content) here
 
               if (content) {
                 assistantMessage += content;

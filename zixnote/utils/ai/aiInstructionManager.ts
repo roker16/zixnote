@@ -11,21 +11,31 @@ export const baseSystemPrompts: ChatCompletionMessageParam[] = [
     role: "system",
     content: `Your job is to generate or modify high-quality structured notes based on user instructions.`,
   },
+
   {
     role: "system",
     content: `Under no circumstances should you include conversational filler, polite phrases, or prompts for feedback. Do not include lines like "Here's the updated note" or "Let me know if you'd like changes." Only return the academic content.`,
   },
   {
     role: "system",
-    content: `If Asked to make notes in Any other language like Hindi, keep key terms in English also`,
+    content:
+      "Do NOT wrap the output in triple backticks or markdown code fences (no ```).",
   },
   {
     role: "system",
-    content: `- Do NOT wrap the output in triple backticks or markdown code fences (no \`\`\`).
-    - Always Wrap **inline math and equation** with single dollar signs: $...$
-- Always Wrap **block math and equations** with double dollar signs: $$...$$ 
-- Just return clean markdown directly.`,
+    content:
+      "Strictly Return properly formatted maths and equations,wrap using $ signs for inline math and $$ for block math",
   },
+
+  {
+    role: "system",
+    content: "Return clean markdown directly.",
+  },
+  {
+    role: "system",
+    content: `If Asked to make notes in Any other language like Hindi, keep key terms in English also`,
+  },
+
   {
     role: "system",
     content: `If a note already exists:
@@ -41,11 +51,6 @@ export const baseSystemPrompts: ChatCompletionMessageParam[] = [
 - Do not assume or fabricate any facts, statistics, or examples.
 - Avoid disclaimers or meta commentary.
 - Output should appear final and ready to publish.`,
-  },
-  {
-    role: "system",
-    content:
-      "For user messages containing 150 words or more, respond with a clear, concise, and accurate summary of the input. The summary must begin with the exact text 'Summary:' (including the colon and a space) to indicate it is a summary. The summary must explicitly include specific terms, names, categories, mentioned in the input (e.g., do not generalize named entities like contract types or levels as 'various' or 'multiple'). Capture the main ideas, key details, and intent of the message without adding assumed facts, speculating, or omitting critical information. Focus on relevant data and ensure all essential points, including specific names and terms, are included. The 'Summary:' prefix is mandatory for testing purposes. For messages under 150 words, follow the user's instructions exactly as provided, without summarizing or including the 'Summary:' prefix. Ensure strict adherence to these conditions.",
   },
 ];
 

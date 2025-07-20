@@ -1,18 +1,21 @@
 "use client";
 
 import React, { useRef, useState } from "react";
-import { Textarea, Button, Badge } from "@mantine/core";
-import { extractTextFromPDF } from "@/utils/ai/extractTextFromPDF";
+import { Textarea, Button, Badge, Modal } from "@mantine/core";
 
 interface MessageInputProps {
   input: string;
   setInput: React.Dispatch<React.SetStateAction<string>>;
-  handleSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
+  handleSubmit: (
+    e: React.FormEvent<HTMLFormElement>,
+    payload: { input: string; extractedText: string }
+  ) => void;
   isLoading: boolean;
 }
 
-const WORD_LIMIT = 10000;
-const MAX_FILE_SIZE_MB = 5;
+const WORD_LIMIT = 30000;
+const MAX_FILE_SIZE_MB = 25;
+
 const MessageInputComponent = ({
   input,
   setInput,
@@ -20,7 +23,12 @@ const MessageInputComponent = ({
   isLoading,
 }: MessageInputProps) => {
   const formRef = useRef<HTMLFormElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [fileName, setFileName] = useState<string | null>(null);
+  const [extractedText, setExtractedText] = useState<string>("");
+  const [errorMsg, setErrorMsg] = useState<string>("");
+  const [modalOpen, setModalOpen] = useState<boolean>(false);
+  const [pdfUploading, setPdfUploading] = useState<boolean>(false);
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter" && !e.shiftKey) {
@@ -33,93 +41,165 @@ const MessageInputComponent = ({
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
     const file = event.target.files?.[0];
-    if (!file || file.type !== "application/pdf") return;
-    if (file.size > MAX_FILE_SIZE_MB * 1024 * 1024) {
-      alert(
-        `❌ File too large: ${(file.size / (1024 * 1024)).toFixed(
-          2
-        )} MB. Max allowed is ${MAX_FILE_SIZE_MB} MB.`
-      );
+    event.target.value = "";
+    setErrorMsg("");
+    setPdfUploading(true);
+
+    if (!file || file.type !== "application/pdf") {
+      setPdfUploading(false);
       return;
     }
-    try {
-      const text = await extractTextFromPDF(file);
-      const wordCount = text.trim().split(/\s+/).length;
 
-      if (wordCount > WORD_LIMIT) {
-        alert(
-          `❌ PDF too long: ${wordCount} words. Limit is ${WORD_LIMIT} words.`
-        );
+    if (file.size > MAX_FILE_SIZE_MB * 1024 * 1024) {
+      setErrorMsg(
+        `❌ File too large: ${(file.size / (1024 * 1024)).toFixed(2)} MB.`
+      );
+      setPdfUploading(false);
+      return;
+    }
+
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+
+      const res = await fetch("/api/extractpdftotext", {
+        method: "POST",
+        body: formData,
+      });
+
+      const { text, error } = await res.json();
+
+      if (error) {
+        setErrorMsg("❌ Failed to extract PDF.");
         return;
       }
 
-      setInput(`Summarise the following:\n\n${text}`);
+      const wordCount = text.trim().split(/\s+/).length;
+      if (wordCount > WORD_LIMIT) {
+        setErrorMsg(`❌ PDF too long: ${wordCount} words.`);
+        return;
+      }
+
+      setExtractedText(text);
       setFileName(file.name);
     } catch (err) {
-      alert(
-        "Failed to extract text from PDF. It may be too large or corrupted."
-      );
-      console.error("PDF parsing error:", err);
+      setErrorMsg("❌ Unexpected error extracting PDF.");
+      console.error(err);
+    } finally {
+      setPdfUploading(false);
     }
   };
 
+  const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    handleSubmit(e, {
+      input,
+      extractedText,
+    });
+    setInput(""); // reset UI input
+  };
+
   return (
-    <form
-      ref={formRef}
-      onSubmit={handleSubmit}
-      className="flex flex-col gap-2 p-2 border rounded-md shadow-sm bg-white"
-    >
-      {fileName && (
-        <div className="pl-1">
-          <Badge color="green" variant="light" className="text-xs">
-            ✅ Loaded: {fileName}
-          </Badge>
-        </div>
-      )}
+    <>
+      <form
+        ref={formRef}
+        onSubmit={handleFormSubmit}
+        className="flex flex-col gap-2 p-2 border rounded-md shadow-sm bg-white"
+      >
+        {fileName && (
+          <div className="pl-1">
+            <Badge color="green" variant="light" className="text-xs">
+              ✅ Loaded: {fileName}
+            </Badge>
+          </div>
+        )}
 
-      <div className="flex gap-2 items-end">
-        <Textarea
-          data-autofocus
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          onKeyDown={handleKeyDown}
-          placeholder="Ask something or upload PDF..."
-          disabled={isLoading}
-          className="flex-1"
-          minRows={2}
-          maxRows={6}
-        />
+        {pdfUploading && (
+          <div className="pl-1">
+            <Badge
+              color="yellow"
+              variant="light"
+              className="text-xs animate-pulse"
+            >
+              ⏳ Extracting PDF...
+            </Badge>
+          </div>
+        )}
 
-        <div className="flex flex-col gap-1">
+        {errorMsg && (
+          <div className="text-red-600 text-sm mt-1 px-2 py-1 border border-red-200 bg-red-50 rounded">
+            {errorMsg}
+          </div>
+        )}
+
+        {extractedText && (
           <Button
-            component="label"
-            variant="light"
+            variant="subtle"
             size="xs"
-            className="w-[90px]"
+            className="text-blue-600 underline self-start"
+            onClick={() => setModalOpen(true)}
           >
-            Upload PDF
-            <input
-              type="file"
-              accept="application/pdf"
-              onChange={handleFileUpload}
-              hidden
-            />
+            📄 View Extracted Text
           </Button>
+        )}
 
-          <Button
-            type="submit"
+        <div className="flex gap-2 items-end">
+          <Textarea
+            data-autofocus
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            onKeyDown={handleKeyDown}
+            placeholder="Enter instructions for AI..."
             disabled={isLoading}
-            size="xs"
-            className="bg-blue-500 hover:bg-blue-600 text-white w-[90px]"
-          >
-            {isLoading ? "..." : "Send"}
-          </Button>
+            className="flex-1"
+            minRows={2}
+            maxRows={6}
+          />
+
+          <div className="flex flex-col gap-1">
+            <Button
+              component="label"
+              variant="light"
+              size="xs"
+              className="w-[90px]"
+              disabled={pdfUploading}
+            >
+              Upload PDF
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="application/pdf"
+                onChange={handleFileUpload}
+                hidden
+              />
+            </Button>
+
+            <Button
+              type="submit"
+              disabled={isLoading}
+              size="xs"
+              className="bg-blue-500 hover:bg-blue-600 text-white w-[90px]"
+            >
+              {isLoading ? "..." : "Send"}
+            </Button>
+          </div>
         </div>
-      </div>
-    </form>
+      </form>
+
+      <Modal
+        opened={modalOpen}
+        onClose={() => setModalOpen(false)}
+        title="Extracted PDF Text"
+        size="lg"
+        centered
+      >
+        <div className="whitespace-pre-wrap text-sm max-h-[70vh] overflow-y-auto">
+          {extractedText}
+        </div>
+      </Modal>
+    </>
   );
 };
 
 MessageInputComponent.displayName = "MessageInputComponent";
-
 export const MessageInput = React.memo(MessageInputComponent);

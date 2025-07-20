@@ -32,7 +32,7 @@ function getTargetAudience(context: ActiveContext): string {
 }
 
 export async function POST(req: Request) {
-  console.log("inside notes making");
+  console.log("inside extracted api making");
   try {
     const {
       topic,
@@ -84,16 +84,17 @@ export async function POST(req: Request) {
 
     // --- COMPOSE FINAL PROMPT MESSAGES ---
     const messages: OpenAI.Chat.ChatCompletionMessageParam[] = [
-      ...baseSystemPrompts,
-      ...getContextPrompts(contextString),
-      ...specialContextPrompts,
+      // ...baseSystemPrompts,
+      ...extractedSystemPrompt,
+      // ...getContextPrompts(contextString),
+      // ...specialContextPrompts,
       // getStylePrompt(style),
       ...topic.map((msg) => ({
         role: msg.role,
         content: msg.content,
       })),
     ];
-    console.log(messages);
+    // console.log(messages);
     const stream = await openai.chat.completions.create({
       model: "deepseek-chat",
       messages,
@@ -138,3 +139,46 @@ export async function POST(req: Request) {
     );
   }
 }
+const extractedSystemPrompt: OpenAI.Chat.ChatCompletionMessageParam[] = [
+  {
+    role: "system",
+    content: `
+You are a focused academic assistant. The following extracted content was parsed from a document or PDF and must serve as your **primary reference**.
+
+Responsibilities:
+- Answer **strictly based on the extracted content**.
+- Do not hallucinate or assume facts.
+- If something seems **cut off, incomplete**, or **missing**, infer cautiously **and state that it's inferred**.
+- Politely redirect if the user query is unrelated to the document.`,
+  },
+  {
+    role: "system",
+    content: `
+When summarizing or analyzing, do not skip any important section, term, or data point.
+
+Your goal is to extract:
+- Key points,
+- Important data/facts,
+- Terminologies,
+- Logical structure (like bullet lists, tables, or sections).
+-Use **Markdown formatting** as needed.
+`,
+  },
+  {
+    role: "system",
+    content:
+      "Do NOT wrap the output in triple backticks or markdown code fences (no ```).",
+  },
+  {
+    role: "system",
+    content:
+      "Always return math and equations in properly formatted LaTeX. Use `$...$` for inline math and `$$...$$` for block-level math. Ensure all symbols, fractions, and notations follow academic conventions precisely.",
+  },
+  {
+    role: "system",
+    content: `
+If information is not available in the extracted content, clearly reply:
+
+"⚠️ This information is not available in the extracted document."`,
+  },
+];

@@ -9,6 +9,7 @@ import Flow from "./manage-notes/@ainotes/Flow";
 import Testimonial from "@/components/landing/Testimonial";
 import { DeviceOSDetector } from "./devicedetector/DeviceOSDetector";
 import { getDeviceAndOS } from "./devicedetector/getDeviceAndOS";
+import PDFUploader from "./manage-notes/@ainotes/Test";
 
 export default async function Index() {
   const supabase = await createClient();
@@ -33,7 +34,7 @@ export default async function Index() {
         {/* <HeroBullets /> */}
         {/* <LastSignedInUsers /> */}
       </Container>
-
+      <PDFUploader />
       {isTestimonialEnabled && <Testimonial />}
       <div>
         {/* <h1>My Next.js App</h1> */}

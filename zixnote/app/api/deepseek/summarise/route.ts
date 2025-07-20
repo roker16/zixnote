@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import OpenAI from "openai";
+import { metadata } from "../../../layout";
 
 // Initialize DeepSeek API client
 const openai = new OpenAI({
@@ -33,6 +34,11 @@ Your task is to create a concise summary that:
       },
       {
         role: "system",
+        content:
+          "Strictly Return properly formatted maths and equations,wrap using $ signs for inline math and $$ for block math",
+      },
+      {
+        role: "system",
         content: `Use Proper headings to summarise.
         Incorporate tables, lists where helpful.
         Use bold formatting to emphasize important terms, such as: Definitions, acts, dates, numbers, categories, causes, and key terms.
@@ -44,6 +50,7 @@ Maintain logical Herirarchy of content, use Headings, subheadings, numbering etc
         content: `Maintain logical Herirarchy of content, use Headings, subheadings, numbering etc for this purpose.
          `,
       },
+
       {
         role: "user",
         content: `Summarize the following text:\n\n${text}`,
