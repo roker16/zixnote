@@ -15,7 +15,7 @@ import {
   useDeleteMutation,
   useQuery,
 } from "@supabase-cache-helpers/postgrest-swr";
-import { IconCheck, IconX } from "@tabler/icons-react";
+import { IconCheck, IconUpload, IconX } from "@tabler/icons-react";
 import { notifications } from "@mantine/notifications";
 
 interface PDFTextUploaderProps {
@@ -202,11 +202,14 @@ export const PDFTextUploader = ({
 
   return (
     <div className="p-4 border rounded shadow-sm bg-white max-w-2xl relative">
-      <h3 className="font-semibold mb-2">Reources</h3>
-
       <Group gap="xs">
-        <Button component="label" disabled={uploading}>
-          Upload PDF Reource
+        <Button
+          component="label"
+          disabled={uploading}
+          variant="light"
+          leftSection={<IconUpload />}
+        >
+          UPLOAD PDF RESOURCE FOR NOTES MAKING
           <input
             type="file"
             ref={fileInputRef}
