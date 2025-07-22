@@ -108,8 +108,16 @@ export const PDFTextUploader = ({
 
     setUploading(true);
     try {
+      // ✅ FIX: Read into memory to avoid file being revoked mid-upload
+      const arrayBuffer = await file.arrayBuffer();
+      const blob = new Blob([arrayBuffer], { type: file.type });
+      const safeFile = new File([blob], file.name, {
+        type: file.type,
+        lastModified: file.lastModified,
+      });
+
       const formData = new FormData();
-      formData.append("file", file);
+      formData.append("file", safeFile); // ✅ Use cloned file here
 
       const res = await fetch("/api/extractpdftotext", {
         method: "POST",
@@ -194,11 +202,11 @@ export const PDFTextUploader = ({
 
   return (
     <div className="p-4 border rounded shadow-sm bg-white max-w-2xl relative">
-      <h3 className="font-semibold mb-2">Upload PDF Reource</h3>
+      <h3 className="font-semibold mb-2">Reources</h3>
 
       <Group gap="xs">
         <Button component="label" disabled={uploading}>
-          Upload PDF
+          Upload PDF Reource
           <input
             type="file"
             ref={fileInputRef}
