@@ -5,9 +5,11 @@ import CreateNotesForm from "../component/CreateNotesForm";
 import { createClient } from "@/utils/supabase/server";
 import { MyAlert } from "../@notes/MyAlert";
 import ShareButton from "../@notes/ShareButton";
-import AiNotesAccordion from "./AiNotesAccordion";
+
 import { getSubscriptionServer } from "@/app/pricing/getSubscriptionServer";
 import Link from "next/link";
+import { PDFTextUploader } from "./PDFTextUploader ";
+import AiNotesAccordion from "./AiNotesAccordion";
 
 export default async function page({
   searchParams,
@@ -91,6 +93,8 @@ export default async function page({
           </div>
         </div>
       </Center>
+      <PDFTextUploader indexId={Number(selectedTopicId)} profileId={user.id} />
+      <div className="font-bold">Notes</div>
       <AiNotesAccordion
         topicId={selectedTopicId as string}
         topicText={selectedName}
