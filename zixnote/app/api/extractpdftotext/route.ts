@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 // export const runtime = "nodejs";
 export const config = {
   api: {
-    responseLimit: "10mb",
+    responseLimit: false,
   },
 };
 export async function POST(req: NextRequest) {
