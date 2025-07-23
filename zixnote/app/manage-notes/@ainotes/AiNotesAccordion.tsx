@@ -181,15 +181,22 @@ function AiNotesAccordion({
           </span>
         </div>
       )}
-      <Accordion
-        variant="filled"
-        multiple
-        radius="xs"
-        value={value}
-        onChange={setValue}
-      >
-        {items}
-      </Accordion>
+      {items && items.length !== 0 && (
+        <>
+          <div className="flex bg-gray-700 p-1 text-gray-50 font-semibold ">
+            NOTES
+          </div>
+          <Accordion
+            variant="filled"
+            multiple
+            radius="xs"
+            value={value}
+            onChange={setValue}
+          >
+            {items}
+          </Accordion>
+        </>
+      )}
       {!isGenerating && (
         <div className="flex flex-col items-center gap-y-6 mt-8 p-6 bg-gray-50 rounded-xl shadow-md">
           {data?.length === 0 ? (

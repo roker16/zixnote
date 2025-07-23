@@ -90,20 +90,6 @@ const MessageInputComponent = ({
       return;
     }
 
-    const wordCount = data.extracted_text.trim().split(/\s+/).length;
-    if (wordCount > WORD_LIMIT) {
-      setErrorMsg(`❌ Selected PDF too long: ${wordCount} words.`);
-      notifications.show({
-        title: "Error",
-        message: `Selected PDF too long: ${wordCount} words.`,
-        color: "red",
-        icon: <IconX size={18} />,
-        position: "top-right",
-        autoClose: 3000,
-      });
-      return;
-    }
-
     setFileName(pdf.file_name);
     setExtractedText(data.extracted_text);
     setSelectPdfModalOpen(false);

@@ -207,6 +207,7 @@ export const PDFTextUploader = ({
           component="label"
           disabled={uploading}
           variant="light"
+          size="xs"
           leftSection={<IconUpload />}
         >
           UPLOAD PDF RESOURCE FOR NOTES MAKING

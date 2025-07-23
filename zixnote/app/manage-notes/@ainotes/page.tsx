@@ -94,7 +94,7 @@ export default async function page({
         </div>
       </Center>
       <PDFTextUploader indexId={Number(selectedTopicId)} profileId={user.id} />
-      <div className="font-bold">Notes</div>
+
       <AiNotesAccordion
         topicId={selectedTopicId as string}
         topicText={selectedName}
