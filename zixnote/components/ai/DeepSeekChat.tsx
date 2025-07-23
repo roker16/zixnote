@@ -38,15 +38,24 @@ export default function DeepSeekChat({
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isStreaming, setIsStreaming] = useState(false);
+  const [userId, setUserId] = useState<string | undefined>(undefined);
   const [error, setError] = useState<string | null>(null);
   const [hasSentExtractedText, setHasSentExtractedText] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const assistantRefs = useRef<(HTMLDivElement | null)[]>([]);
   const supabase = createClient();
   const searchParams = useSearchParams();
+
   // const headingname = searchParams.get("headingname");
   const subjectName = searchParams.get("name");
+  const headingId = searchParams.get("headingid");
+  useEffect(() => {
+    const getUser = async () => {
+      setUserId((await supabase.auth.getUser()).data.user?.id);
+    };
 
+    getUser();
+  }, [supabase.auth]);
   //Initial prompt if content is not available
   useEffect(() => {
     if (!initialContent?.trim() && notesTitle) {
@@ -450,6 +459,8 @@ export default function DeepSeekChat({
           setInput={setInput}
           handleSubmit={handleSubmit}
           isLoading={isLoading}
+          indexId={Number(headingId)}
+          profileId={userId}
         />
       </div>
     </div>
