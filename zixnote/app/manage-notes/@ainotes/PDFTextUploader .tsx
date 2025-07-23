@@ -23,7 +23,7 @@ interface PDFTextUploaderProps {
   profileId: string; // Supabase profile UUID
 }
 
-const MAX_FILE_SIZE_MB = 25;
+const MAX_FILE_SIZE_MB = 4.4;
 const WORD_LIMIT = 30000;
 
 export const PDFTextUploader = ({
