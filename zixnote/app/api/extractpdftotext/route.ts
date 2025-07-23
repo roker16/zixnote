@@ -1,11 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
 // export const runtime = "nodejs";
-export const config = {
-  api: {
-    responseLimit: false,
-  },
-};
+
 export async function POST(req: NextRequest) {
   try {
     const formData = await req.formData();
