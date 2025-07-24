@@ -253,6 +253,32 @@ const sections = [
       },
     ],
   },
+  {
+    title: "AEN (Railway)",
+    children: [
+      {
+        label: "All Subject",
+        children: [
+          {
+            label: "Civil Engg (General)",
+            href: "/manage-notes?f=11&group=exam&id1=5&id2=4&id=85&name=Civil+Engineering+%28General%29",
+          },
+          {
+            label: "Civil Engg (Railway)",
+            href: "/manage-notes?f=11&group=exam&id1=5&id2=4&id=84&name=Civil+Engineering+%28Railways%29",
+          },
+          {
+            label: "Establishment & Finance",
+            href: "/manage-notes?f=11&group=exam&id1=5&id2=4&id=88&name=Establishment+and+Financial+rules",
+          },
+          {
+            label: "Rajbhasha and GK",
+            href: "/manage-notes?f=11&group=exam&id1=5&id2=4&id=89&name=General+knowledge+and+Official+language+policy+and+rules",
+          },
+        ],
+      },
+    ],
+  },
 ];
 
 function renderLinks(
