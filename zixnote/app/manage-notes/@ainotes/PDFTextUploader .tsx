@@ -14,7 +14,7 @@ import {
   useDeleteMutation,
   useQuery,
 } from "@supabase-cache-helpers/postgrest-swr";
-import { IconCheck, IconUpload, IconX } from "@tabler/icons-react";
+import { IconCheck, IconTrash, IconUpload, IconX } from "@tabler/icons-react";
 import { notifications } from "@mantine/notifications";
 import { PDFDocument } from "pdf-lib";
 
@@ -317,6 +317,7 @@ export const PDFTextUploader = ({
       setProcessingStatus("");
     }
   };
+
   const handleSave = async () => {
     if (!extractedText || !fileName || !profileId || !indexId) {
       setErrorMsg("❌ Missing required data.");
@@ -416,28 +417,24 @@ export const PDFTextUploader = ({
       {existingResources && existingResources.length > 0 && (
         <div className="mt-6">
           <h4 className="font-medium mb-2">📄 Already Uploaded PDFs</h4>
-          <ul className="space-y-2 text-sm text-gray-800">
+          <ul className="space-y-1 text-sm text-gray-700">
             {existingResources.map((res) => (
               <li
                 key={res.id}
-                className="flex items-center justify-between bg-gray-50 px-3 py-2 rounded border"
+                className="flex items-center justify-between px-2 py-0"
               >
-                <div>
-                  <div className="font-semibold">{res.file_name}</div>
-                  {res.description && (
-                    <div className="text-gray-600 text-xs">
-                      {res.description}
-                    </div>
-                  )}
+                <div className="flex items-center gap-2 truncate">
+                  <IconTrash
+                    size={16}
+                    className={`cursor-pointer ${
+                      deletingId === res.id ? "opacity-50 animate-pulse" : ""
+                    }`}
+                    onClick={() => openDeleteModal(res.id)}
+                  />
+                  <span className="italic font-semibold truncate">
+                    {res.file_name}
+                  </span>
                 </div>
-                <Button
-                  size="xs"
-                  color="red"
-                  loading={deletingId === res.id}
-                  onClick={() => openDeleteModal(res.id)}
-                >
-                  Delete
-                </Button>
               </li>
             ))}
           </ul>
