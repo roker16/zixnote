@@ -1,6 +1,5 @@
 "use client";
-
-import React, { useRef, useState, useEffect } from "react";
+import React, { useRef, useState } from "react";
 import {
   Button,
   Textarea,
@@ -17,14 +16,16 @@ import {
 } from "@supabase-cache-helpers/postgrest-swr";
 import { IconCheck, IconUpload, IconX } from "@tabler/icons-react";
 import { notifications } from "@mantine/notifications";
+import { PDFDocument } from "pdf-lib";
 
 interface PDFTextUploaderProps {
   indexId: number;
-  profileId: string; // Supabase profile UUID
+  profileId: string;
 }
 
 const MAX_FILE_SIZE_MB = 4.4;
-const WORD_LIMIT = 30000;
+const MAX_TOTAL_FILE_SIZE_MB = 25;
+const WORD_LIMIT = 60000;
 
 export const PDFTextUploader = ({
   indexId,
@@ -40,6 +41,8 @@ export const PDFTextUploader = ({
   const [modalOpen, setModalOpen] = useState(false);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [resourceToDelete, setResourceToDelete] = useState<number | null>(null);
+  const [deletingId, setDeletingId] = useState<number | null>(null);
+  const [processingStatus, setProcessingStatus] = useState<string>("");
 
   const supabase = createClient();
 
@@ -57,7 +60,7 @@ export const PDFTextUploader = ({
     }
   );
 
-  const { trigger: deleteResource, isMutating: deleting } = useDeleteMutation(
+  const { trigger: deleteResource } = useDeleteMutation(
     supabase.from("pdf_extracted_texts"),
     ["id"],
     null,
@@ -71,7 +74,6 @@ export const PDFTextUploader = ({
           position: "top-center",
           autoClose: 3000,
         });
-        mutate();
       },
       onError: (error) => {
         console.error("Delete error:", error);
@@ -93,61 +95,228 @@ export const PDFTextUploader = ({
     setErrorMsg("");
     setExtractedText("");
     setFileName(null);
+    setProcessingStatus("");
 
     if (!file || file.type !== "application/pdf") {
       setErrorMsg("❌ Please upload a valid PDF file.");
       return;
     }
 
-    if (file.size > MAX_FILE_SIZE_MB * 1024 * 1024) {
-      setErrorMsg(
-        `❌ File too large: ${(file.size / (1024 * 1024)).toFixed(2)} MB.`
-      );
+    const totalMaxBytes = MAX_TOTAL_FILE_SIZE_MB * 1024 * 1024;
+    if (file.size > totalMaxBytes) {
+      setErrorMsg(`❌ File size exceeds ${MAX_TOTAL_FILE_SIZE_MB}MB limit.`);
       return;
     }
 
+    const maxPartBytes = 4 * 1024 * 1024; // 4MB per part
     setUploading(true);
+
     try {
-      // ✅ FIX: Read into memory to avoid file being revoked mid-upload
+      const baseFileName = file.name.replace(/\.pdf$/i, "");
       const arrayBuffer = await file.arrayBuffer();
-      const blob = new Blob([arrayBuffer], { type: file.type });
-      const safeFile = new File([blob], file.name, {
-        type: file.type,
-        lastModified: file.lastModified,
-      });
+      const fullPdf = await PDFDocument.load(arrayBuffer);
+      const totalPages = fullPdf.getPageCount();
 
-      const formData = new FormData();
-      formData.append("file", safeFile); // ✅ Use cloned file here
+      console.log(`Original size: ${(file.size / 1024 / 1024).toFixed(2)}MB`);
+      console.log(`Total pages: ${totalPages}`);
 
-      const res = await fetch("/api/extractpdftotext", {
-        method: "POST",
-        body: formData,
-      });
+      // Single part case
+      if (file.size <= maxPartBytes) {
+        const formData = new FormData();
+        formData.append("file", file);
+        const res = await fetch("/api/extractpdftotext", {
+          method: "POST",
+          body: formData,
+        });
+        const { text, error } = await res.json();
 
-      const { text, error } = await res.json();
+        if (error || !text) {
+          setErrorMsg("❌ Failed to extract text from file");
+          setUploading(false);
+          return;
+        }
 
-      if (error || !text) {
-        setErrorMsg("❌ Failed to extract text from PDF.");
+        const wordCount = text.trim().split(/\s+/).length;
+        if (wordCount > WORD_LIMIT) {
+          setErrorMsg(`❌ Extracted text exceeds ${WORD_LIMIT} word limit.`);
+          setUploading(false);
+          return;
+        }
+
+        const { error: dbError } = await supabase
+          .from("pdf_extracted_texts")
+          .insert({
+            index_id: indexId,
+            uploaded_by: profileId,
+            file_name: file.name,
+            extracted_text: text,
+            description: description || null,
+          });
+
+        if (dbError) {
+          console.error("Supabase error:", dbError);
+          setErrorMsg("❌ Failed to save to database.");
+        } else {
+          notifications.show({
+            title: `Saved: ${file.name}`,
+            message: "Text saved successfully",
+            color: "green",
+            icon: <IconCheck size={18} />,
+            position: "top-center",
+            autoClose: 3000,
+          });
+        }
+
+        await mutate();
+        setUploading(false);
         return;
       }
 
-      const wordCount = text.trim().split(/\s+/).length;
-      if (wordCount > WORD_LIMIT) {
-        setErrorMsg(`❌ Extracted text exceeds ${WORD_LIMIT} word limit.`);
-        return;
+      // Multi-part processing
+      setProcessingStatus("Splitting PDF...");
+      const parts: { pages: number[]; pdfBytes: Uint8Array }[] = [];
+      let currentPart = await PDFDocument.create();
+      let currentPartPages: number[] = [];
+      let currentPartSize = 0;
+
+      // Measure PDF overhead
+      const emptyPdf = await PDFDocument.create();
+      const overheadBytes = (await emptyPdf.save()).byteLength;
+      const avgPageSize = (file.size - overheadBytes) / totalPages;
+
+      for (let pageIndex = 0; pageIndex < totalPages; pageIndex++) {
+        const [copiedPage] = await currentPart.copyPages(fullPdf, [pageIndex]);
+        currentPart.addPage(copiedPage);
+        currentPartPages.push(pageIndex);
+
+        // Check size every 2 pages or when approaching limit
+        if (
+          currentPartPages.length % 2 === 0 ||
+          (currentPartSize > maxPartBytes * 0.7 && currentPartPages.length > 1)
+        ) {
+          const pdfBytes = await currentPart.save();
+          currentPartSize = pdfBytes.byteLength;
+
+          if (currentPartSize > maxPartBytes) {
+            // Remove last page if over limit
+            currentPart.removePage(currentPart.getPageCount() - 1);
+            const finalBytes = await currentPart.save();
+            parts.push({
+              pages: [...currentPartPages.slice(0, -1)],
+              pdfBytes: finalBytes,
+            });
+
+            // Start new part with the last page
+            currentPart = await PDFDocument.create();
+            const [newPage] = await currentPart.copyPages(fullPdf, [pageIndex]);
+            currentPart.addPage(newPage);
+            currentPartPages = [pageIndex];
+            currentPartSize = (await currentPart.save()).byteLength;
+          }
+        } else {
+          // Estimate size growth
+          currentPartSize =
+            overheadBytes + avgPageSize * currentPartPages.length;
+        }
       }
 
-      setExtractedText(text);
-      setFileName(file.name);
-      setModalOpen(true);
+      // Add the final part if it has pages
+      if (currentPart.getPageCount() > 0) {
+        const pdfBytes = await currentPart.save();
+        parts.push({
+          pages: currentPartPages,
+          pdfBytes: pdfBytes,
+        });
+      }
+
+      // Verify total size
+      const totalProcessedSize = parts.reduce(
+        (sum, part) => sum + part.pdfBytes.byteLength,
+        0
+      );
+      console.log(
+        `Created ${parts.length} parts (total ${(
+          totalProcessedSize /
+          1024 /
+          1024
+        ).toFixed(2)}MB)`
+      );
+
+      // Process each part
+      for (let partIndex = 0; partIndex < parts.length; partIndex++) {
+        const part = parts[partIndex];
+        setProcessingStatus(
+          `Processing part ${partIndex + 1}/${parts.length}...`
+        );
+
+        // Fix: Explicitly create Uint8Array from the bytes
+        const pdfUint8Array = new Uint8Array(part.pdfBytes);
+        const blob = new Blob([pdfUint8Array], { type: "application/pdf" });
+
+        const partFile = new File(
+          [blob],
+          `${baseFileName}-part${partIndex + 1}.pdf`,
+          {
+            type: "application/pdf",
+          }
+        );
+
+        const formData = new FormData();
+        formData.append("file", partFile);
+
+        const res = await fetch("/api/extractpdftotext", {
+          method: "POST",
+          body: formData,
+        });
+        const { text, error } = await res.json();
+
+        if (error || !text) {
+          setErrorMsg(`❌ Failed to extract text from part ${partIndex + 1}`);
+          continue;
+        }
+
+        const wordCount = text.trim().split(/\s+/).length;
+        if (wordCount > WORD_LIMIT) {
+          setErrorMsg(
+            `❌ Part ${partIndex + 1} exceeds ${WORD_LIMIT} word limit.`
+          );
+          continue;
+        }
+
+        const { error: dbError } = await supabase
+          .from("pdf_extracted_texts")
+          .insert({
+            index_id: indexId,
+            uploaded_by: profileId,
+            file_name: `${baseFileName}-part${partIndex + 1}.pdf`,
+            extracted_text: text,
+            description: description || null,
+          });
+
+        if (dbError) {
+          console.error("Supabase error:", dbError);
+          setErrorMsg(`❌ Failed to save part ${partIndex + 1} to database.`);
+        } else {
+          notifications.show({
+            title: `Saved: ${baseFileName}-part${partIndex + 1}`,
+            message: "Text saved successfully",
+            color: "green",
+            icon: <IconCheck size={18} />,
+            position: "top-center",
+            autoClose: 3000,
+          });
+        }
+      }
+
+      await mutate();
     } catch (err) {
-      console.error("PDF extraction error:", err);
-      setErrorMsg("❌ Unexpected error while extracting PDF.");
+      console.error("PDF processing error:", err);
+      setErrorMsg("❌ Unexpected error while processing PDF.");
     } finally {
       setUploading(false);
+      setProcessingStatus("");
     }
   };
-
   const handleSave = async () => {
     if (!extractedText || !fileName || !profileId || !indexId) {
       setErrorMsg("❌ Missing required data.");
@@ -190,9 +359,14 @@ export const PDFTextUploader = ({
   const handleDelete = async () => {
     if (!resourceToDelete) return;
 
+    setDeletingId(resourceToDelete);
+
     await deleteResource({ id: resourceToDelete, uploaded_by: profileId });
+
+    setDeletingId(null);
     setDeleteModalOpen(false);
     setResourceToDelete(null);
+    await mutate();
   };
 
   const openDeleteModal = (id: number) => {
@@ -228,7 +402,7 @@ export const PDFTextUploader = ({
 
         {uploading && (
           <Badge color="yellow" variant="light" className="animate-pulse">
-            ⏳ Extracting...
+            ⏳ {processingStatus}
           </Badge>
         )}
       </Group>
@@ -259,7 +433,7 @@ export const PDFTextUploader = ({
                 <Button
                   size="xs"
                   color="red"
-                  loading={deleting}
+                  loading={deletingId === res.id}
                   onClick={() => openDeleteModal(res.id)}
                 >
                   Delete
@@ -314,7 +488,11 @@ export const PDFTextUploader = ({
           <Button variant="light" onClick={() => setDeleteModalOpen(false)}>
             Cancel
           </Button>
-          <Button color="red" onClick={handleDelete} loading={deleting}>
+          <Button
+            color="red"
+            onClick={handleDelete}
+            loading={deletingId !== null}
+          >
             Delete
           </Button>
         </Group>
