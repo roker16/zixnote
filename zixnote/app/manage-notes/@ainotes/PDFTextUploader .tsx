@@ -26,6 +26,9 @@ interface PDFTextUploaderProps {
 const MAX_TOTAL_FILE_SIZE_MB = 25;
 const MAX_PART_FILE_SIZE_MB = 4;
 const WORD_LIMIT = 60000;
+const MAX_RETRIES = 3;
+const RETRY_DELAY_MS = 1000;
+const SMALL_FILE_THRESHOLD_MB = 1; // Threshold for attempting local copy
 
 export const PDFTextUploader = ({
   indexId,
@@ -120,13 +123,18 @@ export const PDFTextUploader = ({
       "content://com.google.android.apps.photos",
       /googledrive/i,
       /drive\.google\.com/i,
+      /content:\/\//i, // Broader check for content URIs on Android
     ];
-    return cloudPatterns.some((pattern) =>
-      typeof pattern === "string"
-        ? file.name.includes(pattern) ||
-          (file as any).webkitRelativePath?.includes(pattern)
-        : pattern.test(file.name) ||
-          pattern.test((file as any).webkitRelativePath || "")
+    const isAndroid = /Android/i.test(navigator.userAgent);
+    return (
+      isAndroid &&
+      cloudPatterns.some((pattern) =>
+        typeof pattern === "string"
+          ? file.name.includes(pattern) ||
+            (file as any).webkitRelativePath?.includes(pattern)
+          : pattern.test(file.name) ||
+            pattern.test((file as any).webkitRelativePath || "")
+      )
     );
   };
 
@@ -142,6 +150,39 @@ export const PDFTextUploader = ({
       console.error("Failed to create local file copy:", err);
       throw new Error("Unable to process Google Drive file");
     }
+  };
+
+  const fetchWithRetry = async (
+    url: string,
+    options: RequestInit,
+    file: File,
+    retries: number
+  ): Promise<Response> => {
+    for (let attempt = 1; attempt <= retries; attempt++) {
+      try {
+        if (!(await isFileAccessible(file))) {
+          throw new Error("File is not accessible");
+        }
+        const response = await fetch(url, {
+          ...options,
+          signal: AbortSignal.timeout(60000), // 60s timeout
+        });
+        if (!response.ok) {
+          throw new Error(
+            `HTTP error ${response.status}: ${response.statusText}`
+          );
+        }
+        return response;
+      } catch (error) {
+        if (attempt === retries) throw error;
+        console.warn(
+          `Fetch attempt ${attempt} failed for file ${file.name} (${file.size} bytes), retrying...`,
+          error
+        );
+        await new Promise((resolve) => setTimeout(resolve, RETRY_DELAY_MS));
+      }
+    }
+    throw new Error("Max retries reached");
   };
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -163,12 +204,22 @@ export const PDFTextUploader = ({
     let uploadFile = file;
 
     if (isGoogleDriveFile(file)) {
-      setProcessingStatus("Copying Google Drive file locally...");
-      try {
-        uploadFile = await createLocalFileCopy(file);
-      } catch (err) {
+      if (file.size <= SMALL_FILE_THRESHOLD_MB * 1024 * 1024) {
+        setProcessingStatus("Copying small Google Drive file locally...");
+        try {
+          uploadFile = await createLocalFileCopy(file);
+          console.log("Local copy created:", uploadFile.name, uploadFile.size);
+        } catch (err) {
+          console.error("Google Drive copy error:", err);
+          setErrorMsg(
+            "⚠️ Failed to process small Google Drive file. Please download the file to your device (e.g., Downloads folder) and try again."
+          );
+          setProcessingStatus("");
+          return;
+        }
+      } else {
         setErrorMsg(
-          "⚠️ Failed to process Google Drive file. Please download the file to your device and try again."
+          "⚠️ Google Drive files may not work directly. Please download the file to your device (e.g., Downloads folder) and try uploading again."
         );
         setProcessingStatus("");
         return;
@@ -209,10 +260,15 @@ export const PDFTextUploader = ({
         setProcessingStatus("Processing file...");
         const formData = new FormData();
         formData.append("file", uploadFile);
-        const res = await fetch("/api/extractpdftotext", {
-          method: "POST",
-          body: formData,
-        });
+        const res = await fetchWithRetry(
+          "/api/extractpdftotext",
+          {
+            method: "POST",
+            body: formData,
+          },
+          uploadFile,
+          MAX_RETRIES
+        );
         console.log("API response status:", res.status, res.statusText);
         const { text, error } = await res.json();
         console.log("API response data:", { text, error });
@@ -339,10 +395,15 @@ export const PDFTextUploader = ({
         const formData = new FormData();
         formData.append("file", partFile);
 
-        const res = await fetch("/api/extractpdftotext", {
-          method: "POST",
-          body: formData,
-        });
+        const res = await fetchWithRetry(
+          "/api/extractpdftotext",
+          {
+            method: "POST",
+            body: formData,
+          },
+          partFile,
+          MAX_RETRIES
+        );
         console.log("API response status:", res.status, res.statusText);
         const { text, error } = await res.json();
         console.log("API response data:", { text, error });
@@ -391,7 +452,7 @@ export const PDFTextUploader = ({
       const errorMessage = err instanceof Error ? err.message : String(err);
       if (errorMessage.includes("ERR_UPLOAD_FILE_CHANGED")) {
         setErrorMsg(
-          "❌ File changed during upload. Please download the file locally and try again."
+          "❌ File changed during upload. Please download the file to your device (e.g., Downloads folder) and try again."
         );
       } else {
         setErrorMsg(
@@ -499,6 +560,11 @@ export const PDFTextUploader = ({
           {errorMsg}
         </div>
       )}
+
+      <Text size="sm" color="dimmed" mt={4}>
+        Note: For Google Drive files, download the PDF to your device (e.g.,
+        Downloads folder) before uploading to avoid errors.
+      </Text>
 
       {existingResources && existingResources.length > 0 && (
         <div className="mt-6">
