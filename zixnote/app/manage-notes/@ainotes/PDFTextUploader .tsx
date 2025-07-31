@@ -343,7 +343,9 @@ export const PDFTextUploader = ({
       await mutate();
     } catch (err) {
       console.error("PDF processing error:", err);
-      setErrorMsg("❌ Unexpected error while processing PDF.");
+      setErrorMsg(
+        `❌ Unxpected error while processing PDF. ${(err as any).message}`
+      );
     } finally {
       setUploading(false);
       setProcessingStatus("");
