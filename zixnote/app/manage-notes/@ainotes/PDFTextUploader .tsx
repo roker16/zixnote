@@ -344,7 +344,7 @@ export const PDFTextUploader = ({
     } catch (err) {
       console.error("PDF processing error:", err);
       setErrorMsg(
-        `❌ Unxpected error while processing PDF. ${(err as any).message}`
+        `❌ Unxpected error while processing PDF. ${JSON.stringify(err)}`
       );
     } finally {
       setUploading(false);
