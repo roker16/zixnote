@@ -561,14 +561,12 @@ export const PDFTextUploader = ({
           setSelectedResourceId(null);
           setViewedText("");
         }}
-        title="View Extracted Text"
+        title=<div className="font-bold text-xl">View Extracted Text</div>
         size="lg"
         centered
       >
-        <Text size="sm" w={500} mb="xs">
-          Extracted Text
-        </Text>
-        <ScrollArea style={{ height: "400px" }} type="auto" scrollbarSize={8}>
+        {/* <div className="font-semibold italic text-red-900">Extracted Text</div> */}
+        <ScrollArea w={600} h={600} scrollbarSize={8}>
           <Text style={{ whiteSpace: "pre-wrap", paddingRight: "8px" }}>
             {viewedText}
           </Text>
