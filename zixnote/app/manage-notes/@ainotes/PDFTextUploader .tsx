@@ -98,14 +98,6 @@ export const PDFTextUploader = ({
     });
   };
 
-  const isGoogleDriveFile = (file: File): boolean => {
-    const isAndroid = /Android/i.test(navigator.userAgent);
-    return (
-      isAndroid &&
-      /content:\/\//i.test(file.name || (file as any).webkitRelativePath || "")
-    );
-  };
-
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     e.target.value = "";
@@ -122,13 +114,9 @@ export const PDFTextUploader = ({
       return;
     }
 
-    let uploadFile = file;
-
-    const isAndroid = /Android/i.test(navigator.userAgent);
-    const MAX_FILE_SIZE_MB = isAndroid ? 15 : MAX_TOTAL_FILE_SIZE_MB;
-    const totalMaxBytes = MAX_FILE_SIZE_MB * 1024 * 1024;
+    const totalMaxBytes = MAX_TOTAL_FILE_SIZE_MB * 1024 * 1024;
     if (file.size > totalMaxBytes) {
-      setErrorMsg(`❌ File size exceeds ${MAX_FILE_SIZE_MB}MB limit.`);
+      setErrorMsg(`❌ File size exceeds ${MAX_TOTAL_FILE_SIZE_MB}MB limit.`);
       return;
     }
 
@@ -144,12 +132,14 @@ export const PDFTextUploader = ({
       console.log(`Original size: ${(file.size / 1024 / 1024).toFixed(2)}MB`);
       console.log(`Total pages: ${totalPages}`);
 
-      if (isGoogleDriveFile(file) || file.size <= maxPartBytes) {
+      if (file.size <= maxPartBytes) {
         setProcessingStatus("Processing file...");
         const pdfBytes = await fullPdf.save();
         const pdfUint8Array = new Uint8Array(pdfBytes);
         const blob = new Blob([pdfUint8Array], { type: "application/pdf" });
-        uploadFile = new File([blob], file.name, { type: "application/pdf" });
+        const uploadFile = new File([blob], file.name, {
+          type: "application/pdf",
+        });
 
         const formData = new FormData();
         formData.append("file", uploadFile);
@@ -256,8 +246,6 @@ export const PDFTextUploader = ({
         });
       }
 
-      fullPdf.removePage(0);
-
       console.log(
         `Created ${parts.length} parts (total ${(
           parts.reduce((sum, part) => sum + part.pdfBytes.byteLength, 0) /
@@ -333,7 +321,7 @@ export const PDFTextUploader = ({
     } catch (err) {
       console.error("PDF processing error:", err);
       setErrorMsg(
-        "❌ Failed to process PDF. For Google Drive files, please download the file to your device (e.g., Downloads folder) and try again."
+        "❌ Failed to process PDF. Please try again or use a different file."
       );
     } finally {
       setUploading(false);
@@ -436,11 +424,6 @@ export const PDFTextUploader = ({
           {errorMsg}
         </div>
       )}
-
-      <Text size="sm" color="dimmed" mt={4}>
-        Note: For Google Drive files, download the PDF to your device (e.g.,
-        Downloads folder) before uploading to avoid errors.
-      </Text>
 
       {existingResources && existingResources.length > 0 && (
         <div className="mt-6">
