@@ -113,85 +113,45 @@ export const PDFTextUploader = ({
   };
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    e.target.value = "";
+    setErrorMsg("");
+    setExtractedText("");
+    setFileName(null);
+    setProcessingStatus("");
+
+    console.log("File selected:", file?.name, file?.type, file?.size);
+
+    if (!file || file.type !== "application/pdf") {
+      setErrorMsg("❌ Please upload a valid PDF file.");
+      console.error("Invalid file type:", file?.type);
+      return;
+    }
+
+    if (file.name.includes("content://com.google.android.apps.docs.storage")) {
+      setErrorMsg(
+        "⚠️ Google Drive files may not work directly. Please download the file to your device and try again."
+      );
+      return;
+    }
+
+    if (!(await isFileAccessible(file))) {
+      setErrorMsg("❌ File is not accessible. Try downloading it first.");
+      return;
+    }
+
+    const isAndroid = /Android/i.test(navigator.userAgent);
+    const MAX_FILE_SIZE_MB = isAndroid ? 15 : MAX_TOTAL_FILE_SIZE_MB;
+    const totalMaxBytes = MAX_FILE_SIZE_MB * 1024 * 1024;
+    if (file.size > totalMaxBytes) {
+      setErrorMsg(`❌ File size exceeds ${MAX_FILE_SIZE_MB}MB limit.`);
+      return;
+    }
+
+    const maxPartBytes = MAX_PART_FILE_SIZE_MB * 1024 * 1024;
+    setUploading(true);
+
     try {
-      setErrorMsg("");
-      setExtractedText("");
-      setFileName(null);
-      setProcessingStatus("");
-
-      if (!e.target.files || e.target.files.length === 0) {
-        setErrorMsg("❌ No file selected. Please choose a PDF file.");
-        console.error("No files in input event:", e.target.files);
-        return;
-      }
-
-      let file = e.target.files[0];
-      e.target.value = "";
-
-      console.log("File selected:", {
-        name: file.name,
-        type: file.type,
-        size: file.size,
-        lastModified: file.lastModified,
-      });
-
-      if (!file) {
-        setErrorMsg("❌ File could not be accessed. Try selecting again.");
-        console.error("File object is null or undefined");
-        return;
-      }
-
-      if (file.type !== "application/pdf") {
-        setErrorMsg("❌ Invalid file type. Please upload a PDF file.");
-        console.error("Invalid file type:", file.type);
-        return;
-      }
-
-      // Handle Google Drive URI by creating a stable local copy
-      if (
-        file.name.includes("content://com.google.android.apps.docs.storage")
-      ) {
-        setProcessingStatus("Copying Google Drive file...");
-        try {
-          const arrayBuffer = await readFileAsArrayBuffer(file);
-          file = new File([arrayBuffer], file.name, {
-            type: "application/pdf",
-            lastModified: Date.now(),
-          });
-          console.log("Created stable file copy:", file.name, file.size);
-        } catch (err: any) {
-          setErrorMsg(`❌ Failed to copy Google Drive file: ${err.message}`);
-          console.error("Google Drive file copy error:", {
-            message: err.message,
-            stack: err.stack,
-            name: err.name,
-            code: err.code,
-          });
-          return;
-        }
-      }
-
-      if (!(await isFileAccessible(file))) {
-        setErrorMsg(
-          "❌ File is not accessible. Try downloading it locally first."
-        );
-        console.error("File accessibility check failed for:", file.name);
-        return;
-      }
-
-      const isAndroid = /Android/i.test(navigator.userAgent);
-      const MAX_FILE_SIZE_MB = isAndroid ? 10 : MAX_TOTAL_FILE_SIZE_MB;
-      const totalMaxBytes = MAX_FILE_SIZE_MB * 1024 * 1024;
-      if (file.size > totalMaxBytes) {
-        setErrorMsg(`❌ File size exceeds ${MAX_FILE_SIZE_MB}MB limit.`);
-        console.error("File size too large:", file.size, "bytes");
-        return;
-      }
-
-      const maxPartBytes = MAX_PART_FILE_SIZE_MB * 1024 * 1024;
-      setUploading(true);
-      setFileName(file.name);
-
       const baseFileName = file.name.replace(/\.pdf$/i, "");
       const arrayBuffer = await readFileAsArrayBuffer(file);
       const fullPdf = await PDFDocument.load(arrayBuffer);
@@ -204,82 +164,57 @@ export const PDFTextUploader = ({
         setProcessingStatus("Processing file...");
         const formData = new FormData();
         formData.append("file", file);
-        try {
-          const res = await fetch("/api/extractpdftotext", {
-            method: "POST",
-            body: formData,
-          });
-          console.log("API response status:", res.status, res.statusText);
-          if (!res.ok) {
-            throw new Error(`HTTP error: ${res.status} ${res.statusText}`);
-          }
-          const { text, error } = await res.json();
-          console.log("API response data:", { text, error });
+        const res = await fetch("/api/extractpdftotext", {
+          method: "POST",
+          body: formData,
+        });
+        console.log("API response status:", res.status, res.statusText);
+        const { text, error } = await res.json();
+        console.log("API response data:", { text, error });
 
-          if (error || !text) {
-            setErrorMsg(
-              `❌ Failed to extract text: ${error || "Unknown error"}`
-            );
-            console.error("Text extraction failed:", error);
-            setUploading(false);
-            setProcessingStatus("");
-            return;
-          }
-
-          const wordCount = text.trim().split(/\s+/).length;
-          if (wordCount > WORD_LIMIT) {
-            setErrorMsg(`❌ Extracted text exceeds ${WORD_LIMIT} word limit.`);
-            console.error("Word count exceeded:", wordCount);
-            setUploading(false);
-            return;
-          }
-
-          const { error: dbError } = await supabase
-            .from("pdf_extracted_texts")
-            .insert({
-              index_id: indexId,
-              uploaded_by: profileId,
-              file_name: file.name,
-              extracted_text: text,
-              description: description || null,
-            });
-
-          if (dbError) {
-            setErrorMsg(`❌ Database error: ${dbError.message}`);
-            console.error("Supabase error:", {
-              message: dbError.message,
-              stack: dbError.stack,
-              name: dbError.name,
-              code: dbError.code,
-            });
-            setProcessingStatus("");
-          } else {
-            notifications.show({
-              title: `Saved: ${file.name}`,
-              message: "Text saved successfully",
-              color: "green",
-              icon: <IconCheck size={18} />,
-              position: "top-center",
-              autoClose: 3000,
-            });
-          }
-
-          await mutate();
-          setUploading(false);
-          setProcessingStatus("");
-          return;
-        } catch (err: any) {
-          setErrorMsg(`❌ Upload failed: ${err.message}`);
-          console.error("Fetch error:", {
-            message: err.message,
-            stack: err.stack,
-            name: err.name,
-            code: err.code,
-          });
+        if (error || !text) {
+          setErrorMsg("❌ Failed to extract text from file");
           setUploading(false);
           setProcessingStatus("");
           return;
         }
+
+        const wordCount = text.trim().split(/\s+/).length;
+        if (wordCount > WORD_LIMIT) {
+          setErrorMsg(`❌ Extracted text exceeds ${WORD_LIMIT} word limit.`);
+          setUploading(false);
+          return;
+        }
+
+        const { error: dbError } = await supabase
+          .from("pdf_extracted_texts")
+          .insert({
+            index_id: indexId,
+            uploaded_by: profileId,
+            file_name: file.name,
+            extracted_text: text,
+            description: description || null,
+          });
+
+        if (dbError) {
+          console.error("Supabase error:", dbError);
+          setErrorMsg("❌ Failed to save to database.");
+          setProcessingStatus("");
+        } else {
+          notifications.show({
+            title: `Saved: ${file.name}`,
+            message: "Text saved successfully",
+            color: "green",
+            icon: <IconCheck size={18} />,
+            position: "top-center",
+            autoClose: 3000,
+          });
+        }
+
+        await mutate();
+        setUploading(false);
+        setProcessingStatus("");
+        return;
       }
 
       setProcessingStatus("Splitting PDF...");
@@ -359,102 +294,60 @@ export const PDFTextUploader = ({
         const formData = new FormData();
         formData.append("file", partFile);
 
-        try {
-          const res = await fetch("/api/extractpdftotext", {
-            method: "POST",
-            body: formData,
-          });
-          console.log("API response status:", res.status, res.statusText);
-          if (!res.ok) {
-            throw new Error(`HTTP error: ${res.status} ${res.statusText}`);
-          }
-          const { text, error } = await res.json();
-          console.log("API response data:", { text, error });
+        const res = await fetch("/api/extractpdftotext", {
+          method: "POST",
+          body: formData,
+        });
+        console.log("API response status:", res.status, res.statusText);
+        const { text, error } = await res.json();
+        console.log("API response data:", { text, error });
 
-          if (error || !text) {
-            setErrorMsg(
-              `❌ Failed to extract text from part ${partIndex + 1}: ${
-                error || "Unknown error"
-              }`
-            );
-            console.error(
-              "Text extraction failed for part:",
-              partIndex + 1,
-              error
-            );
-            continue;
-          }
-
-          const wordCount = text.trim().split(/\s+/).length;
-          if (wordCount > WORD_LIMIT) {
-            setErrorMsg(
-              `❌ Part ${partIndex + 1} exceeds ${WORD_LIMIT} word limit.`
-            );
-            console.error(
-              "Word count exceeded for part:",
-              partIndex + 1,
-              wordCount
-            );
-            continue;
-          }
-
-          const { error: dbError } = await supabase
-            .from("pdf_extracted_texts")
-            .insert({
-              index_id: indexId,
-              uploaded_by: profileId,
-              file_name: `${baseFileName}-part${partIndex + 1}.pdf`,
-              extracted_text: text,
-              description: description || null,
-            });
-
-          if (dbError) {
-            setErrorMsg(
-              `❌ Database error for part ${partIndex + 1}: ${dbError.message}`
-            );
-            console.error("Supabase error for part:", partIndex + 1, {
-              message: dbError.message,
-              stack: dbError.stack,
-              name: dbError.name,
-              code: dbError.code,
-            });
-          } else {
-            notifications.show({
-              title: `Saved: ${baseFileName}-part${partIndex + 1}`,
-              message: "Text saved successfully",
-              color: "green",
-              icon: <IconCheck size={18} />,
-              position: "top-center",
-              autoClose: 3000,
-            });
-          }
-        } catch (err: any) {
-          setErrorMsg(
-            `❌ Upload failed for part ${partIndex + 1}: ${err.message}`
-          );
-          console.error("Fetch error for part:", partIndex + 1, {
-            message: err.message,
-            stack: err.stack,
-            name: err.name,
-            code: err.code,
-          });
+        if (error || !text) {
+          setErrorMsg(`❌ Failed to extract text from part ${partIndex + 1}`);
           continue;
+        }
+
+        const wordCount = text.trim().split(/\s+/).length;
+        if (wordCount > WORD_LIMIT) {
+          setErrorMsg(
+            `❌ Part ${partIndex + 1} exceeds ${WORD_LIMIT} word limit.`
+          );
+          continue;
+        }
+
+        const { error: dbError } = await supabase
+          .from("pdf_extracted_texts")
+          .insert({
+            index_id: indexId,
+            uploaded_by: profileId,
+            file_name: `${baseFileName}-part${partIndex + 1}.pdf`,
+            extracted_text: text,
+            description: description || null,
+          });
+
+        if (dbError) {
+          console.error("Supabase error:", dbError);
+          setErrorMsg(`❌ Failed to save part ${partIndex + 1} to database.`);
+        } else {
+          notifications.show({
+            title: `Saved: ${baseFileName}-part${partIndex + 1}`,
+            message: "Text saved successfully",
+            color: "green",
+            icon: <IconCheck size={18} />,
+            position: "top-center",
+            autoClose: 3000,
+          });
         }
       }
 
       await mutate();
-    } catch (err: any) {
-      const errorDetails = {
-        message: err.message,
-        stack: err.stack,
-        name: err.name,
-        cause: err.cause,
-        code: err.code,
-      };
+    } catch (err) {
+      console.error("PDF processing error:", err);
       setErrorMsg(
-        `❌ Error: ${err.message || "Unexpected error while processing PDF"}`
+        `❌ Unxpected error while processing PDF code. ${(err as any).code}${
+          (err as any).status
+        }${(err as any).stack}${(err as any).code}`
       );
-      console.error("PDF processing error:", errorDetails);
     } finally {
       setUploading(false);
       setProcessingStatus("");
