@@ -23,8 +23,8 @@ interface PDFTextUploaderProps {
   profileId: string;
 }
 
-const MAX_FILE_SIZE_MB = 4.4;
 const MAX_TOTAL_FILE_SIZE_MB = 25;
+const MAX_PART_FILE_SIZE_MB = 4;
 const WORD_LIMIT = 60000;
 
 export const PDFTextUploader = ({
@@ -89,6 +89,29 @@ export const PDFTextUploader = ({
     }
   );
 
+  const readFileAsArrayBuffer = (file: File): Promise<ArrayBuffer> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result as ArrayBuffer);
+      reader.onerror = () => reject(new Error("Failed to read file"));
+      reader.readAsArrayBuffer(file);
+    });
+  };
+
+  const isFileAccessible = async (file: File): Promise<boolean> => {
+    try {
+      const testReader = new FileReader();
+      await new Promise((resolve, reject) => {
+        testReader.onload = resolve;
+        testReader.onerror = reject;
+        testReader.readAsArrayBuffer(file.slice(0, 1024));
+      });
+      return true;
+    } catch {
+      return false;
+    }
+  };
+
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     e.target.value = "";
@@ -97,42 +120,62 @@ export const PDFTextUploader = ({
     setFileName(null);
     setProcessingStatus("");
 
+    console.log("File selected:", file?.name, file?.type, file?.size);
+
     if (!file || file.type !== "application/pdf") {
       setErrorMsg("❌ Please upload a valid PDF file.");
+      console.error("Invalid file type:", file?.type);
       return;
     }
 
-    const totalMaxBytes = MAX_TOTAL_FILE_SIZE_MB * 1024 * 1024;
+    if (file.name.includes("content://com.google.android.apps.docs.storage")) {
+      setErrorMsg(
+        "⚠️ Google Drive files may not work directly. Please download the file to your device and try again."
+      );
+      return;
+    }
+
+    if (!(await isFileAccessible(file))) {
+      setErrorMsg("❌ File is not accessible. Try downloading it first.");
+      return;
+    }
+
+    const isAndroid = /Android/i.test(navigator.userAgent);
+    const MAX_FILE_SIZE_MB = isAndroid ? 15 : MAX_TOTAL_FILE_SIZE_MB;
+    const totalMaxBytes = MAX_FILE_SIZE_MB * 1024 * 1024;
     if (file.size > totalMaxBytes) {
-      setErrorMsg(`❌ File size exceeds ${MAX_TOTAL_FILE_SIZE_MB}MB limit.`);
+      setErrorMsg(`❌ File size exceeds ${MAX_FILE_SIZE_MB}MB limit.`);
       return;
     }
 
-    const maxPartBytes = 4 * 1024 * 1024; // 4MB per part
+    const maxPartBytes = MAX_PART_FILE_SIZE_MB * 1024 * 1024;
     setUploading(true);
 
     try {
       const baseFileName = file.name.replace(/\.pdf$/i, "");
-      const arrayBuffer = await file.arrayBuffer();
+      const arrayBuffer = await readFileAsArrayBuffer(file);
       const fullPdf = await PDFDocument.load(arrayBuffer);
       const totalPages = fullPdf.getPageCount();
 
       console.log(`Original size: ${(file.size / 1024 / 1024).toFixed(2)}MB`);
       console.log(`Total pages: ${totalPages}`);
 
-      // Single part case
       if (file.size <= maxPartBytes) {
+        setProcessingStatus("Processing file...");
         const formData = new FormData();
         formData.append("file", file);
         const res = await fetch("/api/extractpdftotext", {
           method: "POST",
           body: formData,
         });
+        console.log("API response status:", res.status, res.statusText);
         const { text, error } = await res.json();
+        console.log("API response data:", { text, error });
 
         if (error || !text) {
           setErrorMsg("❌ Failed to extract text from file");
           setUploading(false);
+          setProcessingStatus("");
           return;
         }
 
@@ -156,6 +199,7 @@ export const PDFTextUploader = ({
         if (dbError) {
           console.error("Supabase error:", dbError);
           setErrorMsg("❌ Failed to save to database.");
+          setProcessingStatus("");
         } else {
           notifications.show({
             title: `Saved: ${file.name}`,
@@ -169,17 +213,16 @@ export const PDFTextUploader = ({
 
         await mutate();
         setUploading(false);
+        setProcessingStatus("");
         return;
       }
 
-      // Multi-part processing
       setProcessingStatus("Splitting PDF...");
       const parts: { pages: number[]; pdfBytes: Uint8Array }[] = [];
       let currentPart = await PDFDocument.create();
       let currentPartPages: number[] = [];
       let currentPartSize = 0;
 
-      // Measure PDF overhead
       const emptyPdf = await PDFDocument.create();
       const overheadBytes = (await emptyPdf.save()).byteLength;
       const avgPageSize = (file.size - overheadBytes) / totalPages;
@@ -189,7 +232,6 @@ export const PDFTextUploader = ({
         currentPart.addPage(copiedPage);
         currentPartPages.push(pageIndex);
 
-        // Check size every 2 pages or when approaching limit
         if (
           currentPartPages.length % 2 === 0 ||
           (currentPartSize > maxPartBytes * 0.7 && currentPartPages.length > 1)
@@ -198,7 +240,6 @@ export const PDFTextUploader = ({
           currentPartSize = pdfBytes.byteLength;
 
           if (currentPartSize > maxPartBytes) {
-            // Remove last page if over limit
             currentPart.removePage(currentPart.getPageCount() - 1);
             const finalBytes = await currentPart.save();
             parts.push({
@@ -206,7 +247,6 @@ export const PDFTextUploader = ({
               pdfBytes: finalBytes,
             });
 
-            // Start new part with the last page
             currentPart = await PDFDocument.create();
             const [newPage] = await currentPart.copyPages(fullPdf, [pageIndex]);
             currentPart.addPage(newPage);
@@ -214,13 +254,11 @@ export const PDFTextUploader = ({
             currentPartSize = (await currentPart.save()).byteLength;
           }
         } else {
-          // Estimate size growth
           currentPartSize =
             overheadBytes + avgPageSize * currentPartPages.length;
         }
       }
 
-      // Add the final part if it has pages
       if (currentPart.getPageCount() > 0) {
         const pdfBytes = await currentPart.save();
         parts.push({
@@ -229,36 +267,28 @@ export const PDFTextUploader = ({
         });
       }
 
-      // Verify total size
-      const totalProcessedSize = parts.reduce(
-        (sum, part) => sum + part.pdfBytes.byteLength,
-        0
-      );
+      fullPdf.removePage(0);
+
       console.log(
         `Created ${parts.length} parts (total ${(
-          totalProcessedSize /
+          parts.reduce((sum, part) => sum + part.pdfBytes.byteLength, 0) /
           1024 /
           1024
         ).toFixed(2)}MB)`
       );
 
-      // Process each part
       for (let partIndex = 0; partIndex < parts.length; partIndex++) {
         const part = parts[partIndex];
         setProcessingStatus(
           `Processing part ${partIndex + 1}/${parts.length}...`
         );
 
-        // Fix: Explicitly create Uint8Array from the bytes
         const pdfUint8Array = new Uint8Array(part.pdfBytes);
         const blob = new Blob([pdfUint8Array], { type: "application/pdf" });
-
         const partFile = new File(
           [blob],
           `${baseFileName}-part${partIndex + 1}.pdf`,
-          {
-            type: "application/pdf",
-          }
+          { type: "application/pdf" }
         );
 
         const formData = new FormData();
@@ -268,7 +298,9 @@ export const PDFTextUploader = ({
           method: "POST",
           body: formData,
         });
+        console.log("API response status:", res.status, res.statusText);
         const { text, error } = await res.json();
+        console.log("API response data:", { text, error });
 
         if (error || !text) {
           setErrorMsg(`❌ Failed to extract text from part ${partIndex + 1}`);
