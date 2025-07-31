@@ -26,9 +26,6 @@ interface PDFTextUploaderProps {
 const MAX_TOTAL_FILE_SIZE_MB = 25;
 const MAX_PART_FILE_SIZE_MB = 4;
 const WORD_LIMIT = 60000;
-const MAX_RETRIES = 3;
-const RETRY_DELAY_MS = 1000;
-const SMALL_FILE_THRESHOLD_MB = 1; // Threshold for attempting local copy
 
 export const PDFTextUploader = ({
   indexId,
@@ -101,88 +98,12 @@ export const PDFTextUploader = ({
     });
   };
 
-  const isFileAccessible = async (file: File): Promise<boolean> => {
-    try {
-      const testReader = new FileReader();
-      await new Promise((resolve, reject) => {
-        testReader.onload = resolve;
-        testReader.onerror = reject;
-        testReader.readAsArrayBuffer(
-          file.slice(0, Math.min(file.size, 2 * 1024 * 1024))
-        ); // Read up to 2MB
-      });
-      return true;
-    } catch {
-      return false;
-    }
-  };
-
   const isGoogleDriveFile = (file: File): boolean => {
-    const cloudPatterns = [
-      "content://com.google.android.apps.docs.storage",
-      "content://com.google.android.apps.photos",
-      /googledrive/i,
-      /drive\.google\.com/i,
-      /content:\/\//i, // Broader check for content URIs on Android
-    ];
     const isAndroid = /Android/i.test(navigator.userAgent);
     return (
       isAndroid &&
-      cloudPatterns.some((pattern) =>
-        typeof pattern === "string"
-          ? file.name.includes(pattern) ||
-            (file as any).webkitRelativePath?.includes(pattern)
-          : pattern.test(file.name) ||
-            pattern.test((file as any).webkitRelativePath || "")
-      )
+      /content:\/\//i.test(file.name || (file as any).webkitRelativePath || "")
     );
-  };
-
-  const createLocalFileCopy = async (file: File): Promise<File> => {
-    try {
-      const arrayBuffer = await readFileAsArrayBuffer(file);
-      const blob = new Blob([arrayBuffer], { type: file.type });
-      return new File([blob], file.name, {
-        type: file.type,
-        lastModified: file.lastModified,
-      });
-    } catch (err) {
-      console.error("Failed to create local file copy:", err);
-      throw new Error("Unable to process Google Drive file");
-    }
-  };
-
-  const fetchWithRetry = async (
-    url: string,
-    options: RequestInit,
-    file: File,
-    retries: number
-  ): Promise<Response> => {
-    for (let attempt = 1; attempt <= retries; attempt++) {
-      try {
-        if (!(await isFileAccessible(file))) {
-          throw new Error("File is not accessible");
-        }
-        const response = await fetch(url, {
-          ...options,
-          signal: AbortSignal.timeout(60000), // 60s timeout
-        });
-        if (!response.ok) {
-          throw new Error(
-            `HTTP error ${response.status}: ${response.statusText}`
-          );
-        }
-        return response;
-      } catch (error) {
-        if (attempt === retries) throw error;
-        console.warn(
-          `Fetch attempt ${attempt} failed for file ${file.name} (${file.size} bytes), retrying...`,
-          error
-        );
-        await new Promise((resolve) => setTimeout(resolve, RETRY_DELAY_MS));
-      }
-    }
-    throw new Error("Max retries reached");
   };
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -203,41 +124,10 @@ export const PDFTextUploader = ({
 
     let uploadFile = file;
 
-    if (isGoogleDriveFile(file)) {
-      if (file.size <= SMALL_FILE_THRESHOLD_MB * 1024 * 1024) {
-        setProcessingStatus("Copying small Google Drive file locally...");
-        try {
-          uploadFile = await createLocalFileCopy(file);
-          console.log("Local copy created:", uploadFile.name, uploadFile.size);
-        } catch (err) {
-          console.error("Google Drive copy error:", err);
-          setErrorMsg(
-            "⚠️ Failed to process small Google Drive file. Please download the file to your device (e.g., Downloads folder) and try again."
-          );
-          setProcessingStatus("");
-          return;
-        }
-      } else {
-        setErrorMsg(
-          "⚠️ Google Drive files may not work directly. Please download the file to your device (e.g., Downloads folder) and try uploading again."
-        );
-        setProcessingStatus("");
-        return;
-      }
-    }
-
-    if (!(await isFileAccessible(uploadFile))) {
-      setErrorMsg(
-        "❌ File is not accessible. Please download it locally and try again."
-      );
-      setProcessingStatus("");
-      return;
-    }
-
     const isAndroid = /Android/i.test(navigator.userAgent);
     const MAX_FILE_SIZE_MB = isAndroid ? 15 : MAX_TOTAL_FILE_SIZE_MB;
     const totalMaxBytes = MAX_FILE_SIZE_MB * 1024 * 1024;
-    if (uploadFile.size > totalMaxBytes) {
+    if (file.size > totalMaxBytes) {
       setErrorMsg(`❌ File size exceeds ${MAX_FILE_SIZE_MB}MB limit.`);
       return;
     }
@@ -246,29 +136,27 @@ export const PDFTextUploader = ({
     setUploading(true);
 
     try {
-      const baseFileName = uploadFile.name.replace(/\.pdf$/i, "");
-      const arrayBuffer = await readFileAsArrayBuffer(uploadFile);
+      const baseFileName = file.name.replace(/\.pdf$/i, "");
+      const arrayBuffer = await readFileAsArrayBuffer(file);
       const fullPdf = await PDFDocument.load(arrayBuffer);
       const totalPages = fullPdf.getPageCount();
 
-      console.log(
-        `Original size: ${(uploadFile.size / 1024 / 1024).toFixed(2)}MB`
-      );
+      console.log(`Original size: ${(file.size / 1024 / 1024).toFixed(2)}MB`);
       console.log(`Total pages: ${totalPages}`);
 
-      if (uploadFile.size <= maxPartBytes) {
+      if (isGoogleDriveFile(file) || file.size <= maxPartBytes) {
         setProcessingStatus("Processing file...");
+        const pdfBytes = await fullPdf.save();
+        const pdfUint8Array = new Uint8Array(pdfBytes);
+        const blob = new Blob([pdfUint8Array], { type: "application/pdf" });
+        uploadFile = new File([blob], file.name, { type: "application/pdf" });
+
         const formData = new FormData();
         formData.append("file", uploadFile);
-        const res = await fetchWithRetry(
-          "/api/extractpdftotext",
-          {
-            method: "POST",
-            body: formData,
-          },
-          uploadFile,
-          MAX_RETRIES
-        );
+        const res = await fetch("/api/extractpdftotext", {
+          method: "POST",
+          body: formData,
+        });
         console.log("API response status:", res.status, res.statusText);
         const { text, error } = await res.json();
         console.log("API response data:", { text, error });
@@ -326,7 +214,7 @@ export const PDFTextUploader = ({
 
       const emptyPdf = await PDFDocument.create();
       const overheadBytes = (await emptyPdf.save()).byteLength;
-      const avgPageSize = (uploadFile.size - overheadBytes) / totalPages;
+      const avgPageSize = (file.size - overheadBytes) / totalPages;
 
       for (let pageIndex = 0; pageIndex < totalPages; pageIndex++) {
         const [copiedPage] = await currentPart.copyPages(fullPdf, [pageIndex]);
@@ -395,15 +283,10 @@ export const PDFTextUploader = ({
         const formData = new FormData();
         formData.append("file", partFile);
 
-        const res = await fetchWithRetry(
-          "/api/extractpdftotext",
-          {
-            method: "POST",
-            body: formData,
-          },
-          partFile,
-          MAX_RETRIES
-        );
+        const res = await fetch("/api/extractpdftotext", {
+          method: "POST",
+          body: formData,
+        });
         console.log("API response status:", res.status, res.statusText);
         const { text, error } = await res.json();
         console.log("API response data:", { text, error });
@@ -449,16 +332,9 @@ export const PDFTextUploader = ({
       await mutate();
     } catch (err) {
       console.error("PDF processing error:", err);
-      const errorMessage = err instanceof Error ? err.message : String(err);
-      if (errorMessage.includes("ERR_UPLOAD_FILE_CHANGED")) {
-        setErrorMsg(
-          "❌ File changed during upload. Please download the file to your device (e.g., Downloads folder) and try again."
-        );
-      } else {
-        setErrorMsg(
-          `❌ Unexpected error while processing PDF: ${errorMessage}`
-        );
-      }
+      setErrorMsg(
+        "❌ Failed to process PDF. For Google Drive files, please download the file to your device (e.g., Downloads folder) and try again."
+      );
     } finally {
       setUploading(false);
       setProcessingStatus("");
