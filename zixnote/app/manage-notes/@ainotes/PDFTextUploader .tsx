@@ -153,13 +153,18 @@ export const PDFTextUploader = ({
 
     try {
       const baseFileName = file.name.replace(/\.pdf$/i, "");
-      const arrayBuffer = await readFileAsArrayBuffer(file);
-      const fullPdf = await PDFDocument.load(arrayBuffer);
-      const totalPages = fullPdf.getPageCount();
+      try {
+        const arrayBuffer = await readFileAsArrayBuffer(file);
 
-      console.log(`Original size: ${(file.size / 1024 / 1024).toFixed(2)}MB`);
-      console.log(`Total pages: ${totalPages}`);
+        const fullPdf = await PDFDocument.load(arrayBuffer);
+        const totalPages = fullPdf.getPageCount();
 
+        console.log(`Original size: ${(file.size / 1024 / 1024).toFixed(2)}MB`);
+        console.log(`Total pages: ${totalPages}`);
+      } catch (err) {
+        setErrorMsg(`File error is ${JSON.stringify((err as any).stack)}`);
+        return;
+      }
       if (file.size <= maxPartBytes) {
         setProcessingStatus("Processing file...");
         const formData = new FormData();
