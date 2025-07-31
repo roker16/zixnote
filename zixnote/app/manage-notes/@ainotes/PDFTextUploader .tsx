@@ -8,13 +8,20 @@ import {
   TextInput,
   Group,
   Text,
+  ScrollArea,
 } from "@mantine/core";
 import { createClient } from "@/utils/supabase/client";
 import {
   useDeleteMutation,
   useQuery,
 } from "@supabase-cache-helpers/postgrest-swr";
-import { IconCheck, IconTrash, IconUpload, IconX } from "@tabler/icons-react";
+import {
+  IconCheck,
+  IconTrash,
+  IconUpload,
+  IconX,
+  IconEye,
+} from "@tabler/icons-react";
 import { notifications } from "@mantine/notifications";
 import { PDFDocument } from "pdf-lib";
 
@@ -40,9 +47,14 @@ export const PDFTextUploader = ({
   const [saving, setSaving] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [textModalOpen, setTextModalOpen] = useState(false);
   const [resourceToDelete, setResourceToDelete] = useState<number | null>(null);
   const [deletingId, setDeletingId] = useState<number | null>(null);
-  const [processingStatus, setProcessingStatus] = useState<string>("");
+  const [processingStatus, setProcessingStatus] = useState("");
+  const [selectedResourceId, setSelectedResourceId] = useState<number | null>(
+    null
+  );
+  const [viewedText, setViewedText] = useState("");
 
   const supabase = createClient();
 
@@ -381,6 +393,36 @@ export const PDFTextUploader = ({
     await mutate();
   };
 
+  const handleViewText = async (id: number) => {
+    setSelectedResourceId(id);
+    setViewedText("");
+    setTextModalOpen(true);
+
+    try {
+      const { data, error } = await supabase
+        .from("pdf_extracted_texts")
+        .select("extracted_text")
+        .eq("id", id)
+        .eq("uploaded_by", profileId)
+        .single();
+
+      if (error || !data) {
+        console.error("Supabase fetch error:", error);
+        setErrorMsg("❌ Failed to fetch text.");
+        setSelectedResourceId(null);
+        setTextModalOpen(false);
+        return;
+      }
+
+      setViewedText(data.extracted_text);
+    } catch (err) {
+      console.error("Text fetch error:", err);
+      setErrorMsg("❌ Failed to fetch text.");
+      setSelectedResourceId(null);
+      setTextModalOpen(false);
+    }
+  };
+
   const openDeleteModal = (id: number) => {
     setResourceToDelete(id);
     setDeleteModalOpen(true);
@@ -432,17 +474,23 @@ export const PDFTextUploader = ({
             {existingResources.map((res) => (
               <li
                 key={res.id}
-                className="flex items-center justify-between px-2 py-0"
+                className="flex items-center justify-between px-2 py-1"
               >
-                <div className="flex items-center gap-2 truncate">
+                <div className="flex items-center gap-2 w-full">
+                  <IconEye
+                    size={18}
+                    className="cursor-pointer flex-shrink-0"
+                    onClick={() => handleViewText(res.id)}
+                  />
                   <IconTrash
-                    size={16}
-                    className={`cursor-pointer ${
-                      deletingId === res.id ? "opacity-50 animate-pulse" : ""
-                    }`}
+                    size={18}
+                    className="cursor-pointer flex-shrink-0"
                     onClick={() => openDeleteModal(res.id)}
                   />
-                  <span className="italic font-semibold truncate">
+                  <span
+                    className="italic font-semibold truncate"
+                    style={{ maxWidth: "calc(100% - 60px)" }}
+                  >
                     {res.file_name}
                   </span>
                 </div>
@@ -502,6 +550,39 @@ export const PDFTextUploader = ({
             loading={deletingId !== null}
           >
             Delete
+          </Button>
+        </Group>
+      </Modal>
+
+      <Modal
+        opened={textModalOpen}
+        onClose={() => {
+          setTextModalOpen(false);
+          setSelectedResourceId(null);
+          setViewedText("");
+        }}
+        title="View Extracted Text"
+        size="lg"
+        centered
+      >
+        <Text size="sm" w={500} mb="xs">
+          Extracted Text
+        </Text>
+        <ScrollArea style={{ height: "400px" }} type="auto" scrollbarSize={8}>
+          <Text style={{ whiteSpace: "pre-wrap", paddingRight: "8px" }}>
+            {viewedText}
+          </Text>
+        </ScrollArea>
+        <Group className="mt-4">
+          <Button
+            variant="light"
+            onClick={() => {
+              setTextModalOpen(false);
+              setSelectedResourceId(null);
+              setViewedText("");
+            }}
+          >
+            Close
           </Button>
         </Group>
       </Modal>
