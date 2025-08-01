@@ -9,6 +9,7 @@ import {
   Group,
   Text,
   ScrollArea,
+  Box,
 } from "@mantine/core";
 import { createClient } from "@/utils/supabase/client";
 import {
@@ -561,13 +562,12 @@ export const PDFTextUploader = ({
           setSelectedResourceId(null);
           setViewedText("");
         }}
-        title=<div className="font-bold text-xl">View Extracted Text</div>
+        size="auto"
+        title=<div className="font-bold text-xl">Extracted Text</div>
       >
         {/* <div className="font-semibold italic text-red-900">Extracted Text</div> */}
-        <ScrollArea w={600} h={600} scrollbarSize={8}>
-          <Text style={{ whiteSpace: "pre-wrap", paddingRight: "8px" }}>
-            {viewedText}
-          </Text>
+        <ScrollArea scrollbarSize={8} w={600} scrollbars="y">
+          <Box w={600}>{viewedText}</Box>
         </ScrollArea>
         <Group className="mt-4">
           <Button
