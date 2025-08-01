@@ -10,6 +10,7 @@ import {
   Text,
   ScrollArea,
   Box,
+  Loader,
 } from "@mantine/core";
 import { createClient } from "@/utils/supabase/client";
 import {
@@ -22,6 +23,7 @@ import {
   IconUpload,
   IconX,
   IconEye,
+  IconPencil,
 } from "@tabler/icons-react";
 import { notifications } from "@mantine/notifications";
 import { PDFDocument } from "pdf-lib";
@@ -45,8 +47,6 @@ export const PDFTextUploader = ({
   const [description, setDescription] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
   const [uploading, setUploading] = useState(false);
-  const [saving, setSaving] = useState(false);
-  const [modalOpen, setModalOpen] = useState(false);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [textModalOpen, setTextModalOpen] = useState(false);
   const [resourceToDelete, setResourceToDelete] = useState<number | null>(null);
@@ -56,6 +56,12 @@ export const PDFTextUploader = ({
     null
   );
   const [viewedText, setViewedText] = useState("");
+  const [isLoadingText, setIsLoadingText] = useState(false);
+  // New states for rename functionality
+  const [renameModalOpen, setRenameModalOpen] = useState(false);
+  const [resourceToRename, setResourceToRename] = useState<number | null>(null);
+  const [newFileName, setNewFileName] = useState("");
+  const [renamingId, setRenamingId] = useState<number | null>(null);
 
   const supabase = createClient();
 
@@ -342,45 +348,6 @@ export const PDFTextUploader = ({
     }
   };
 
-  const handleSave = async () => {
-    if (!extractedText || !fileName || !profileId || !indexId) {
-      setErrorMsg("❌ Missing required data.");
-      return;
-    }
-
-    setSaving(true);
-    setErrorMsg("");
-
-    const { error } = await supabase.from("pdf_extracted_texts").insert({
-      index_id: indexId,
-      uploaded_by: profileId,
-      file_name: fileName,
-      extracted_text: extractedText,
-      description: description || null,
-    });
-
-    if (error) {
-      console.error("Supabase insert error:", error);
-      setErrorMsg("❌ Failed to save to database.");
-    } else {
-      setModalOpen(false);
-      setExtractedText("");
-      setFileName(null);
-      setDescription("");
-      notifications.show({
-        title: "Success",
-        message: "Text saved successfully",
-        color: "green",
-        icon: <IconCheck size={18} />,
-        position: "top-center",
-        autoClose: 3000,
-      });
-      await mutate();
-    }
-
-    setSaving(false);
-  };
-
   const handleDelete = async () => {
     if (!resourceToDelete) return;
 
@@ -398,6 +365,7 @@ export const PDFTextUploader = ({
     setSelectedResourceId(id);
     setViewedText("");
     setTextModalOpen(true);
+    setIsLoadingText(true);
 
     try {
       const { data, error } = await supabase
@@ -412,21 +380,75 @@ export const PDFTextUploader = ({
         setErrorMsg("❌ Failed to fetch text.");
         setSelectedResourceId(null);
         setTextModalOpen(false);
+        setIsLoadingText(false);
         return;
       }
 
       setViewedText(data.extracted_text);
+      setIsLoadingText(false);
     } catch (err) {
       console.error("Text fetch error:", err);
       setErrorMsg("❌ Failed to fetch text.");
       setSelectedResourceId(null);
       setTextModalOpen(false);
+      setIsLoadingText(false);
+    }
+  };
+
+  const handleRename = async () => {
+    if (!resourceToRename || !newFileName.trim()) {
+      setErrorMsg("❌ Please enter a valid file name.");
+      return;
+    }
+
+    setRenamingId(resourceToRename);
+    setErrorMsg("");
+
+    const finalFileName = newFileName.trim().endsWith(".pdf")
+      ? newFileName.trim()
+      : `${newFileName.trim()}.pdf`;
+
+    try {
+      const { error } = await supabase
+        .from("pdf_extracted_texts")
+        .update({ file_name: finalFileName })
+        .eq("id", resourceToRename)
+        .eq("uploaded_by", profileId);
+
+      if (error) {
+        console.error("Supabase update error:", error);
+        setErrorMsg("❌ Failed to rename file.");
+      } else {
+        notifications.show({
+          title: "Success",
+          message: "File renamed successfully",
+          color: "green",
+          icon: <IconCheck size={18} />,
+          position: "top-center",
+          autoClose: 3000,
+        });
+        setRenameModalOpen(false);
+        setNewFileName("");
+        setResourceToRename(null);
+        await mutate();
+      }
+    } catch (err) {
+      console.error("Rename error:", err);
+      setErrorMsg("❌ Failed to rename file.");
+    } finally {
+      setRenamingId(null);
     }
   };
 
   const openDeleteModal = (id: number) => {
     setResourceToDelete(id);
     setDeleteModalOpen(true);
+  };
+
+  const openRenameModal = (id: number, currentName: string) => {
+    setResourceToRename(id);
+    setNewFileName(currentName.replace(/\.pdf$/i, ""));
+    setRenameModalOpen(true);
   };
 
   return (
@@ -483,6 +505,11 @@ export const PDFTextUploader = ({
                     className="cursor-pointer flex-shrink-0"
                     onClick={() => handleViewText(res.id)}
                   />
+                  <IconPencil
+                    size={18}
+                    className="cursor-pointer flex-shrink-0"
+                    onClick={() => openRenameModal(res.id, res.file_name)}
+                  />
                   <IconTrash
                     size={18}
                     className="cursor-pointer flex-shrink-0"
@@ -490,7 +517,7 @@ export const PDFTextUploader = ({
                   />
                   <span
                     className="italic font-semibold truncate"
-                    style={{ maxWidth: "calc(100% - 60px)" }}
+                    style={{ maxWidth: "calc(100% - 80px)" }} // Adjusted for extra icon
                   >
                     {res.file_name}
                   </span>
@@ -500,39 +527,6 @@ export const PDFTextUploader = ({
           </ul>
         </div>
       )}
-
-      <Modal
-        opened={modalOpen}
-        onClose={() => setModalOpen(false)}
-        title="Review Extracted Text"
-        size="lg"
-        centered
-      >
-        <Textarea
-          label="Extracted Text"
-          minRows={10}
-          maxRows={30}
-          value={extractedText}
-          onChange={(e) => setExtractedText(e.target.value)}
-        />
-
-        <TextInput
-          label="Optional Description"
-          placeholder="e.g. Summary of Case Study PDF"
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-          className="mt-4"
-        />
-
-        <Group className="mt-4">
-          <Button variant="light" onClick={() => setModalOpen(false)}>
-            Cancel
-          </Button>
-          <Button onClick={handleSave} loading={saving}>
-            Save to Database
-          </Button>
-        </Group>
-      </Modal>
 
       <Modal
         opened={deleteModalOpen}
@@ -563,11 +557,18 @@ export const PDFTextUploader = ({
           setViewedText("");
         }}
         size="auto"
-        title=<div className="font-bold text-xl">Extracted Text</div>
+        title={<div className="font-bold text-xl">Extracted Text</div>}
       >
-        {/* <div className="font-semibold italic text-red-900">Extracted Text</div> */}
         <ScrollArea scrollbarSize={8} w={600} scrollbars="y">
-          <Box w={600}>{viewedText}</Box>
+          <Box w={600}>
+            {isLoadingText ? (
+              <div className="flex justify-center items-center py-32">
+                <Loader size="lg" color="gray" />
+              </div>
+            ) : (
+              viewedText
+            )}
+          </Box>
         </ScrollArea>
         <Group className="mt-4">
           <Button
@@ -579,6 +580,40 @@ export const PDFTextUploader = ({
             }}
           >
             Close
+          </Button>
+        </Group>
+      </Modal>
+
+      <Modal
+        opened={renameModalOpen}
+        onClose={() => {
+          setRenameModalOpen(false);
+          setResourceToRename(null);
+          setNewFileName("");
+        }}
+        title="Rename PDF"
+        centered
+      >
+        <TextInput
+          label="New File Name"
+          placeholder="Enter new file name"
+          value={newFileName}
+          onChange={(e) => setNewFileName(e.target.value)}
+          className="mb-4"
+        />
+        <Group className="mt-4">
+          <Button
+            variant="light"
+            onClick={() => {
+              setRenameModalOpen(false);
+              setResourceToRename(null);
+              setNewFileName("");
+            }}
+          >
+            Cancel
+          </Button>
+          <Button onClick={handleRename} loading={renamingId !== null}>
+            Rename
           </Button>
         </Group>
       </Modal>
