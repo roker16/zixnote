@@ -10,6 +10,7 @@ import Testimonial from "@/components/landing/Testimonial";
 import { DeviceOSDetector } from "./devicedetector/DeviceOSDetector";
 import { getDeviceAndOS } from "./devicedetector/getDeviceAndOS";
 import PDFUploader from "./manage-notes/@ainotes/Test";
+import { headers } from "next/headers";
 
 export default async function Index() {
   const supabase = await createClient();
@@ -25,12 +26,19 @@ export default async function Index() {
     .single();
 
   const isTestimonialEnabled = setting?.setting_status === "enabled";
-
+  const hostname = headers().get("host") || "";
   return (
     <div>
       <HeaderMegaMenu user={user} />
       <Container size="xl">
-        <PublicDashboard />
+        <div>
+          {hostname.includes("neetdigital.com") ? (
+            <h1>Welcome to NEET Digital</h1>
+          ) : (
+            <PublicDashboard />
+          )}
+        </div>
+
         {/* <HeroBullets /> */}
         {/* <LastSignedInUsers /> */}
       </Container>

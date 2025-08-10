@@ -11,6 +11,7 @@ import {
   ScrollArea,
   Box,
   Loader,
+  Title,
 } from "@mantine/core";
 import { createClient } from "@/utils/supabase/client";
 import {
@@ -457,11 +458,11 @@ export const PDFTextUploader = ({
         <Button
           component="label"
           disabled={uploading}
-          variant="light"
-          size="xs"
-          leftSection={<IconUpload />}
+          variant="filled"
+          size="sm"
+          leftSection={<IconUpload size={14} />}
         >
-          UPLOAD PDF RESOURCE FOR NOTES MAKING
+          Upload PDF for Notes
           <input
             type="file"
             ref={fileInputRef}
@@ -492,7 +493,9 @@ export const PDFTextUploader = ({
 
       {existingResources && existingResources.length > 0 && (
         <div className="mt-6">
-          <h4 className="font-medium mb-2">📄 Already Uploaded PDFs</h4>
+          <h4 className="text-sm font-semibold text-gray-800 mb-3 tracking-normal border-b-2 border-gray-300 pb-1">
+            Uploaded Resources
+          </h4>
           <ul className="space-y-1 text-sm text-gray-700">
             {existingResources.map((res) => (
               <li
