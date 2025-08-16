@@ -1,16 +1,11 @@
-import LastSignedInUsers from "@/components/kpi/LastSignedInUsers";
 import { FooterCentered } from "@/components/landing/FooterCentered";
 import { HeaderMegaMenu } from "@/components/landing/HeaderMegaMenu";
-import { HeroBullets } from "@/components/landing/HeroBullets";
+import Testimonial from "@/components/landing/Testimonial";
 import { createClient } from "@/utils/supabase/server";
 import { Container } from "@mantine/core";
-import PublicDashboard from "./PublicDashboard";
-import Flow from "./manage-notes/@ainotes/Flow";
-import Testimonial from "@/components/landing/Testimonial";
-import { DeviceOSDetector } from "./devicedetector/DeviceOSDetector";
-import { getDeviceAndOS } from "./devicedetector/getDeviceAndOS";
-import PDFUploader from "./manage-notes/@ainotes/Test";
 import { headers } from "next/headers";
+import NEETDashboard from "./NEETDashboard";
+import { getDeviceAndOS } from "./devicedetector/getDeviceAndOS";
 
 export default async function Index() {
   const supabase = await createClient();
@@ -31,14 +26,16 @@ export default async function Index() {
     <div>
       <HeaderMegaMenu user={user} />
       <Container size="xl">
-        <div>
+        {/* <div>
           {hostname.includes("neetdigital.com") ? (
-            <h1>Welcome to NEET Digital</h1>
+            <>
+              <NEETDashboard />
+            </>
           ) : (
             <PublicDashboard />
           )}
-        </div>
-
+        </div> */}
+        <NEETDashboard />
         {/* <HeroBullets /> */}
         {/* <LastSignedInUsers /> */}
       </Container>
