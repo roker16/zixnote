@@ -6,6 +6,7 @@ import { Container } from "@mantine/core";
 import { headers } from "next/headers";
 import NEETDashboard from "./NEETDashboard";
 import { getDeviceAndOS } from "./devicedetector/getDeviceAndOS";
+import PublicDashboard from "./PublicDashboard";
 
 export default async function Index() {
   const supabase = await createClient();
@@ -26,7 +27,7 @@ export default async function Index() {
     <div>
       <HeaderMegaMenu user={user} />
       <Container size="xl">
-        {/* <div>
+        <div>
           {hostname.includes("neetdigital.com") ? (
             <>
               <NEETDashboard />
@@ -34,8 +35,8 @@ export default async function Index() {
           ) : (
             <PublicDashboard />
           )}
-        </div> */}
-        <NEETDashboard />
+        </div>
+        {/* <NEETDashboard /> */}
         {/* <HeroBullets /> */}
         {/* <LastSignedInUsers /> */}
       </Container>
