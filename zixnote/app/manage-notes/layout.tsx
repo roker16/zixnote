@@ -135,7 +135,7 @@ export default function ManageSyllabusLayout({
       </AppShell.Navbar>
       <AppShell.Main pt={`calc(${rem(50)} + var(--mantine-spacing-md))`}>
         <Space h={10} />
-        {activeTab === "first" && <div>{ainotes}</div>}
+        {activeTab === "first" && <div>{notes}</div>}
         {activeTab === "second" && <div>{sharednotes}</div>}
         {activeTab === "third" && <div>Third Tab</div>}
       </AppShell.Main>
